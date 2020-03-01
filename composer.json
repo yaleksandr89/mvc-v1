@@ -1,0 +1,24 @@
+{
+  "name": "hatershop/test",
+  "license": "MIT",
+  "description": "Test task",
+  "authors": [
+    {
+      "name": "Aleksandr Yurchenko",
+      "email": "y.aleksandr89@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Core\\": "vendor/core/",
+      "Project\\": "project"
+    },
+    "files": [
+      "config/init.php",
+      "config/routes.php"
+    ]
+  },
+  "require": {
+    "ext-mbstring": "*"
+  }
+}
