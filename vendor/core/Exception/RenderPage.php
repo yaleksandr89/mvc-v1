@@ -1,19 +1,19 @@
 <?php declare(strict_types=1);
 
-namespace Core\exception;
+namespace Core\Exception;
 
 use Throwable;
 use Exception;
 
 /**
- * Class ConnectFile
+ * Class ConnectClass
  *
  * @package Core\exception
  */
-class ConnectFile extends Exception
+class RenderPage extends Exception
 {
     /**
-     * ConnectFile constructor.
+     * ConnectClass constructor.
      *
      * @param string $message
      * @param int $code

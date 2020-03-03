@@ -2,8 +2,8 @@
 
 namespace Core;
 
-use Core\exception\ConnectLayout;
-use Core\exception\RenderPage;
+use Core\Exception\ConnectLayout;
+use Core\Exception\RenderPage;
 
 /**
  * Class View

@@ -8,10 +8,15 @@
     </div>
     <div class="card-body pl-5 pr-5">
         <div class="card mb-3">
-            <img class="card-img-top" src="<?= $article['img'] ?>" alt="<?= $article['title'] ?>">
             <div class="card-body">
+                <small class="form-text text-muted">
+                    Опубликовано: <?= $article['published_at'] ?>
+                </small>
+                <small class="form-text text-muted">
+                    Обновленно: <?= $article['updated_at'] ?>
+                </small>
                 <h5 class="card-title"><?= $article['title'] ?></h5>
-                <p class="card-text"><?= $article['text'] ?></p>
+                <p class="card-text"><?= $article['content_html'] ?></p>
             </div>
         </div>
     </div>

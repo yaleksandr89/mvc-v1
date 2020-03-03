@@ -2,9 +2,9 @@
 
 namespace Core;
 
-use Core\exception\ConnectClass;
-use Core\exception\ConnectFile;
-use Core\exception\ExecutableMethod;
+use Core\Exception\ConnectClass;
+use Core\Exception\ConnectFile;
+use Core\Exception\ExecutableMethod;
 
 /**
  * Class Dispatcher
@@ -20,8 +20,8 @@ class Dispatcher
     public function getPage(Track $track): ?Page
     {
         $className = ucfirst($track->getController()) . 'Controller';
-        $path = ROOT . "/project/controllers/{$className}.php";
-        $fullName = "\\project\\controllers\\{$className}";
+        $path = WORK_DIR . "/Controllers/{$className}.php";
+        $fullName = "\\Project\\Controllers\\{$className}";
 
         try {
 

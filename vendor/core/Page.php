@@ -3,7 +3,7 @@
 namespace Core;
 
 /**
- * Class Page
+ * Class PageModal
  *
  * @package Core
  */
@@ -30,7 +30,7 @@ class Page
     private array $data;
 
     /**
-     * Page constructor.
+     * PageModal constructor.
      * @param string $layout
      * @param array $meta
      * @param string|null $view

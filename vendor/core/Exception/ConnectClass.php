@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Core\exception;
+namespace Core\Exception;
 
 use Throwable;
 use Exception;

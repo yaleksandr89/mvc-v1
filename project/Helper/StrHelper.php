@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Project\helper;
+namespace Project\Helper;
 
 /**
  * Class StrHelper
  *
- * @package Project\helper
+ * @package Project\Helper
  */
 class StrHelper
 {

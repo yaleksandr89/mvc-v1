@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Project\controllers;
+namespace Project\Controllers;
 
 use Core\Controller;
 use Core\Page;
-use Project\helper\StrHelper;
+use Project\Helper\StrHelper;
 
 /**
  * Class MainController

@@ -6,10 +6,12 @@ return [
     // Главная
     new Route('/', 'main', 'index'),
 
-    // Тестовая страница 1
+    // все статьи
     new Route('/articles', 'page', 'all'),
-    // Тестовая страница 2
+    // Выбранная страница
     new Route('/article/:id', 'page', 'single'),
+    // Нужный диапазон статей
+    new Route('/articles/:start/:end', 'page', 'custom'),
 
     // Вполненные пет-проекты
     new Route('/pet-projects', 'pet', 'index'),
