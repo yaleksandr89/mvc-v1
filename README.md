@@ -8,4 +8,4 @@ Project folder: `project/...`
 
 ## Install ##
 
-Clone the repository, at the command prompt to type: `composer update` and set up a virtual host.
+Clone the repository, at the command prompt to type: `composer i` and set up a virtual host.
