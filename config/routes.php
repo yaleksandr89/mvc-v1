@@ -1,6 +1,6 @@
 <?php
 
-use Core\Route;
+use Yaa\Framework\Route;
 
 return [
     // Главная
@@ -12,9 +12,6 @@ return [
     new Route('/article/:id', 'page', 'single'),
     // Нужный диапазон статей
     new Route('/articles/:start/:end', 'page', 'custom'),
-
-    // Вполненные пет-проекты
-    new Route('/pet-projects', 'pet', 'index'),
 
     // Контакты
     new Route('/contacts', 'contact', 'index'),

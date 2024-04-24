@@ -1,0 +1,23 @@
+{
+    "name": "yaa/mvc-framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aleksandr Yurchenko",
+            "email": "y.aleksandr89@yandex.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Yaa\\Framework\\": "src"
+        }
+    },
+    "require": {
+        "php": "^8",
+        "symfony/dotenv": "^7"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^7"
+    }
+}
