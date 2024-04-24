@@ -3,9 +3,10 @@
 namespace App\Controllers;
 
 use App\Helper\StrHelper;
+use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
 
-class ContactController extends \Yaa\Framework\Controller
+class ContactController extends Controller
 {
     public function index(): Page
     {
@@ -23,7 +24,7 @@ class ContactController extends \Yaa\Framework\Controller
             'telegram' => '//t.me/yaleksandr89',
             'skype' => 'skype:y.aleksandr89?chat',
             'vkontakte' => '//vk.com/y.aleksandr89',
-            'email' => 'mailto:yaleksandr89@gmail.com?subject=A%20letter%20from%20the%20site%20(AlexanderYurchenko.ru)&body=Hello!',
+            'email' => 'mailto:yaleksandr89@yandex.ru?subject=MVC%20V1',
             'linkedin' => '//www.linkedin.com/in/yaleksandr89/',
             'github' => '//github.com/yaleksandr89',
         ];

@@ -3,9 +3,10 @@
 namespace App\Controllers;
 
 use App\Helper\StrHelper;
+use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
 
-class MainController extends \Yaa\Framework\Controller
+class MainController extends Controller
 {
     public function index(): Page
     {

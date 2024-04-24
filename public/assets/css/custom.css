@@ -108,14 +108,14 @@
 
 /*telegram*/
 .link_dark.telegram {
-    border-color: #2DA4D7;
-    color: #2DA4D7;
+    border-color: #2481CC;
+    color: #2481CC;
 }
 
 .link_dark.telegram:hover {
     color: #fff;
-    background-color: #2DA4D7;
-    border-color: #2DA4D7;
+    background-color: #2481CC;
+    border-color: #2481CC;
     text-decoration: none;
 }
 
@@ -127,14 +127,14 @@
 
 /*skype*/
 .link_dark.skype {
-    border-color: #28A8EA;
-    color: #28A8EA;
+    border-color: #00B1EB;
+    color: #00B1EB;
 }
 
 .link_dark.skype:hover {
     color: #fff;
-    background-color: #28A8EA;
-    border-color: #28A8EA;
+    background-color: #00B1EB;
+    border-color: #00B1EB;
     text-decoration: none;
 }
 
@@ -146,14 +146,14 @@
 
 /*Linkedin*/
 .link_dark.linkedin {
-    border-color: #0077B5;
-    color: #0077B5;
+    border-color: #0A64BF;
+    color: #0A64BF;
 }
 
 .link_dark.linkedin:hover {
     color: #fff;
-    background-color: #0077B5;
-    border-color: #0077B5;
+    background-color: #0A64BF;
+    border-color: #0A64BF;
     text-decoration: none;
 }
 
@@ -165,14 +165,14 @@
 
 /*github*/
 .link_dark.github {
-    border-color: #24292E;
-    color: #24292E;
+    border-color: #636C76;
+    color: #636C76;
 }
 
 .link_dark.github:hover {
     color: #fff;
-    background-color: #24292E;
-    border-color: #24292E;
+    background-color: #636C76;
+    border-color: #636C76;
     text-decoration: none;
 }
 

@@ -2,9 +2,10 @@
 
 namespace App\Controllers;
 
+use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
 
-class ErrorController extends \Yaa\Framework\Controller
+class ErrorController extends Controller
 {
     public function notFound(): Page
     {
@@ -15,6 +16,6 @@ class ErrorController extends \Yaa\Framework\Controller
         ];
         http_response_code(404);
 
-        return $this->render('errors/notFound');
+        return $this->render('errors/not-found');
     }
 }

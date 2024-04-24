@@ -32,7 +32,7 @@ class PageController extends Controller
     {
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
-        $id = (int) $params['id'];
+        $id = (int)$params['id'];
         $article = PageModal::getInstance()->getById($id);
 
         $this->meta = [
@@ -51,8 +51,8 @@ class PageController extends Controller
     {
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
-        $start = (int) $params['start'];
-        $end = (int) $params['end'];
+        $start = (int)$params['start'];
+        $end = (int)$params['end'];
 
         $articles = PageModal::getInstance()->getByRange($start, $end);
 
