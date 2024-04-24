@@ -1,6 +1,12 @@
-$(function () {
-    let $urlPathname = $(location).attr('pathname');
-    let $lastElementUrl = $urlPathname.split('/').pop();
+document.addEventListener('DOMContentLoaded', function () {
+    let urlPathname = window.location.pathname;
+    let lastSegment = urlPathname.split('/').pop();
 
-    $('ul.navbar-nav').children('[data-id="' + $lastElementUrl + '"]').addClass('active');
+    let navItems = document.querySelectorAll('.nav-item');
+
+    navItems.forEach(function (item) {
+        if (item.dataset.id === lastSegment) {
+            item.classList.add('custom-active');
+        }
+    });
 });

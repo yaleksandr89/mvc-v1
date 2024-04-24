@@ -1,69 +1,48 @@
-html, body {
-    height: 100%;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-.wrapper {
+.custom-body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 100%;
+    min-height: 100vh;
 }
 
-.wrapper main {
+.custom-main {
     flex-grow: 1;
 }
 
-.wrapper .footer {
+.footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-content: center;
     height: 76px;
-    background-color: #343a40;
+    background-color: #212529;
 }
 
 #notfound {
-    position: relative;
-}
-
-#notfound .notfound {
     position: absolute;
-    left: 50%;
     top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
+    left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .notfound {
-    width: 100%;
-    line-height: 1.4;
     text-align: center;
 }
 
 .notfound .notfound-404 {
-    position: relative;
     height: 340px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .notfound .notfound-404 h1 {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
     font-size: 252px;
     font-weight: 900;
     color: #262626;
     text-transform: uppercase;
     letter-spacing: -40px;
-    margin-left: -20px;
+    margin: 0;
 }
 
 .notfound .notfound-404 h1 > span {
@@ -71,23 +50,13 @@ img {
 }
 
 .notfound .notfound-404 h3 {
-    position: relative;
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #262626;
+    color: #212529;
     margin: 0;
     letter-spacing: 3px;
     padding-left: 6px;
-}
-
-.notfound h2 {
-    font-size: 20px;
-    font-weight: 400;
-    text-transform: uppercase;
-    color: #000;
-    margin-top: 0;
-    margin-bottom: 25px;
 }
 
 .link_dark {
