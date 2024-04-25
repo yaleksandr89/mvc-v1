@@ -10,18 +10,22 @@
         <?php if (count($articles) > 0): ?>
             <?php foreach ($articles as $article): ?>
                 <div class="card mb-3">
-                    <div class="card-body">
-                        <small class="form-text text-muted">
-                            Опубликовано: <?= $article['published_at'] ?>
-                        </small>
-                        <small class="form-text text-muted">
-                            Обновленно: <?= $article['updated_at'] ?>
-                        </small>
+                    <div class="card-body d-flex flex-column">
                         <h2 class="card-title"><?= $article['title'] ?></h2>
                         <p class="card-text"><?= $article['excerpt'] ?></p>
-                        <a href="/article/<?= $article['id'] ?>" class="btn btn-lg btn-outline-dark w-100">
-                            Открыть статью
-                        </a>
+                        <div class="mt-auto d-flex justify-content-between">
+                            <a href="/article/<?= $article['id'] ?>" class="btn btn-lg btn-outline-dark">
+                                Открыть статью
+                            </a>
+                            <div class="text-end d-flex flex-column">
+                                <small class="form-text text-muted">
+                                    Опубликовано: <?= $article['published_at'] ?>
+                                </small>
+                                <small class="form-text text-muted">
+                                    Обновлено: <?= $article['updated_at'] ?>
+                                </small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>

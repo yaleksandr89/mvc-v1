@@ -22,10 +22,13 @@ class PageController extends Controller
         ];
 
         $h1 = 'Вывод всех статей';
-        $desc = 'Вывод всех статей на тестовом сайте';
+        $desc = 'Вывод всех статей';
         $articles = PageModal::getInstance()->getAll();
 
-        return $this->render('pages/articles', compact('h1', 'desc', 'nameMethod', 'articles'));
+        return $this->render(
+            'pages/articles',
+            compact('h1', 'desc', 'nameMethod', 'articles')
+        );
     }
 
     public function single(array $params): Page
@@ -37,14 +40,16 @@ class PageController extends Controller
 
         $this->meta = [
             'title' => $article['title'],
-            'description' => $article['description'],
+            'description' => $article['excerpt'],
             'keywords' => mb_strtolower($article['title']),
         ];
 
-        $h1 = $article['title'];
-        $desc = $article['description'];
+        $desc = 'Вывод одиночной статьи';
 
-        return $this->render('pages/article', compact('h1', 'desc', 'nameMethod', 'article'));
+        return $this->render(
+            'pages/article',
+            compact('desc', 'nameMethod', 'article')
+        );
     }
 
     public function custom(array $params): Page
@@ -65,6 +70,9 @@ class PageController extends Controller
         $h1 = "Выбранные статьи от $start до $end";
         $desc = "Выбранные статьи в диапазоне от $start до $end";
 
-        return $this->render('pages/articles', compact('h1', 'desc', 'nameMethod', 'articles'));
+        return $this->render(
+            'pages/articles',
+            compact('h1', 'desc', 'nameMethod', 'articles')
+        );
     }
 }

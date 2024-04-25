@@ -17,7 +17,7 @@ class ContactController extends Controller
         ];
 
         $h1 = 'Страница контактов';
-        $desc = 'Страница контактов тестового сайта';
+        $desc = 'Страница с произвольным содержанием';
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
         $contacts = [
