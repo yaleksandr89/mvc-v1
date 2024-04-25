@@ -212,6 +212,9 @@
                     <li class="nav-item" data-id="articles">
                         <a class="nav-link" href="/articles">Статьи</a>
                     </li>
+                    <li class="nav-item" data-id="create">
+                        <a class="nav-link" href="/articles/create">Создать статью</a>
+                    </li>
                     <li class="nav-item" data-id="contacts">
                         <a class="nav-link" href="/contacts">Контакты</a>
                     </li>
@@ -222,6 +225,13 @@
 </header>
 
 <main class="container custom-main">
+    <?php if (array_key_exists('flash', $_SESSION)): ?>
+        <div class="alert alert-<?= $_SESSION['flash']['type'] ?> alert-dismissible fade show" role="alert">
+            <?= $_SESSION['flash']['message'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <?php deleteSessionKey('flash'); ?>
+        </div>
+    <?php endif; ?>
     <?= $content ?>
 </main>
 <footer class="footer mt-3">

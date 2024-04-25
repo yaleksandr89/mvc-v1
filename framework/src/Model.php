@@ -47,19 +47,35 @@ class Model
     protected function db_query($sql_query, $params_execute = []): false|PDOStatement
     {
         $sth = self::$dbh->prepare($sql_query);
+
         $verifiedParams = [];
         foreach ($params_execute as $placeholder => $item) {
             if (is_int($item)) {
                 $sth->bindParam(count($params_execute), $placeholder, PDO::PARAM_INT);
-                $verifiedParams[] = $item;
+                if (is_string($placeholder)) {
+                    $verifiedParams[$placeholder] = $item;
+                } else {
+                    $verifiedParams[] = $item;
+                }
             } elseif (is_string($item)) {
                 $sth->bindParam(count($params_execute), $placeholder, PDO::PARAM_STR);
-                $verifiedParams[] = $item;
+                if (is_string($placeholder)) {
+                    $verifiedParams[$placeholder] = $item;
+                } else {
+                    $verifiedParams[] = $item;
+                }
             }
         }
+
+        //dump($verifiedParams);
         $sth->execute($verifiedParams);
 
         return $sth;
+    }
+
+    protected function getLastInsertId(): bool|string
+    {
+        return self::$dbh->lastInsertId();
     }
 
     private function __clone()

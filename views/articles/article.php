@@ -11,9 +11,17 @@
             <div class="card-body d-flex flex-column">
                 <p class="card-text"><?= $article['content_html'] ?></p>
                 <div class="mt-auto d-flex justify-content-between">
-                    <a href="/articles" class="btn btn-lg btn-outline-dark">
-                        Назад
-                    </a>
+                    <div>
+                        <a href="/articles/<?= $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
+                            Редактировать
+                        </a>
+                        <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger ms-2">
+                            Удалить
+                        </a>
+                        <a href="/articles" class="btn btn-lg btn-outline-dark ms-2">
+                            К списку статей
+                        </a>
+                    </div>
                     <div class="text-end d-flex flex-column">
                         <small class="form-text text-muted">
                             Опубликовано: <?= $article['published_at'] ?>

@@ -4,7 +4,12 @@
 </div>
 <div class="card">
     <div class="card-header">
-        <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
+        <div class="mt-auto d-flex justify-content-between align-items-center h-100">
+            <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
+            <a href="/articles/create" class="btn btn-lg btn-outline-dark">
+                Создать статью
+            </a>
+        </div>
     </div>
     <div class="card-body pl-5 pr-5">
         <?php if (count($articles) > 0): ?>
@@ -14,9 +19,17 @@
                         <h2 class="card-title"><?= $article['title'] ?></h2>
                         <p class="card-text"><?= $article['excerpt'] ?></p>
                         <div class="mt-auto d-flex justify-content-between">
-                            <a href="/article/<?= $article['id'] ?>" class="btn btn-lg btn-outline-dark">
-                                Открыть статью
-                            </a>
+                            <div>
+                                <a href="/articles/<?= $article['id'] ?>/show" class="btn btn-lg btn-outline-dark">
+                                    Открыть
+                                </a>
+                                <a href="/articles/<?= $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
+                                    Редактировать
+                                </a>
+                                <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger">
+                                    Удалить
+                                </a>
+                            </div>
                             <div class="text-end d-flex flex-column">
                                 <small class="form-text text-muted">
                                     Опубликовано: <?= $article['published_at'] ?>

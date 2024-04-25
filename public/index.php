@@ -12,6 +12,7 @@ $routes = include BASE_PATH . '/config/routes.php';
 
 $dotenv = new Dotenv();
 $dotenv->load(BASE_PATH . '/.env');
+date_default_timezone_set(env('APP_TIMEZONE', 'Europe/Moscow'));
 
 $track = (new Router())->getTrack($routes, $_SERVER['REQUEST_URI']);
 $page = (new Dispatcher())->getPage($track);
