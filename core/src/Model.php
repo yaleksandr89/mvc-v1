@@ -67,7 +67,6 @@ class Model
             }
         }
 
-        //dump($verifiedParams);
         $sth->execute($verifiedParams);
 
         return $sth;
@@ -76,6 +75,13 @@ class Model
     protected function getLastInsertId(): bool|string
     {
         return self::$dbh->lastInsertId();
+    }
+
+    public function getColumn(string $sql)
+    {
+        return $this
+            ->db_query($sql)
+            ->fetchColumn();
     }
 
     private function __clone()

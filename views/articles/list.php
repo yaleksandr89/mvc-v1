@@ -42,6 +42,8 @@
                     </div>
                 </div>
             <?php endforeach; ?>
+            <?= $paginator ?>
+
         <?php else: ?>
             <div class="alert alert-warning m-0" role="alert">
                 <strong>Статьи не найдены!</strong><br/>

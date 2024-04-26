@@ -7,7 +7,7 @@
         <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
     </div>
     <div class="card-body pl-5 pr-5">
-        <div class="text-center mt-5 mb-5">
+        <div class="text-center mt-3 mb-3">
             <a class="btn link_dark telegram mb-2" href="<?= $contacts['telegram'] ?>" target="_blank"
                rel="nofollow noopener">
                 Telegram<span class="blink">_</span>

@@ -8,6 +8,7 @@ use App\Validations\ArticleValidate;
 use JetBrains\PhpStorm\NoReturn;
 use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
+use Yaa\Framework\Pagination;
 
 class ArticleController extends Controller
 {
@@ -25,11 +26,22 @@ class ArticleController extends Controller
 
         $h1 = 'Вывод всех статей';
         $desc = 'Вывод всех статей';
-        $articles = ArticleModal::getInstance()->getAll();
+
+        $paginator = static::getPaginator();
+        $start = $paginator->getStart();
+
+        $articles = ArticleModal::getInstance()->getAllWithPaginate($paginator);
+
 
         return $this->render(
             'articles/list',
-            compact('h1', 'desc', 'nameMethod', 'articles')
+            compact(
+                'h1',
+                'desc',
+                'nameMethod',
+                'articles',
+                'paginator',
+            )
         );
     }
 
@@ -193,5 +205,14 @@ class ArticleController extends Controller
         }
 
         redirect('/articles');
+    }
+
+    private static function getPaginator(): Pagination
+    {
+        return new Pagination(
+            static::getCurrentPage(),
+            static::getPerPage(5),
+            static::getTotalPages(ArticleModal::class, 'blog_posts')
+        );
     }
 }

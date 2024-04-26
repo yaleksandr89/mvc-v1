@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTime;
 use PDOException;
 use Yaa\Framework\Model;
+use Yaa\Framework\Pagination;
 
 class ArticleModal extends Model
 {
@@ -18,6 +19,31 @@ class ArticleModal extends Model
             file_put_contents(
                 LOG . '/database-errors.txt',
                 '(' . date('Y-m-d H:i:s') . ') / [ function getAll() {}] ' .
+                $error->getMessage() . PHP_EOL,
+                FILE_APPEND
+            );
+
+            echo $error->getMessage();
+            exit;
+        }
+    }
+
+    public function getAllWithPaginate(Pagination $paginator): ?array
+    {
+        try {
+            return $this
+                ->db_query("
+                SELECT * 
+                FROM blog_posts
+                ORDER BY id DESC
+                LIMIT $paginator->perPage
+                OFFSET {$paginator->getStart()}
+                ")
+                ->fetchAll();
+        } catch (PDOException $error) {
+            file_put_contents(
+                LOG . '/database-errors.txt',
+                '(' . date('Y-m-d H:i:s') . ') / [ function getAllWithPaginate() {}] ' .
                 $error->getMessage() . PHP_EOL,
                 FILE_APPEND
             );

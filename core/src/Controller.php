@@ -9,12 +9,6 @@ class Controller
     // Мета данные: title, description, keywords
     protected array $meta;
 
-    // Текущая страница пагинация
-    protected int $page = 1;
-
-    // Количество записей на странице
-    protected int $perPage = 10;
-
     // Общее количество записей
     protected int $total = 0;
 
@@ -26,5 +20,24 @@ class Controller
             $view,
             $data
         );
+    }
+
+    protected static function getCurrentPage(): int
+    {
+        return array_key_exists('page', $_GET)
+            ? (int)$_GET['page']
+            : 1;
+    }
+
+    protected static function getPerPage(int $perPage = 10): int
+    {
+        return $perPage;
+    }
+
+    protected static function getTotalPages(string $classModel, string $tableName): int
+    {
+        /** @var Model $classModel - класс, который является дочернего класса Model */
+        return $classModel::getInstance()
+            ->getColumn("SELECT COUNT(*) AS count FROM $tableName");
     }
 }
