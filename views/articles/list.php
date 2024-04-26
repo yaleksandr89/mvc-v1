@@ -6,7 +6,7 @@
     <div class="card-header">
         <div class="mt-auto d-flex justify-content-between align-items-center h-100">
             <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
-            <a href="/articles/create" class="btn btn-lg btn-outline-dark">
+            <a href="/articles/create" class="btn btn-lg btn-outline-dark btn_link_dark">
                 Создать статью
             </a>
         </div>
@@ -20,10 +20,10 @@
                         <p class="card-text"><?= $article['excerpt'] ?></p>
                         <div class="mt-auto d-flex justify-content-between">
                             <div>
-                                <a href="/articles/<?= $article['id'] ?>/show" class="btn btn-lg btn-outline-dark">
+                                <a href="/articles/<?= $article['id'] ?>/show" class="btn btn-lg btn-outline-dark btn_link_dark">
                                     Открыть
                                 </a>
-                                <a href="/articles/<?= $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
+                                <a href="/articles/<?= $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark btn_link_dark">
                                     Редактировать
                                 </a>
                                 <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger">

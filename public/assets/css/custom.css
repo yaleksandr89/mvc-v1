@@ -59,6 +59,23 @@
     padding-left: 6px;
 }
 
+.btn_link_dark {
+    color: #6c737b;
+    border: 1px solid #6c737b;
+}
+
+.btn_link_dark:hover {
+    color: #fff;
+    background-color: #6c737b;
+    border-color: #6c737b;
+}
+
+.btn_link_dark:focus {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, .5);
+    -moz-box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, .5);
+    box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, .5);
+}
+
 .link_dark {
     color: #343a40;
     border: 1px solid #343a40;

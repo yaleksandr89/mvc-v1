@@ -108,10 +108,10 @@ deleteSessionKey('old_form_value');
                     <div class="mt-auto d-flex justify-content-between">
                         <?php if ('edit' === $type): ?>
                             <div>
-                                <button type="submit" class="btn btn-lg btn-outline-dark">
+                                <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
                                     Обновить
                                 </button>
-                                <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger ms-2">
+                                <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger btn_link_dark ms-2">
                                     Удалить
                                 </a>
                             </div>
@@ -119,10 +119,10 @@ deleteSessionKey('old_form_value');
                                 К списку статей
                             </a>
                         <?php else: ?>
-                            <button type="submit" class="btn btn-lg btn-outline-dark">
+                            <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
                                 <?= 'Создать' ?>
                             </button>
-                            <a href="/articles" class="btn btn-lg btn-outline-dark">
+                            <a href="/articles" class="btn btn-lg btn-outline-dark btn_link_dark">
                                 К списку статей
                             </a>
                         <?php endif; ?>
