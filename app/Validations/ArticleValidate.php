@@ -22,7 +22,10 @@ class ArticleValidate
         if (mb_strlen($title) < 15) {
             $errors['title']['minLength'] = 'Минимум 15 символов';
         }
-        if (is_null($id) && ArticleModal::getInstance()->getByColumn('title', $title)) {
+        if (
+            ($article = ArticleModal::getInstance()->getByColumn('title', $title)) &&
+            $article['id'] !== $id
+        ) {
             $errors['title']['unique'] = 'Название уже существует';
         }
 
