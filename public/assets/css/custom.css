@@ -227,6 +227,10 @@ ul.pagination li.active a {
     border-color: #f18224;
 }
 
+ul.pagination li a:hover {
+    color: #222222;
+}
+
 @media only screen and (max-width: 991px) {
     .link_dark {
         margin-right: 2px;

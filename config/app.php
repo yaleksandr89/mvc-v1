@@ -2,24 +2,7 @@
 
 session_start();
 
-// HTTP or HTTPS
 use JetBrains\PhpStorm\NoReturn;
-
-if ($_SERVER['SERVER_PORT'] !== '443') {
-    // http://example.com/project/index.php
-    $appPath = "http://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}";
-} else {
-    // https://example.com/project/index.php
-    $appPath = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['PHP_SELF']}";
-}
-
-// http://example.com/project/index.php → http://example.com/project/
-$appPath = preg_replace('~[^/]+$~', '', $appPath);
-
-// http://example.com/project/ → http://example.com
-$appPath = str_replace('/project/', '', $appPath);
-
-define('PATH', $appPath);
 
 const WORK_DIR = BASE_PATH . '/app';
 const LOG = BASE_PATH . '/logs';

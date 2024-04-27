@@ -101,31 +101,6 @@ class ArticleModal extends Model
         }
     }
 
-    public function getByRange(int $start, int $end): ?array
-    {
-        try {
-            return $this
-                ->db_query(
-                    'SELECT id, title, excerpt, content_html, published_at, updated_at FROM blog_posts WHERE id >= :start AND id <= :end',
-                    [
-                        'start' => $start,
-                        'end' => $end,
-                    ]
-                )
-                ->fetchAll();
-        } catch (PDOException $error) {
-            file_put_contents(
-                LOG . '/database-errors.txt',
-                '(' . date('Y-m-d H:i:s') . ') / [ function getByRange() {} ] ' .
-                $error->getMessage() . PHP_EOL,
-                FILE_APPEND
-            );
-
-            echo $error->getMessage();
-            exit;
-        }
-    }
-
     public function create(array $data, bool $getCreatedItem = false): bool|array
     {
         try {
