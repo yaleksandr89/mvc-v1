@@ -3,7 +3,6 @@
 use Yaa\Framework\Route;
 
 // Порядок маршрутов для определенной группы имеет значение.
-
 return [
     // Главная
     new Route('/', 'main', 'index'),
@@ -18,8 +17,6 @@ return [
     new Route('/articles/:id/delete', 'article', 'delete'),
     // Выбранная страница
     new Route('/articles/:id/show', 'article', 'show'),
-    // Нужный диапазон статей
-    new Route('/articles/:start/:end', 'article', 'custom'),
 
     // Контакты
     new Route('/contacts', 'contact', 'index'),

@@ -28,10 +28,7 @@ class ArticleController extends Controller
         $desc = 'Вывод всех статей';
 
         $paginator = static::getPaginator();
-        $start = $paginator->getStart();
-
         $articles = ArticleModal::getInstance()->getAllWithPaginate($paginator);
-
 
         return $this->render(
             'articles/list',
@@ -63,30 +60,6 @@ class ArticleController extends Controller
         return $this->render(
             'articles/article',
             compact('desc', 'nameMethod', 'article')
-        );
-    }
-
-    public function custom(array $params): Page
-    {
-        $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
-
-        $start = (int)$params['start'];
-        $end = (int)$params['end'];
-
-        $articles = ArticleModal::getInstance()->getByRange($start, $end);
-
-        $this->meta = [
-            'title' => "Выбранные статьи от $start до $end",
-            'description' => "Выбранные статьи в диапазоне от $start до $end",
-            'keywords' => 'выборка статей',
-        ];
-
-        $h1 = "Выбранные статьи от $start до $end";
-        $desc = "Выбранные статьи в диапазоне от $start до $end";
-
-        return $this->render(
-            'articles/list',
-            compact('h1', 'desc', 'nameMethod', 'articles')
         );
     }
 
