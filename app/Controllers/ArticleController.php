@@ -157,7 +157,7 @@ class ArticleController extends Controller
             validationFlashMessage($errors);
             addFlashMessage('Ошибка валидации данных', 'danger');
 
-            redirect('/articles/create');
+            redirect("/articles/$id/edit");
         }
 
         return $this->render(

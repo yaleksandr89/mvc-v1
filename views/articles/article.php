@@ -15,9 +15,6 @@
                         <a href="/articles/<?= $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark btn_link_dark">
                             Редактировать
                         </a>
-                        <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger ms-2">
-                            Удалить
-                        </a>
                         <a href="/articles" class="btn btn-lg btn-outline-dark btn_link_dark ms-2">
                             К списку статей
                         </a>
