@@ -19,25 +19,25 @@
 <details>
   <summary>Создание</summary>
 
-![ajax filter is in operation](./docs/img/create-article.gif)
+![ajax filter is in operation](./docs/img/mvc-create-article.gif)
 </details>
 
 <details>
   <summary>Отображение</summary>
 
-![ajax filter is in operation](./docs/img/read-article.gif)
+![ajax filter is in operation](./docs/img/mvc-read-article.gif)
 </details>
 
 <details>
   <summary>Обновление</summary>
 
-![ajax filter is in operation](./docs/img/update-article.gif)
+![ajax filter is in operation](./docs/img/mvc-update-article.gif)
 </details>
 
 <details>
   <summary>Удаление</summary>
 
-![ajax filter is in operation](./docs/img/delete-article.gif)
+![ajax filter is in operation](./docs/img/mvc-delete-article.gif)
 </details>
 
 При создании и обновлении статьи реализовано валидация:
@@ -45,7 +45,7 @@
 <details>
   <summary>Процесс валидации</summary>
 
-![ajax filter is in operation](./docs/img/delete-article.gif)
+![ajax filter is in operation](./docs/img/mvc-validation.gif)
 </details>
 
 В каталоге `docs/conf/` располагается: `nginx-configuration.conf` - пример конфигурации для `nginx`.
@@ -57,4 +57,4 @@
 3. Переименуйте `.env.example` в `.env` и секцию `# DB info`
 4. Создайте базу данных и импортируйте содержимое файла `db-dump-with-articles.sql`, который находится в `docs/mysql-dump/`.
 
->> Изменения сделанные в 2024 - минимальны. Я целенаправленно оставил структуру ядра исходной, не стал добавлять функционал контейнера, DI и прочего. Так как это одна из первых моих работ и поэтому я решил сохранить его практически в первозданном виде 😇
+> Изменения сделанные в 2024 - минимальны. Я целенаправленно оставил структуру ядра исходной, не стал добавлять функционал контейнера, DI и прочего. Так как это одна из первых моих работ и поэтому я решил сохранить его практически в первозданном виде 😇
