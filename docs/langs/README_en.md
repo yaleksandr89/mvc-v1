@@ -9,7 +9,7 @@
 ## Used Stack:
 
 - PHP 8
-- Mysql (PDO)
+- Postgresql (PDO)
 - Bootstrap 5.3
 
 ## Description:
@@ -55,6 +55,6 @@ In the directory `docs/conf/` you can find: `nginx-configuration.conf` - an exam
 1. Add the configuration to your server. You can use the file from `docs/conf/` as a basis.
 2. Run `composer i`
 3. Rename `.env.example` to `.env` and fill in the `# DB info` section
-4. Create a database and import the contents of the file `db-dump-with-articles.sql`, which is located in `docs/mysql-dump/`.
+4. Create a database and import the contents of the file `db_dump.sql` (example command for import: `sudo -iu postgres psql -U postgres mvc_v1 < /www/mvc-v1.col/docs/db_dump.sql`), which is located in the `docs/` folder.
 
 > Changes made in 2024 are minimal. I intentionally kept the core structure of the original, I did not add container functionality, DI, etc. Since this is one of my first works, I decided to keep it almost in its original form 😇

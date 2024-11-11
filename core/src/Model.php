@@ -16,10 +16,9 @@ class Model
     private function __construct()
     {
         $dns = sprintf(
-            'mysql:host=%s;dbname=%s;charset=%s',
+            'pgsql:host=%s;dbname=%s',
             env('DB_HOST'),
-            env('DB_NAME'),
-            env('DB_CHARSET')
+            env('DB_NAME')
         );
 
         $options = [

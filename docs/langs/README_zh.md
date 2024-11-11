@@ -9,7 +9,7 @@
 ## 使用的技术栈:
 
 - PHP 8
-- Mysql (PDO)
+- Postgresql (PDO)
 - Bootstrap 5.3
 
 ## 描述:
@@ -55,6 +55,6 @@
 1. 将配置添加到您的服务器上。您可以使用`docs/conf/`中的文件作为基础。
 2. 运行 `composer i`
 3. 将 `.env.example` 重命名为 `.env` 并填写 `# DB info` 部分
-4. 创建数据库并导入位于 `docs/mysql-dump/` 中的 `db-dump-with-articles.sql` 文件的内容。
+4. 创建数据库并导入文件 `db_dump.sql` 的内容（导入示例命令：`sudo -iu postgres psql -U postgres mvc_v1 < /www/mvc-v1.col/docs/db_dump.sql`），该文件位于 `docs/` 文件夹中。
 
 > 2024年所做的更改很小。我故意保留了原始的核心结构，没有添加容器功能、DI等。因为这是我最早的作品之一，所以我决定几乎保持其原始形式 😇
