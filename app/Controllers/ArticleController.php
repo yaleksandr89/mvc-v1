@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Helper\SecurityHelper;
 use App\Helper\StrHelper;
 use App\Models\ArticleModal;
 use App\Validations\ArticleValidate;
-use JetBrains\PhpStorm\NoReturn;
 use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
 use Yaa\Framework\Pagination;
@@ -49,6 +49,10 @@ class ArticleController extends Controller
         $id = (int)$params['id'];
         $article = ArticleModal::getInstance()->getById($id);
 
+        if ($article === false) {
+            return (new ErrorController())->notFound();
+        }
+
         $this->meta = [
             'title' => $article['title'],
             'description' => $article['excerpt'],
@@ -82,17 +86,19 @@ class ArticleController extends Controller
             'content_html' => '',
         ];
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = $_POST['title'] ?? null;
-            $excerpt = $_POST['excerpt'] ?? null;
-            $content_html = $_POST['content_html'] ?? null;
+        if (SecurityHelper::isPostRequest($_SERVER['REQUEST_METHOD'] ?? '')) {
+            self::requireValidCsrfToken();
+
+            $title = is_string($_POST['title'] ?? null) ? $_POST['title'] : '';
+            $excerpt = is_string($_POST['excerpt'] ?? null) ? $_POST['excerpt'] : '';
+            $content_html = is_string($_POST['content_html'] ?? null) ? $_POST['content_html'] : '';
 
             $errors = ArticleValidate::validate(
                 compact('title', 'excerpt', 'content_html')
             );
 
             if (count($errors) === 0) {
-                $article = ArticleModal::getInstance()->create([$title, $excerpt, $content_html], true);
+                $article = ArticleModal::getInstance()->create($title, $excerpt, $content_html);
 
                 if (!$article) {
                     oldFormValue($_POST);
@@ -122,6 +128,10 @@ class ArticleController extends Controller
         $id = (int)$params['id'];
         $article = ArticleModal::getInstance()->getById($id);
 
+        if ($article === false) {
+            return (new ErrorController())->notFound();
+        }
+
         $this->meta = [
             'title' => $article['title'],
             'description' => "Страница для редактирования '{$article['title']}'",
@@ -133,17 +143,19 @@ class ArticleController extends Controller
         $desc = 'Редактирование созданной статьи';
         $type = 'edit';
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = $_POST['title'] ?? null;
-            $excerpt = $_POST['excerpt'] ?? null;
-            $content_html = $_POST['content_html'] ?? null;
+        if (SecurityHelper::isPostRequest($_SERVER['REQUEST_METHOD'] ?? '')) {
+            self::requireValidCsrfToken();
+
+            $title = is_string($_POST['title'] ?? null) ? $_POST['title'] : '';
+            $excerpt = is_string($_POST['excerpt'] ?? null) ? $_POST['excerpt'] : '';
+            $content_html = is_string($_POST['content_html'] ?? null) ? $_POST['content_html'] : '';
 
             $errors = ArticleValidate::validate(
                 compact('id', 'title', 'excerpt', 'content_html')
             );
 
             if (count($errors) === 0) {
-                if (!ArticleModal::getInstance()->edit([$id, $title, $excerpt, $content_html])) {
+                if (!ArticleModal::getInstance()->edit($id, $title, $excerpt, $content_html)) {
                     oldFormValue($_POST);
                     addFlashMessage('Ошибка при редактировании статьи', 'danger');
                     redirect("/articles/$id/edit");
@@ -166,18 +178,37 @@ class ArticleController extends Controller
         );
     }
 
-    #[NoReturn]
-    public function delete(array $params): void
+    public function delete(array $params): Page
     {
-        $id = (int)$params['id'];
-
-        if (ArticleModal::getInstance()->delete($id)) {
-            addFlashMessage('Статья успешно удалена');
-        } else {
-            addFlashMessage('Ошибка при удалении статьи', 'danger');
+        if (!SecurityHelper::isPostRequest($_SERVER['REQUEST_METHOD'] ?? '')) {
+            header('Allow: POST');
+            self::stopRequest(405, 'Method Not Allowed');
         }
 
+        self::requireValidCsrfToken();
+
+        $id = (int)$params['id'];
+
+        if (!ArticleModal::getInstance()->delete($id)) {
+            return (new ErrorController())->notFound();
+        }
+
+        addFlashMessage('Статья успешно удалена');
         redirect('/articles');
+    }
+
+    private static function requireValidCsrfToken(): void
+    {
+        if (!SecurityHelper::isValidCsrfToken($_SESSION, $_POST['_csrf'] ?? null)) {
+            self::stopRequest(403, 'Forbidden');
+        }
+    }
+
+    private static function stopRequest(int $status, string $message): never
+    {
+        http_response_code($status);
+        echo $message;
+        exit;
     }
 
     private static function getPaginator(): Pagination

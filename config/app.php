@@ -2,8 +2,6 @@
 
 session_start();
 
-use JetBrains\PhpStorm\NoReturn;
-
 const WORK_DIR = BASE_PATH . '/app';
 const LOG = BASE_PATH . '/logs';
 const PROJECT_VIEW = BASE_PATH . '/views';
@@ -19,8 +17,7 @@ function env(string $key, $default = null)
     return $value !== false ? $value : $default;
 }
 
-#[NoReturn]
-function redirect(string $path, int $code = 302): void
+function redirect(string $path, int $code = 302): never
 {
     header(header: 'Location: ' . $path, response_code: $code);
     exit;

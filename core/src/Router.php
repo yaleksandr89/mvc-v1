@@ -6,18 +6,11 @@ class Router
 {
     public function getTrack(array $routes, string $uri): Track
     {
-        foreach ($routes as $route) {
-            $uriParts = explode('?', $uri, 2);
-            $path = $uriParts[0];
+        $path = explode('?', $uri, 2)[0];
 
+        foreach ($routes as $route) {
             $pattern = $this->createPattern($route->getPath());
             if (preg_match($pattern, $path, $params)) {
-                $getParams = [];
-                if (isset($uriParts[1])) {
-                    parse_str($uriParts[1], $getParams);
-                }
-
-                $params = array_merge($params, $getParams);
                 $params = $this->clearParams($params);
 
                 return new Track($route->getController(), $route->getAction(), $params);

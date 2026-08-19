@@ -1,4 +1,7 @@
 <?php
+
+use App\Helper\SecurityHelper;
+
 /**
  * @var array $article
  * @var string $h1
@@ -7,6 +10,9 @@
  */
 
 ['title' => $title, 'excerpt' => $excerpt, 'content_html' => $contentHtml] = $article;
+
+$articleId = isset($article['id']) ? (int)$article['id'] : null;
+$csrfToken = SecurityHelper::csrfToken($_SESSION);
 
 $errorsTitle = [];
 $errorsExcerpt = [];
@@ -32,21 +38,37 @@ deleteSessionKey('old_form_value');
 ?>
 
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
-    <h1><?= $h1 ?></h1>
-    <span><?= $desc ?></span>
+    <h1><?= SecurityHelper::escapeHtml($h1) ?></h1>
+    <span><?= SecurityHelper::escapeHtml($desc) ?></span>
 </div>
 <div class="card">
     <div class="card-header">
-        <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
+        <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
     <div class="card-body pl-5 pr-5">
         <div class="card mb-3">
             <div class="card-body d-flex flex-column">
                 <?php if ('edit' === $type): ?>
-                    <form action="/articles/<?= $article['id'] ?>/edit" method="POST">
+                    <form
+                        id="delete-article-form"
+                        action="/articles/<?= $articleId ?>/delete"
+                        method="POST"
+                    >
+                        <input
+                            type="hidden"
+                            name="_csrf"
+                            value="<?= SecurityHelper::escapeHtml($csrfToken) ?>"
+                        >
+                    </form>
+                    <form action="/articles/<?= $articleId ?>/edit" method="POST">
                 <?php else: ?>
                     <form action="/articles/create" method="POST">
                 <?php endif; ?>
+                    <input
+                        type="hidden"
+                        name="_csrf"
+                        value="<?= SecurityHelper::escapeHtml($csrfToken) ?>"
+                    >
                     <div class="mb-3">
                         <label for="title" class="form-label">Название:</label>
                         <input
@@ -54,14 +76,14 @@ deleteSessionKey('old_form_value');
                                 id="title"
                                 class="form-control<?= $titleIsInvalid ?>"
                                 name="title"
-                                value="<?= $title ?>"
+                                value="<?= SecurityHelper::escapeHtml($title) ?>"
                                 aria-describedby="titleFeedback"
                                 required
                         >
                         <?php if (count($errorsTitle) > 0): ?>
                             <?php foreach ($errorsTitle as $errorTitle): ?>
                                 <div id="titleFeedback" class="invalid-feedback">
-                                    <?= $errorTitle ?>
+                                    <?= SecurityHelper::escapeHtml($errorTitle) ?>
                                     <?php unset($errorTitle); ?>
                                 </div>
                             <?php endforeach; ?>
@@ -76,11 +98,11 @@ deleteSessionKey('old_form_value');
                                 rows="3"
                                 aria-describedby="excerptFeedback"
                                 required
-                        ><?= $excerpt ?></textarea>
+                        ><?= SecurityHelper::escapeHtml($excerpt) ?></textarea>
                         <?php if (count($errorsExcerpt) > 0): ?>
                             <?php foreach ($errorsExcerpt as $errorExcerpt): ?>
                                 <div id="excerptFeedback" class="invalid-feedback">
-                                    <?= $errorExcerpt ?>
+                                    <?= SecurityHelper::escapeHtml($errorExcerpt) ?>
                                 </div>
                             <?php endforeach; ?>
                             <?php unset($errorsExcerpt); ?>
@@ -95,11 +117,11 @@ deleteSessionKey('old_form_value');
                                 rows="6"
                                 aria-describedby="contentHtmlFeedback"
                                 required
-                        ><?= $contentHtml ?></textarea>
+                        ><?= SecurityHelper::escapeHtml($contentHtml) ?></textarea>
                         <?php if (count($errorsContentHtml) > 0): ?>
                             <?php foreach ($errorsContentHtml as $errorContentHtml): ?>
                                 <div id="contentHtmlFeedback" class="invalid-feedback">
-                                    <?= $errorContentHtml ?>
+                                    <?= SecurityHelper::escapeHtml($errorContentHtml) ?>
                                 </div>
                             <?php endforeach; ?>
                             <?php unset($errorsContentHtml); ?>
@@ -111,9 +133,13 @@ deleteSessionKey('old_form_value');
                                 <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
                                     Обновить
                                 </button>
-                                <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger btn_link_dark ms-2">
+                                <button
+                                    type="submit"
+                                    form="delete-article-form"
+                                    class="btn btn-lg btn-outline-danger btn_link_dark ms-2"
+                                >
                                     Удалить
-                                </a>
+                                </button>
                             </div>
                             <a href="/articles" class="btn btn-lg btn-outline-dark">
                                 К списку статей

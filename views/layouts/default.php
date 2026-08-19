@@ -1,3 +1,23 @@
+<?php
+
+use App\Helper\SecurityHelper;
+
+$flashType = $_SESSION['flash']['type'] ?? 'success';
+$allowedFlashTypes = [
+    'primary',
+    'secondary',
+    'success',
+    'danger',
+    'warning',
+    'info',
+    'light',
+    'dark',
+];
+
+if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
+    $flashType = 'success';
+}
+?>
 <!doctype html>
 <html lang="ru">
 <head>
@@ -123,9 +143,9 @@
     <link href="<?= PROJECT_CSS ?>/navbar-static.css" rel="stylesheet">
     <link href="<?= PROJECT_CSS ?>/custom.css" rel="stylesheet">
 
-    <title><?= $title ?></title>
-    <meta name="description" content="<?= $description ?>">
-    <meta name="keywords" content="<?= $keywords ?>">
+    <title><?= SecurityHelper::escapeHtml($title) ?></title>
+    <meta name="description" content="<?= SecurityHelper::escapeHtml($description) ?>">
+    <meta name="keywords" content="<?= SecurityHelper::escapeHtml($keywords) ?>">
 </head>
 <body class="custom-body">
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -226,8 +246,8 @@
 
 <main class="container custom-main">
     <?php if (array_key_exists('flash', $_SESSION)): ?>
-        <div class="alert alert-<?= $_SESSION['flash']['type'] ?> alert-dismissible fade show" role="alert">
-            <?= $_SESSION['flash']['message'] ?>
+        <div class="alert alert-<?= $flashType ?> alert-dismissible fade show" role="alert">
+            <?= SecurityHelper::escapeHtml($_SESSION['flash']['message'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             <?php deleteSessionKey('flash'); ?>
         </div>
