@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -9,6 +10,9 @@ use Yaa\Framework\Pagination;
 
 class ArticleModal extends Model
 {
+    /**
+     * @return list<array<string, mixed>>
+     */
     public function getAll(): array
     {
         try {
@@ -20,6 +24,9 @@ class ArticleModal extends Model
         }
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
     public function getAllWithPaginate(Pagination $paginator): array
     {
         try {
@@ -37,6 +44,9 @@ class ArticleModal extends Model
         }
     }
 
+    /**
+     * @return array<string, mixed>|false
+     */
     public function getById(int $id): array|false
     {
         try {
@@ -53,6 +63,9 @@ class ArticleModal extends Model
         }
     }
 
+    /**
+     * @return array<string, mixed>|false
+     */
     public function getByTitle(string $title): array|false
     {
         try {
@@ -69,6 +82,9 @@ class ArticleModal extends Model
         }
     }
 
+    /**
+     * @return array<string, mixed>|false
+     */
     public function create(
         string $title,
         string $excerpt,
@@ -118,7 +134,7 @@ class ArticleModal extends Model
                 ]
             );
 
-            return $sth !== false && $sth->rowCount() > 0;
+            return $sth->rowCount() > 0;
         } catch (PDOException $error) {
             $this->handleDatabaseFailure($error, __METHOD__);
         }
@@ -134,7 +150,7 @@ class ArticleModal extends Model
                 [':id' => $id]
             );
 
-            return $sth !== false && $sth->rowCount() > 0;
+            return $sth->rowCount() > 0;
         } catch (PDOException $error) {
             $this->handleDatabaseFailure($error, __METHOD__);
         }

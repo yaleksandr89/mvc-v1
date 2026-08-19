@@ -1,9 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
 class Page
 {
+    /**
+     * @param array<string, mixed> $meta
+     * @param array<string, mixed> $data
+     */
     public function __construct(
         private string $layout,
         private array $meta = [],
@@ -12,6 +17,9 @@ class Page
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
@@ -22,6 +30,9 @@ class Page
         return $this->layout;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getMeta(): array
     {
         return $this->meta;

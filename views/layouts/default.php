@@ -1,8 +1,17 @@
 <?php
+declare(strict_types=1);
 
 use App\Helper\SecurityHelper;
 
-$flashType = $_SESSION['flash']['type'] ?? 'success';
+$metaTitle = $title ?? '';
+$metaDescription = $description ?? '';
+$metaKeywords = $keywords ?? '';
+$flash = $_SESSION['flash'] ?? null;
+if (!is_array($flash)) {
+    $flash = null;
+}
+
+$flashType = $flash['type'] ?? 'success';
 $allowedFlashTypes = [
     'primary',
     'secondary',
@@ -143,9 +152,9 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
     <link href="<?= PROJECT_CSS ?>/navbar-static.css" rel="stylesheet">
     <link href="<?= PROJECT_CSS ?>/custom.css" rel="stylesheet">
 
-    <title><?= SecurityHelper::escapeHtml($title) ?></title>
-    <meta name="description" content="<?= SecurityHelper::escapeHtml($description) ?>">
-    <meta name="keywords" content="<?= SecurityHelper::escapeHtml($keywords) ?>">
+    <title><?= SecurityHelper::escapeHtml($metaTitle) ?></title>
+    <meta name="description" content="<?= SecurityHelper::escapeHtml($metaDescription) ?>">
+    <meta name="keywords" content="<?= SecurityHelper::escapeHtml($metaKeywords) ?>">
 </head>
 <body class="custom-body">
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -245,9 +254,9 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
 </header>
 
 <main class="container custom-main">
-    <?php if (array_key_exists('flash', $_SESSION)): ?>
-        <div class="alert alert-<?= $flashType ?> alert-dismissible fade show" role="alert">
-            <?= SecurityHelper::escapeHtml($_SESSION['flash']['message'] ?? '') ?>
+    <?php if ($flash !== null): ?>
+        <div class="alert alert-<?= SecurityHelper::escapeHtml($flashType) ?> alert-dismissible fade show" role="alert">
+            <?= SecurityHelper::escapeHtml($flash['message'] ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             <?php deleteSessionKey('flash'); ?>
         </div>

@@ -1,10 +1,15 @@
+<?php
+declare(strict_types=1);
+
+use App\Helper\SecurityHelper;
+?>
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
-    <h1><?= $h1 ?></h1>
-    <span><?= $desc ?></span>
+    <h1><?= SecurityHelper::escapeHtml($h1) ?></h1>
+    <span><?= SecurityHelper::escapeHtml($desc) ?></span>
 </div>
 <div class="card">
     <div class="card-header">
-        <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
+        <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
     <div class="card-body pl-5 pr-5">
         <h2>Формулировка</h2>

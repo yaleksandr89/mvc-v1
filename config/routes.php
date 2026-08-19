@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 use Yaa\Framework\Route;
 
 // Порядок маршрутов для определенной группы имеет значение.
+/** @var list<Route> */
 return [
     // Главная
     new Route('/', 'main', 'index'),

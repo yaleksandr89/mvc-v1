@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -12,8 +13,6 @@ use Yaa\Framework\Pagination;
 
 class ArticleController extends Controller
 {
-    private array $articles;
-
     public function all(): Page
     {
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
@@ -42,6 +41,9 @@ class ArticleController extends Controller
         );
     }
 
+    /**
+     * @param array{id: string} $params
+     */
     public function show(array $params): Page
     {
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
@@ -86,16 +88,19 @@ class ArticleController extends Controller
             'content_html' => '',
         ];
 
-        if (SecurityHelper::isPostRequest($_SERVER['REQUEST_METHOD'] ?? '')) {
+        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+        if (!is_string($requestMethod)) {
+            $requestMethod = '';
+        }
+
+        if (SecurityHelper::isPostRequest($requestMethod)) {
             self::requireValidCsrfToken();
 
             $title = is_string($_POST['title'] ?? null) ? $_POST['title'] : '';
             $excerpt = is_string($_POST['excerpt'] ?? null) ? $_POST['excerpt'] : '';
             $content_html = is_string($_POST['content_html'] ?? null) ? $_POST['content_html'] : '';
 
-            $errors = ArticleValidate::validate(
-                compact('title', 'excerpt', 'content_html')
-            );
+            $errors = ArticleValidate::validate($title, $excerpt, $content_html);
 
             if (count($errors) === 0) {
                 $article = ArticleModal::getInstance()->create($title, $excerpt, $content_html);
@@ -123,6 +128,9 @@ class ArticleController extends Controller
         );
     }
 
+    /**
+     * @param array{id: string} $params
+     */
     public function edit(array $params): Page
     {
         $id = (int)$params['id'];
@@ -143,16 +151,19 @@ class ArticleController extends Controller
         $desc = 'Редактирование созданной статьи';
         $type = 'edit';
 
-        if (SecurityHelper::isPostRequest($_SERVER['REQUEST_METHOD'] ?? '')) {
+        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+        if (!is_string($requestMethod)) {
+            $requestMethod = '';
+        }
+
+        if (SecurityHelper::isPostRequest($requestMethod)) {
             self::requireValidCsrfToken();
 
             $title = is_string($_POST['title'] ?? null) ? $_POST['title'] : '';
             $excerpt = is_string($_POST['excerpt'] ?? null) ? $_POST['excerpt'] : '';
             $content_html = is_string($_POST['content_html'] ?? null) ? $_POST['content_html'] : '';
 
-            $errors = ArticleValidate::validate(
-                compact('id', 'title', 'excerpt', 'content_html')
-            );
+            $errors = ArticleValidate::validate($title, $excerpt, $content_html, $id);
 
             if (count($errors) === 0) {
                 if (!ArticleModal::getInstance()->edit($id, $title, $excerpt, $content_html)) {
@@ -178,9 +189,17 @@ class ArticleController extends Controller
         );
     }
 
+    /**
+     * @param array{id: string} $params
+     */
     public function delete(array $params): Page
     {
-        if (!SecurityHelper::isPostRequest($_SERVER['REQUEST_METHOD'] ?? '')) {
+        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+        if (!is_string($requestMethod)) {
+            $requestMethod = '';
+        }
+
+        if (!SecurityHelper::isPostRequest($requestMethod)) {
             header('Allow: POST');
             self::stopRequest(405, 'Method Not Allowed');
         }

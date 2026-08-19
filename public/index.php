@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
@@ -12,9 +13,15 @@ $routes = include BASE_PATH . '/config/routes.php';
 
 $dotenv = new Dotenv();
 $dotenv->load(BASE_PATH . '/.env');
-date_default_timezone_set(env('APP_TIMEZONE', 'Europe/Moscow'));
+$timezone = env('APP_TIMEZONE', 'Europe/Moscow');
+date_default_timezone_set(is_string($timezone) ? $timezone : 'Europe/Moscow');
 
-$track = (new Router())->getTrack($routes, $_SERVER['REQUEST_URI']);
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+if (!is_string($requestUri)) {
+    $requestUri = '/';
+}
+
+$track = (new Router())->getTrack($routes, $requestUri);
 $page = (new Dispatcher())->getPage($track);
 
 echo (new View())->render($page);

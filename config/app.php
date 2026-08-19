@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 session_start();
 
@@ -10,7 +11,7 @@ const PROJECT_CSS = '/assets/css';
 const PROJECT_JS = '/assets/js';
 const LAYOUT = 'default';
 
-function env(string $key, $default = null)
+function env(string $key, mixed $default = null): mixed
 {
     $value = array_key_exists($key, $_ENV) ? $_ENV[$key] : false;
 
@@ -39,12 +40,18 @@ function addFlashMessage(string $message, string $type = 'success'): void
     ];
 }
 
+/**
+ * @param array<string, array<string, string>> $message
+ */
 function validationFlashMessage(array $message): void
 {
     deleteSessionKey('validation');
     $_SESSION['validation'] = $message;
 }
 
+/**
+ * @param array<array-key, mixed> $values
+ */
 function oldFormValue(array $values): void
 {
     deleteSessionKey('old_form_value');

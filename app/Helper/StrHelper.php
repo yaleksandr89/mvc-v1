@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Helper;
 
@@ -6,8 +7,12 @@ class StrHelper
 {
     public static function prepareNameMethod(string $nameMethods): string
     {
-        preg_match('/::(.*)/', $nameMethods, $matches);
+        $parts = explode('::', $nameMethods, 2);
 
-        return str_replace(['::', $matches[1]], ['@', ucfirst($matches[1])], $nameMethods);
+        if (count($parts) !== 2) {
+            return $nameMethods;
+        }
+
+        return $parts[0] . '@' . ucfirst($parts[1]);
     }
 }

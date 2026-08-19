@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -21,14 +22,26 @@ class ContactController extends Controller
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
         $contacts = [
-            'telegram' => '//t.me/yaleksandr89',
+            'telegram' => 'https://t.me/yaleksandr89',
             'skype' => 'skype:y.aleksandr89?chat',
-            'vkontakte' => '//vk.com/y.aleksandr89',
+            'vkontakte' => 'https://vk.com/y.aleksandr89',
             'email' => 'mailto:yaleksandr89@yandex.ru?subject=MVC%20V1',
-            'linkedin' => '//www.linkedin.com/in/yaleksandr89/',
-            'github' => '//github.com/yaleksandr89',
+            'linkedin' => 'https://www.linkedin.com/in/yaleksandr89/',
+            'github' => 'https://github.com/yaleksandr89',
         ];
 
-        return $this->render('contacts/index', compact('h1', 'desc', 'nameMethod', 'contacts'));
+        $contactLabels = [
+            'telegram' => 'Telegram',
+            'skype' => 'Skype',
+            'vkontakte' => 'Vkontakte',
+            'email' => 'Email',
+            'linkedin' => 'Linkedin',
+            'github' => 'Github',
+        ];
+
+        return $this->render(
+            'contacts/index',
+            compact('h1', 'desc', 'nameMethod', 'contacts', 'contactLabels')
+        );
     }
 }

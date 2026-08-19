@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Helper;
 
@@ -27,6 +28,8 @@ class SecurityHelper
     }
 
     /**
+     * @param array<string, mixed> $session
+     *
      * @throws RandomException
      */
     public static function csrfToken(array &$session): string
@@ -41,6 +44,9 @@ class SecurityHelper
         return $token;
     }
 
+    /**
+     * @param array<string, mixed> $session
+     */
     public static function isValidCsrfToken(array $session, mixed $token): bool
     {
         $sessionToken = $session[self::CSRF_SESSION_KEY] ?? null;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use App\Helper\SecurityHelper;
 
@@ -20,20 +21,33 @@ $errorsContentHtml = [];
 $titleIsInvalid = '';
 $excerptIsInvalid = '';
 $contentHtmlIsInvalid = '';
-if (array_key_exists('validation', $_SESSION)) {
-    $errorsTitle = $_SESSION['validation']['title'] ?? [];
-    $errorsExcerpt = $_SESSION['validation']['excerpt'] ?? [];
-    $errorsContentHtml = $_SESSION['validation']['content_html'] ?? [];
+$validation = $_SESSION['validation'] ?? [];
+if (is_array($validation)) {
+    $validationTitle = $validation['title'] ?? [];
+    $validationExcerpt = $validation['excerpt'] ?? [];
+    $validationContentHtml = $validation['content_html'] ?? [];
+
+    $errorsTitle = is_array($validationTitle) ? $validationTitle : [];
+    $errorsExcerpt = is_array($validationExcerpt) ? $validationExcerpt : [];
+    $errorsContentHtml = is_array($validationContentHtml) ? $validationContentHtml : [];
 
     $titleIsInvalid = count($errorsTitle) > 0 ? ' is-invalid' : '';
     $excerptIsInvalid = count($errorsExcerpt) > 0 ? ' is-invalid' : '';
     $contentHtmlIsInvalid = count($errorsContentHtml) > 0 ? ' is-invalid' : '';
-    deleteSessionKey('validation');
+}
+deleteSessionKey('validation');
+
+$oldFormValue = $_SESSION['old_form_value'] ?? [];
+if (!is_array($oldFormValue)) {
+    $oldFormValue = [];
 }
 
-$title = $_SESSION['old_form_value']['title'] ?? $title;
-$excerpt = $_SESSION['old_form_value']['excerpt'] ?? $excerpt;
-$contentHtml = $_SESSION['old_form_value']['content_html'] ?? $contentHtml;
+$oldTitle = $oldFormValue['title'] ?? $title;
+$oldExcerpt = $oldFormValue['excerpt'] ?? $excerpt;
+$oldContentHtml = $oldFormValue['content_html'] ?? $contentHtml;
+$title = is_string($oldTitle) ? $oldTitle : $title;
+$excerpt = is_string($oldExcerpt) ? $oldExcerpt : $excerpt;
+$contentHtml = is_string($oldContentHtml) ? $oldContentHtml : $contentHtml;
 deleteSessionKey('old_form_value');
 ?>
 
@@ -74,7 +88,7 @@ deleteSessionKey('old_form_value');
                         <input
                                 type="text"
                                 id="title"
-                                class="form-control<?= $titleIsInvalid ?>"
+                                class="form-control<?= SecurityHelper::escapeHtml($titleIsInvalid) ?>"
                                 name="title"
                                 value="<?= SecurityHelper::escapeHtml($title) ?>"
                                 aria-describedby="titleFeedback"
@@ -93,7 +107,7 @@ deleteSessionKey('old_form_value');
                         <label for="excerpt" class="form-label">Краткое содержание:</label>
                         <textarea
                                 id="excerpt"
-                                class="form-control<?= $excerptIsInvalid ?>"
+                                class="form-control<?= SecurityHelper::escapeHtml($excerptIsInvalid) ?>"
                                 name="excerpt"
                                 rows="3"
                                 aria-describedby="excerptFeedback"
@@ -112,7 +126,7 @@ deleteSessionKey('old_form_value');
                         <label for="contentHtmlFeedback" class="form-label">Содержание:</label>
                         <textarea
                                 id="contentHtmlFeedback"
-                                class="form-control<?= $contentHtmlIsInvalid ?>"
+                                class="form-control<?= SecurityHelper::escapeHtml($contentHtmlIsInvalid) ?>"
                                 name="content_html"
                                 rows="6"
                                 aria-describedby="contentHtmlFeedback"
