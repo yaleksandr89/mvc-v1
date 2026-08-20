@@ -22,6 +22,7 @@
     "support": {
         "issues": "https://github.com/yaleksandr89/mvc-v1/issues",
         "source": "https://github.com/yaleksandr89/mvc-v1",
+        "security": "https://github.com/yaleksandr89/mvc-v1/security/policy",
         "forum": "https://github.com/yaleksandr89/mvc-v1/discussions"
     },
     "funding": [

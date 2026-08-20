@@ -1,0 +1,51 @@
+name: Feature request / Предложить улучшение
+description: Suggest an improvement that preserves the educational mvc-v1 purpose. / Предложите улучшение, сохраняющее учебное назначение mvc-v1.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        mvc-v1 is an educational MVC project. Proposals should preserve its small custom MVC purpose and visible flow.
+        mvc-v1 — учебный MVC-проект. Предложения должны сохранять его небольшую самописную MVC-архитектуру и видимый поток работы.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case / Проблема или сценарий
+      description: What problem would this solve, and for whom? / Какую проблему это решит и для кого?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution / Предлагаемое решение
+      description: Describe a focused solution that fits the project contract. / Опишите сфокусированное решение, соответствующее контракту проекта.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Affected scope / Затронутая область
+      options:
+        - Router and routes / Router и маршруты
+        - Dispatcher or controllers / Dispatcher или контроллеры
+        - Article CRUD and validation / CRUD статей и валидация
+        - Model, PDO, or PostgreSQL / Model, PDO или PostgreSQL
+        - Views and output / Представления и вывод
+        - Session or CSRF / Сессия или CSRF
+        - Setup or documentation / Установка или документация
+        - Other / Другое
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered (optional) / Рассмотренные альтернативы (необязательно)
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmation / Подтверждение
+      options:
+        - label: I searched existing Issues. / Я проверил(а) существующие Issues.
+          required: true
