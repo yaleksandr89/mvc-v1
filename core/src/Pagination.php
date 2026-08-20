@@ -82,13 +82,13 @@ class Pagination
         }
 
         $path = $url['path'] ?? '/';
-        if (!is_string($path) || $path === '') {
+        if ($path === '') {
             $path = '/';
         }
 
         $params = [];
         $query = $url['query'] ?? '';
-        if (is_string($query) && $query !== '') {
+        if ($query !== '') {
             parse_str($query, $params);
             unset($params['page']);
         }

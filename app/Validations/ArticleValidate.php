@@ -20,8 +20,8 @@ class ArticleValidate
         $errors = [];
 
         $title = mb_strtolower(trim($title));
-        $excerpt = mb_strtolower(trim($excerpt));
-        $contentHtml = mb_strtolower(trim($contentHtml));
+        $excerpt = trim($excerpt);
+        $contentHtml = trim($contentHtml);
 
         // Название
         if (empty($title)) {

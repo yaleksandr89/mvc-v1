@@ -8,13 +8,14 @@ use PDOException;
 use PDOStatement;
 use Yaa\Framework\Traits\SingletonTrait;
 
-class Model
+/** @phpstan-consistent-constructor */
+abstract class Model
 {
     use SingletonTrait;
 
     private static ?PDO $dbh = null;
 
-    private function __construct()
+    protected function __construct()
     {
         try {
             $host = env('DB_HOST');

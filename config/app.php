@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 session_start();
 
-const WORK_DIR = BASE_PATH . '/app';
-const LOG = BASE_PATH . '/logs';
-const PROJECT_VIEW = BASE_PATH . '/views';
+const WORK_DIR = __DIR__ . '/../app';
+const LOG = __DIR__ . '/../logs';
+const PROJECT_VIEW = __DIR__ . '/../views';
 const PROJECT_IMG = '/assets/img';
 const PROJECT_CSS = '/assets/css';
 const PROJECT_JS = '/assets/js';

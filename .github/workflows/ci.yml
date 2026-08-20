@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+          extensions: mbstring, pdo_pgsql
+
+      - name: Validate root Composer manifest
+        run: composer validate --strict --no-check-publish
+
+      - name: Validate embedded framework Composer manifest
+        run: composer validate --strict --no-check-publish core/composer.json
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Audit dependencies
+        run: composer audit --locked
+
+      - name: Lint PHP sources
+        run: |
+          find app core/src config public views tests -type f -name '*.php' -print0 \
+            | xargs -0 -n1 php -l
+
+      - name: Run regression tests
+        run: composer test
+
+      - name: Run static analysis
+        run: composer analyse

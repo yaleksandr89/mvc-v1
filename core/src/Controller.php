@@ -8,8 +8,12 @@ class Controller
     protected string $layout = LAYOUT;
 
     // Мета данные: title, description, keywords
+    /** @var array<string, mixed> */
     protected array $meta = [];
 
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function render(string $view, array $data = []): Page
     {
         return new Page(

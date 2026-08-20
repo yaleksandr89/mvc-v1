@@ -5,14 +5,22 @@ namespace Yaa\Framework\Traits;
 
 trait SingletonTrait
 {
-    private static ?self $instance = null;
+    /** @var array<class-string, object> */
+    private static array $instances = [];
 
     public static function getInstance(): static
     {
-        if (static::$instance === null) {
-            static::$instance = new static();
+        $class = static::class;
+
+        if (!isset(self::$instances[$class])) {
+            self::$instances[$class] = new static();
         }
 
-        return static::$instance;
+        $instance = self::$instances[$class];
+        if (!$instance instanceof static) {
+            throw new \LogicException("Singleton instance for $class has an invalid type.");
+        }
+
+        return $instance;
     }
 }

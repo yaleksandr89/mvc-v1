@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use DateTime;
+use PDO;
 use PDOException;
 use Yaa\Framework\Model;
 use Yaa\Framework\Pagination;
@@ -16,9 +17,11 @@ class ArticleModal extends Model
     public function getAll(): array
     {
         try {
-            return $this
-                ->db_query('SELECT id,title,excerpt,content_html,published_at,updated_at FROM blog_posts')
-                ->fetchAll();
+            return array_values(
+                $this
+                    ->db_query('SELECT id,title,excerpt,content_html,published_at,updated_at FROM blog_posts')
+                    ->fetchAll(PDO::FETCH_ASSOC)
+            );
         } catch (PDOException $error) {
             $this->handleDatabaseFailure($error, __METHOD__);
         }
@@ -30,15 +33,17 @@ class ArticleModal extends Model
     public function getAllWithPaginate(Pagination $paginator): array
     {
         try {
-            return $this
-                ->db_query("
-                SELECT * 
-                FROM blog_posts
-                ORDER BY id DESC
-                LIMIT $paginator->perPage
-                OFFSET {$paginator->getStart()}
-                ")
-                ->fetchAll();
+            return array_values(
+                $this
+                    ->db_query("
+                    SELECT *
+                    FROM blog_posts
+                    ORDER BY id DESC
+                    LIMIT $paginator->perPage
+                    OFFSET {$paginator->getStart()}
+                    ")
+                    ->fetchAll(PDO::FETCH_ASSOC)
+            );
         } catch (PDOException $error) {
             $this->handleDatabaseFailure($error, __METHOD__);
         }

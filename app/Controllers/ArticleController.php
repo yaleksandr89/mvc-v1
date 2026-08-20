@@ -26,7 +26,7 @@ class ArticleController extends Controller
         $h1 = 'Вывод всех статей';
         $desc = 'Вывод всех статей';
 
-        $paginator = static::getPaginator();
+        $paginator = self::getPaginator();
         $articles = ArticleModal::getInstance()->getAllWithPaginate($paginator);
 
         return $this->render(
