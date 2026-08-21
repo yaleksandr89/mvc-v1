@@ -1,0 +1,6 @@
+.git
+.idea
+.env
+.env.docker
+vendor
+logs/*

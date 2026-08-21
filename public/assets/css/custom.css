@@ -142,25 +142,6 @@
     box-shadow: 0 0 0 0.2rem rgba(45, 164, 215, .5);
 }
 
-/*skype*/
-.link_dark.skype {
-    border-color: #00B1EB;
-    color: #00B1EB;
-}
-
-.link_dark.skype:hover {
-    color: #fff;
-    background-color: #00B1EB;
-    border-color: #00B1EB;
-    text-decoration: none;
-}
-
-.link_dark.skype:focus {
-    -webkit-box-shadow: 0 0 0 0.2rem rgba(40, 168, 234, .5);
-    -moz-box-shadow: 0 0 0 0.2rem rgba(40, 168, 234, .5);
-    box-shadow: 0 0 0 0.2rem rgba(40, 168, 234, .5);
-}
-
 /*Linkedin*/
 .link_dark.linkedin {
     border-color: #0A64BF;

@@ -23,7 +23,6 @@ class ContactController extends Controller
 
         $contacts = [
             'telegram' => 'https://t.me/yaleksandr89',
-            'skype' => 'skype:y.aleksandr89?chat',
             'vkontakte' => 'https://vk.com/y.aleksandr89',
             'email' => 'mailto:yaleksandr89@yandex.ru?subject=MVC%20V1',
             'linkedin' => 'https://www.linkedin.com/in/yaleksandr89/',
@@ -32,7 +31,6 @@ class ContactController extends Controller
 
         $contactLabels = [
             'telegram' => 'Telegram',
-            'skype' => 'Skype',
             'vkontakte' => 'Vkontakte',
             'email' => 'Email',
             'linkedin' => 'Linkedin',

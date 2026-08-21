@@ -23,7 +23,7 @@ class Dispatcher
                 throw new ConnectClass('Controller or action name has an invalid format.');
             }
 
-            $appNamespace = $_ENV['APP_NAMESPACE'] ?? null;
+            $appNamespace = env('APP_NAMESPACE');
             if (
                 !is_string($appNamespace) ||
                 preg_match('/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)+$/D', $appNamespace) !== 1

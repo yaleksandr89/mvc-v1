@@ -13,9 +13,12 @@ const LAYOUT = 'default';
 
 function env(string $key, mixed $default = null): mixed
 {
-    $value = array_key_exists($key, $_ENV) ? $_ENV[$key] : false;
+    $value = getenv($key);
+    if ($value !== false) {
+        return $value;
+    }
 
-    return $value !== false ? $value : $default;
+    return array_key_exists($key, $_ENV) ? $_ENV[$key] : $default;
 }
 
 function redirect(string $path, int $code = 302): never

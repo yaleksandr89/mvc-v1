@@ -17,9 +17,6 @@ use App\Helper\SecurityHelper;
                rel="nofollow noopener">
                 <?= SecurityHelper::escapeHtml($contactLabels['telegram']) ?><span class="blink">_</span>
             </a>
-            <a class="btn link_dark skype mb-2" href="<?= SecurityHelper::escapeHtml($contacts['skype']) ?>">
-                <?= SecurityHelper::escapeHtml($contactLabels['skype']) ?><span class="blink">_</span>
-            </a>
             <a class="btn link_dark vk mb-2" href="<?= SecurityHelper::escapeHtml($contacts['vkontakte']) ?>"
                target="_blank" rel="nofollow noopener">
                 <?= SecurityHelper::escapeHtml($contactLabels['vkontakte']) ?><span class="blink">_</span>

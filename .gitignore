@@ -9,5 +9,6 @@ composer.phar
 
 # (Files|Folders) projects
 .env
+/.env.docker
 /logs/*
 !/logs/.gitkeep
