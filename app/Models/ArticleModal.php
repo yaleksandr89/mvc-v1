@@ -124,8 +124,8 @@ class ArticleModal extends Model
     ): bool
     {
         try {
-            $sql = 'UPDATE blog_posts  
-                    SET title=:title, excerpt=:excerpt, content_html=:content_html, updated_at=:updated_at 
+            $sql = 'UPDATE blog_posts
+                    SET title=:title, excerpt=:excerpt, content_html=:content_html, updated_at=:updated_at
                     WHERE id=:id';
 
             $sth = $this->db_query(
@@ -135,7 +135,7 @@ class ArticleModal extends Model
                     ':title' => $title,
                     ':excerpt' => $excerpt,
                     ':content_html' => $contentHtml,
-                    ':updated_at' => (new DateTime('now'))->format('Y-m-d H:i:s'),
+                    ':updated_at' => new DateTime('now')->format('Y-m-d H:i:s'),
                 ]
             );
 

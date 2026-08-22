@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Yaa\Framework;
 
-class Track
+readonly class Track
 {
     /**
      * @param array<string, string> $params

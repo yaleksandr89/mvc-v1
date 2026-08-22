@@ -52,7 +52,7 @@ class ArticleController extends Controller
         $article = ArticleModal::getInstance()->getById($id);
 
         if ($article === false) {
-            return (new ErrorController())->notFound();
+            return new ErrorController()->notFound();
         }
 
         $this->meta = [
@@ -137,7 +137,7 @@ class ArticleController extends Controller
         $article = ArticleModal::getInstance()->getById($id);
 
         if ($article === false) {
-            return (new ErrorController())->notFound();
+            return new ErrorController()->notFound();
         }
 
         $this->meta = [
@@ -209,7 +209,7 @@ class ArticleController extends Controller
         $id = (int)$params['id'];
 
         if (!ArticleModal::getInstance()->delete($id)) {
-            return (new ErrorController())->notFound();
+            return new ErrorController()->notFound();
         }
 
         addFlashMessage('Статья успешно удалена');

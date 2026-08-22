@@ -97,7 +97,7 @@ assertTrue(SecurityHelper::isPostRequest('POST'), 'POST method must be accepted'
 assertTrue(!SecurityHelper::isPostRequest('GET'), 'GET method must be rejected');
 
 $routes = [new Route('/articles/:id/show', 'article', 'show')];
-$track = (new Router())->getTrack($routes, '/articles/1/show?id=2');
+$track = new Router()->getTrack($routes, '/articles/1/show?id=2');
 assertSameValue(
     '1',
     $track->getParams()['id'] ?? null,

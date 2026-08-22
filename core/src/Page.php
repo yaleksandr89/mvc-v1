@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Yaa\Framework;
 
-class Page
+readonly class Page
 {
     /**
      * @param array<string, mixed> $meta

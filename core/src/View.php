@@ -25,6 +25,9 @@ class View
         }
     }
 
+    /**
+     * @throws ConnectLayout
+     */
     private function renderLayout(Page $page, string $content): string
     {
         $layoutPath = PROJECT_VIEW . "/layouts/{$page->getLayout()}.php";
@@ -48,6 +51,9 @@ class View
         return $rendered;
     }
 
+    /**
+     * @throws RenderPage
+     */
     private function renderView(Page $page): string
     {
         $view = $page->getView();

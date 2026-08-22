@@ -32,7 +32,7 @@ class ArticleValidate
         }
         if (
             ($article = ArticleModal::getInstance()->getByTitle($title)) &&
-            ($id === null || (int)$article['id'] !== $id)
+            ((int)$article['id'] !== $id)
         ) {
             $errors['title']['unique'] = 'Название уже существует';
         }

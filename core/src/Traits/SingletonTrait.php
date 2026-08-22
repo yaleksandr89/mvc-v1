@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Yaa\Framework\Traits;
 
+use LogicException;
+
 trait SingletonTrait
 {
     /** @var array<class-string, object> */
@@ -18,7 +20,7 @@ trait SingletonTrait
 
         $instance = self::$instances[$class];
         if (!$instance instanceof static) {
-            throw new \LogicException("Singleton instance for $class has an invalid type.");
+            throw new LogicException("Singleton instance for $class has an invalid type.");
         }
 
         return $instance;

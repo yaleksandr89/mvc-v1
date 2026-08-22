@@ -74,7 +74,7 @@ assertCoreTrue(
 );
 
 $_SERVER['REQUEST_URI'] = '/articles?search=%22%20onmouseover%3D%22alert%281%29&page=2';
-$escapedPaginationHtml = (new Pagination(2, 1, 3))->renderHtml();
+$escapedPaginationHtml = new Pagination(2, 1, 3)->renderHtml();
 assertCoreTrue(
     !str_contains($escapedPaginationHtml, '" onmouseover="'),
     'query-derived data must not break out of an href attribute'

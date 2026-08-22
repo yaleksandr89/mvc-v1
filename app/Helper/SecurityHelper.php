@@ -8,7 +8,7 @@ use Stringable;
 
 class SecurityHelper
 {
-    private const CSRF_SESSION_KEY = '_csrf_token';
+    private const string CSRF_SESSION_KEY = '_csrf_token';
 
     public static function escapeHtml(mixed $value): string
     {
