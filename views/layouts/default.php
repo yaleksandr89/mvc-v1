@@ -3,45 +3,17 @@ declare(strict_types=1);
 
 use App\Helper\SecurityHelper;
 
-$metaTitle = $title ?? '';
-$metaDescription = $description ?? '';
-$metaKeywords = $keywords ?? '';
-$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-if (!is_string($requestPath) || $requestPath === '') {
-    $requestPath = '/';
-}
-
-if ($requestPath !== '/' && str_ends_with($requestPath, '/')) {
-    $requestPath = substr($requestPath, 0, -1);
-}
-
-$activeNavigation = match (true) {
-    $requestPath === '/' => 'home',
-    $requestPath === '/articles', preg_match('#^/articles/\d+/(show|edit)$#', $requestPath) === 1 => 'articles',
-    $requestPath === '/articles/create' => 'create',
-    $requestPath === '/contacts' => 'contacts',
-    default => null,
-};
-$flash = $_SESSION['flash'] ?? null;
-if (!is_array($flash)) {
-    $flash = null;
-}
-
-$flashType = $flash['type'] ?? 'success';
-$allowedFlashTypes = [
-    'primary',
-    'secondary',
-    'success',
-    'danger',
-    'warning',
-    'info',
-    'light',
-    'dark',
-];
-
-if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
-    $flashType = 'success';
-}
+/**
+ * @var string $title
+ * @var string $description
+ * @var string $keywords
+ * @var string $content
+ * @var 'home'|'articles'|'create'|'contacts'|null $activeNavigation
+ * @var array{
+ *     message: string,
+ *     type: 'primary'|'secondary'|'success'|'danger'|'warning'|'info'|'light'|'dark'
+ * }|null $flash
+ */
 ?>
 <!doctype html>
 <html lang="ru">
@@ -64,9 +36,9 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
     <link href="<?= PROJECT_CSS ?>/bootstrap.min.css" rel="stylesheet">
     <link href="<?= PROJECT_CSS ?>/custom.css" rel="stylesheet">
 
-    <title><?= SecurityHelper::escapeHtml($metaTitle) ?></title>
-    <meta name="description" content="<?= SecurityHelper::escapeHtml($metaDescription) ?>">
-    <meta name="keywords" content="<?= SecurityHelper::escapeHtml($metaKeywords) ?>">
+    <title><?= SecurityHelper::escapeHtml($title) ?></title>
+    <meta name="description" content="<?= SecurityHelper::escapeHtml($description) ?>">
+    <meta name="keywords" content="<?= SecurityHelper::escapeHtml($keywords) ?>">
 </head>
 <body class="custom-body">
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -167,10 +139,9 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
 
 <main class="container custom-main">
     <?php if ($flash !== null): ?>
-        <div class="alert alert-<?= SecurityHelper::escapeHtml($flashType) ?> alert-dismissible fade show" role="alert">
-            <?= SecurityHelper::escapeHtml($flash['message'] ?? '') ?>
+        <div class="alert alert-<?= SecurityHelper::escapeHtml($flash['type']) ?> alert-dismissible fade show" role="alert">
+            <?= SecurityHelper::escapeHtml($flash['message']) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            <?php deleteSessionKey('flash'); ?>
         </div>
     <?php endif; ?>
     <?= $content ?>

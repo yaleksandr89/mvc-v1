@@ -62,7 +62,8 @@
     "scripts": {
         "test": [
             "@php tests/security.Tests.php",
-            "@php tests/core.Tests.php"
+            "@php tests/core.Tests.php",
+            "@php tests/presentation.Tests.php"
         ],
         "analyse": "phpstan analyse --no-progress",
         "check": [

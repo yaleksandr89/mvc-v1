@@ -10,12 +10,15 @@ use Yaa\Framework\Exceptions\RenderPage;
 
 class View
 {
-    public function render(Page $page): string
+    /**
+     * @param array<string, mixed> $layoutData
+     */
+    public function render(Page $page, array $layoutData = []): string
     {
         $bufferLevel = ob_get_level();
 
         try {
-            return $this->renderLayout($page, $this->renderView($page));
+            return $this->renderLayout($page, $this->renderView($page), $layoutData);
         } catch (Throwable $error) {
             while (ob_get_level() > $bufferLevel) {
                 ob_end_clean();
@@ -26,9 +29,11 @@ class View
     }
 
     /**
+     * @param array<string, mixed> $layoutData
+     *
      * @throws ConnectLayout
      */
-    private function renderLayout(Page $page, string $content): string
+    private function renderLayout(Page $page, string $content, array $layoutData): string
     {
         $layoutPath = PROJECT_VIEW . "/layouts/{$page->getLayout()}.php";
         if (!is_file($layoutPath)) {
@@ -41,6 +46,7 @@ class View
 
         $meta = $page->getMeta();
         extract($meta, EXTR_PREFIX_SAME, 'copy');
+        extract($layoutData, EXTR_SKIP);
         include $layoutPath;
 
         $rendered = ob_get_clean();

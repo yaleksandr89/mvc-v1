@@ -5,6 +5,7 @@ namespace Yaa\Framework;
 
 define('BASE_PATH', dirname(__DIR__));
 
+use App\Presentation\LayoutPresenter;
 use Symfony\Component\Dotenv\Dotenv;
 
 require_once BASE_PATH . '/config/app.php';
@@ -24,5 +25,6 @@ if (!is_string($requestUri)) {
 
 $track = new Router()->getTrack($routes, $requestUri);
 $page = new Dispatcher()->getPage($track);
+$layoutData = LayoutPresenter::prepare($requestUri, pullSessionValue('flash'));
 
-echo new View()->render($page);
+echo new View()->render($page, $layoutData);

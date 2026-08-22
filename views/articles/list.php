@@ -3,7 +3,21 @@ declare(strict_types=1);
 
 use App\Helper\SecurityHelper;
 
-$csrfToken = SecurityHelper::csrfToken($_SESSION);
+/**
+ * @var string $h1
+ * @var string $desc
+ * @var string $nameMethod
+ * @var string $csrfToken
+ * @var list<array{
+ *     id: int|string,
+ *     title: string,
+ *     excerpt: string,
+ *     content_html: string,
+ *     published_at: string,
+ *     updated_at: string
+ * }> $articles
+ * @var \Yaa\Framework\Pagination $paginator
+ */
 ?>
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
     <h1><?= SecurityHelper::escapeHtml($h1) ?></h1>

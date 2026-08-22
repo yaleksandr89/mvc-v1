@@ -2,6 +2,12 @@
 declare(strict_types=1);
 
 use App\Helper\SecurityHelper;
+
+/**
+ * @var string $h1
+ * @var string $desc
+ * @var string $nameMethod
+ */
 ?>
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
     <h1><?= SecurityHelper::escapeHtml($h1) ?></h1>

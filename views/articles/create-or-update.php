@@ -4,51 +4,23 @@ declare(strict_types=1);
 use App\Helper\SecurityHelper;
 
 /**
- * @var array $article
  * @var string $h1
  * @var string $desc
  * @var string $nameMethod
+ * @var 'create'|'edit' $type
+ * @var string $formAction
+ * @var string|null $deleteAction
+ * @var string $csrfToken
+ * @var string $title
+ * @var string $excerpt
+ * @var string $contentHtml
+ * @var list<string> $errorsTitle
+ * @var list<string> $errorsExcerpt
+ * @var list<string> $errorsContentHtml
+ * @var ''|' is-invalid' $titleIsInvalid
+ * @var ''|' is-invalid' $excerptIsInvalid
+ * @var ''|' is-invalid' $contentHtmlIsInvalid
  */
-
-['title' => $title, 'excerpt' => $excerpt, 'content_html' => $contentHtml] = $article;
-
-$articleId = isset($article['id']) ? (int)$article['id'] : null;
-$csrfToken = SecurityHelper::csrfToken($_SESSION);
-
-$errorsTitle = [];
-$errorsExcerpt = [];
-$errorsContentHtml = [];
-$titleIsInvalid = '';
-$excerptIsInvalid = '';
-$contentHtmlIsInvalid = '';
-$validation = $_SESSION['validation'] ?? [];
-if (is_array($validation)) {
-    $validationTitle = $validation['title'] ?? [];
-    $validationExcerpt = $validation['excerpt'] ?? [];
-    $validationContentHtml = $validation['content_html'] ?? [];
-
-    $errorsTitle = is_array($validationTitle) ? $validationTitle : [];
-    $errorsExcerpt = is_array($validationExcerpt) ? $validationExcerpt : [];
-    $errorsContentHtml = is_array($validationContentHtml) ? $validationContentHtml : [];
-
-    $titleIsInvalid = count($errorsTitle) > 0 ? ' is-invalid' : '';
-    $excerptIsInvalid = count($errorsExcerpt) > 0 ? ' is-invalid' : '';
-    $contentHtmlIsInvalid = count($errorsContentHtml) > 0 ? ' is-invalid' : '';
-}
-deleteSessionKey('validation');
-
-$oldFormValue = $_SESSION['old_form_value'] ?? [];
-if (!is_array($oldFormValue)) {
-    $oldFormValue = [];
-}
-
-$oldTitle = $oldFormValue['title'] ?? $title;
-$oldExcerpt = $oldFormValue['excerpt'] ?? $excerpt;
-$oldContentHtml = $oldFormValue['content_html'] ?? $contentHtml;
-$title = is_string($oldTitle) ? $oldTitle : $title;
-$excerpt = is_string($oldExcerpt) ? $oldExcerpt : $excerpt;
-$contentHtml = is_string($oldContentHtml) ? $oldContentHtml : $contentHtml;
-deleteSessionKey('old_form_value');
 ?>
 
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
@@ -65,7 +37,7 @@ deleteSessionKey('old_form_value');
                 <?php if ('edit' === $type): ?>
                     <form
                         id="delete-article-form"
-                        action="/articles/<?= $articleId ?>/delete"
+                        action="<?= SecurityHelper::escapeHtml($deleteAction) ?>"
                         method="POST"
                     >
                         <input
@@ -74,9 +46,9 @@ deleteSessionKey('old_form_value');
                             value="<?= SecurityHelper::escapeHtml($csrfToken) ?>"
                         >
                     </form>
-                    <form action="/articles/<?= $articleId ?>/edit" method="POST">
+                    <form action="<?= SecurityHelper::escapeHtml($formAction) ?>" method="POST">
                 <?php else: ?>
-                    <form action="/articles/create" method="POST">
+                    <form action="<?= SecurityHelper::escapeHtml($formAction) ?>" method="POST">
                 <?php endif; ?>
                     <input
                         type="hidden"
@@ -98,7 +70,6 @@ deleteSessionKey('old_form_value');
                             <?php foreach ($errorsTitle as $errorTitle): ?>
                                 <div id="titleFeedback" class="invalid-feedback">
                                     <?= SecurityHelper::escapeHtml($errorTitle) ?>
-                                    <?php unset($errorTitle); ?>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -119,7 +90,6 @@ deleteSessionKey('old_form_value');
                                     <?= SecurityHelper::escapeHtml($errorExcerpt) ?>
                                 </div>
                             <?php endforeach; ?>
-                            <?php unset($errorsExcerpt); ?>
                         <?php endif; ?>
                     </div>
                     <div class="mb-3">
@@ -138,7 +108,6 @@ deleteSessionKey('old_form_value');
                                     <?= SecurityHelper::escapeHtml($errorContentHtml) ?>
                                 </div>
                             <?php endforeach; ?>
-                            <?php unset($errorsContentHtml); ?>
                         <?php endif; ?>
                     </div>
                     <div class="mt-auto d-flex flex-column flex-md-row justify-content-between gap-3">
@@ -161,7 +130,7 @@ deleteSessionKey('old_form_value');
                         <?php else: ?>
                             <div class="d-flex flex-wrap gap-2">
                                 <button type="submit" class="btn btn-lg btn-outline-dark">
-                                    <?= 'Создать' ?>
+                                    Создать
                                 </button>
                                 <a href="/articles" class="btn btn-lg btn-outline-dark">
                                     К списку статей

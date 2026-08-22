@@ -34,6 +34,18 @@ function deleteSessionKey(string $key): void
     }
 }
 
+function pullSessionValue(string $key, mixed $default = null): mixed
+{
+    if (!array_key_exists($key, $_SESSION)) {
+        return $default;
+    }
+
+    $value = $_SESSION[$key];
+    unset($_SESSION[$key]);
+
+    return $value;
+}
+
 function addFlashMessage(string $message, string $type = 'success'): void
 {
     deleteSessionKey('flash');

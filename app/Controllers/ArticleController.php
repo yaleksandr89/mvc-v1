@@ -6,13 +6,18 @@ namespace App\Controllers;
 use App\Helper\SecurityHelper;
 use App\Helper\StrHelper;
 use App\Models\ArticleModal;
+use App\Presentation\ArticleFormPresenter;
 use App\Validations\ArticleValidate;
+use Random\RandomException;
 use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
 use Yaa\Framework\Pagination;
 
 class ArticleController extends Controller
 {
+    /**
+     * @throws RandomException
+     */
     public function all(): Page
     {
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
@@ -28,6 +33,7 @@ class ArticleController extends Controller
 
         $paginator = self::getPaginator();
         $articles = ArticleModal::getInstance()->getAllWithPaginate($paginator);
+        $csrfToken = SecurityHelper::csrfToken($_SESSION);
 
         return $this->render(
             'articles/list',
@@ -37,6 +43,7 @@ class ArticleController extends Controller
                 'nameMethod',
                 'articles',
                 'paginator',
+                'csrfToken',
             )
         );
     }
@@ -54,6 +61,17 @@ class ArticleController extends Controller
         if ($article === false) {
             return new ErrorController()->notFound();
         }
+
+        /**
+         * @var array{
+         *     id: int|string,
+         *     title: string,
+         *     excerpt: string,
+         *     content_html: string,
+         *     published_at: string,
+         *     updated_at: string
+         * } $article
+         */
 
         $this->meta = [
             'title' => $article['title'],
@@ -122,9 +140,17 @@ class ArticleController extends Controller
             redirect('/articles/create');
         }
 
+        $formData = ArticleFormPresenter::prepare(
+            $article,
+            pullSessionValue('validation', []),
+            pullSessionValue('old_form_value', []),
+            SecurityHelper::csrfToken($_SESSION),
+            $type
+        );
+
         return $this->render(
             'articles/create-or-update',
-            compact('h1', 'desc', 'nameMethod', 'article', 'type')
+            array_merge(compact('h1', 'desc', 'nameMethod'), $formData)
         );
     }
 
@@ -139,6 +165,17 @@ class ArticleController extends Controller
         if ($article === false) {
             return new ErrorController()->notFound();
         }
+
+        /**
+         * @var array{
+         *     id: int|string,
+         *     title: string,
+         *     excerpt: string,
+         *     content_html: string,
+         *     published_at: string,
+         *     updated_at: string
+         * } $article
+         */
 
         $this->meta = [
             'title' => $article['title'],
@@ -183,9 +220,17 @@ class ArticleController extends Controller
             redirect("/articles/$id/edit");
         }
 
+        $formData = ArticleFormPresenter::prepare(
+            $article,
+            pullSessionValue('validation', []),
+            pullSessionValue('old_form_value', []),
+            SecurityHelper::csrfToken($_SESSION),
+            $type
+        );
+
         return $this->render(
             'articles/create-or-update',
-            compact('h1', 'desc', 'nameMethod', 'article', 'type')
+            array_merge(compact('h1', 'desc', 'nameMethod'), $formData)
         );
     }
 

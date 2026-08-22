@@ -21,25 +21,12 @@ class ContactController extends Controller
         $desc = 'Страница с произвольным содержанием';
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
-        $contacts = [
-            'telegram' => 'https://t.me/yaleksandr89',
-            'vkontakte' => 'https://vk.com/y.aleksandr89',
-            'email' => 'mailto:yaleksandr89@yandex.ru?subject=MVC%20V1',
-            'linkedin' => 'https://www.linkedin.com/in/yaleksandr89/',
-            'github' => 'https://github.com/yaleksandr89',
-        ];
-
-        $contactLabels = [
-            'telegram' => 'Telegram',
-            'vkontakte' => 'Vkontakte',
-            'email' => 'Email',
-            'linkedin' => 'Linkedin',
-            'github' => 'Github',
-        ];
+        /** @var array<string, array{label: string, url: string}> $contacts */
+        $contacts = require dirname(__DIR__, 2) . '/config/contacts.php';
 
         return $this->render(
             'contacts/index',
-            compact('h1', 'desc', 'nameMethod', 'contacts', 'contactLabels')
+            compact('h1', 'desc', 'nameMethod', 'contacts')
         );
     }
 }
