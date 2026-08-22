@@ -28,7 +28,7 @@ $(SERVICE):
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help init check-env config build up down restart ps log log-all in php composer composer-install test test-dox coverage coverage-html analyse check smoke db-check demo-data postgres-reinit
+.PHONY: help init check-env config build up down restart ps log log-all in php composer composer-install test test-dox coverage coverage-html analyse check smoke db-check demo-data postgres-reinit test-db-create test-db-reset test-db-check test-db-drop
 
 help:
 	@printf '%s\n' 'Bootstrap / Первичная настройка:'
@@ -48,6 +48,9 @@ help:
 	@printf '%s\n' '  make log-all                           Follow all project logs / Смотреть все логи'
 	@printf '%s\n' '  make in <service>                      Open a non-root service shell / Открыть shell сервиса без root'
 	@printf '%s\n' '  make db-check                          Check PostgreSQL schema/data state / Проверить состояние схемы/данных PostgreSQL'
+	@printf '%s\n' '  make test-db-create                    Create isolated mvc_v1_test if absent / Создать изолированную mvc_v1_test при отсутствии'
+	@printf '%s\n' '  make test-db-reset                     Reset schema and fixtures in mvc_v1_test / Сбросить схему и фикстуры в mvc_v1_test'
+	@printf '%s\n' '  make test-db-check                     Check isolated test database / Проверить изолированную тестовую БД'
 	@printf '%s\n' '  make demo-data                         Load 50 demo articles into an empty database / Загрузить 50 демо-статей в пустую базу'
 	@printf '%s\n' '  make smoke                             Run full CRUD/CSRF smoke / Запустить CRUD/CSRF smoke'
 	@printf '%s\n' ''
@@ -62,6 +65,7 @@ help:
 	@printf '%s\n' '  make analyse | check                   Run Composer quality scripts / Запустить проверки Composer'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Destructive maintenance / Деструктивные операции:'
+	@printf '%s\n' '  make test-db-drop CONFIRM=mvc_v1_test  Drop only isolated mvc_v1_test / Удалить только изолированную mvc_v1_test'
 	@printf '%s\n' '  make postgres-reinit CONFIRM=postgres18 Recreate PostgreSQL volume with an empty schema / Пересоздать volume PostgreSQL с пустой схемой'
 	@printf '%s\n' '  make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1 Recreate volume and load 50 demo articles / Пересоздать volume PostgreSQL и загрузить 50 демо-статей'
 
@@ -119,13 +123,13 @@ composer: check-env
 composer-install: check-env
 	@$(COMPOSE) exec --user app php composer install --no-interaction --prefer-dist
 
-test: check-env
+test: test-db-reset
 	@$(COMPOSE) exec --user app php ./vendor/bin/phpunit --configuration=phpunit.xml.dist
 
-test-dox: check-env
+test-dox: test-db-reset
 	@$(COMPOSE) exec --user app php ./vendor/bin/phpunit --configuration=phpunit.xml.dist --testdox
 
-coverage: check-env
+coverage: test-db-reset
 	@$(COMPOSE) exec --user app -e XDEBUG_MODE=coverage php \
 		./vendor/bin/phpunit \
 		--configuration=phpunit.xml.dist \
@@ -133,7 +137,7 @@ coverage: check-env
 		--coverage-text \
 		--show-uncovered-for-coverage-text
 
-coverage-html: check-env
+coverage-html: test-db-reset
 	@$(COMPOSE) exec --user app php rm -rf -- runtime/coverage
 	@$(COMPOSE) exec --user app -e XDEBUG_MODE=coverage php \
 		./vendor/bin/phpunit \
@@ -143,7 +147,7 @@ coverage-html: check-env
 analyse: check-env
 	@$(COMPOSE) exec --user app php composer analyse
 
-check: check-env
+check: test-db-reset
 	@$(COMPOSE) exec --user app php composer check
 
 smoke: check-env
@@ -153,6 +157,33 @@ smoke: check-env
 
 db-check: check-env
 	@$(COMPOSE) exec --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -Atc "SHOW server_version; SELECT COUNT(*), MIN(id), MAX(id) FROM blog_posts;"'
+
+test-db-create: check-env
+	@exists=$$($(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d postgres -Atc "SELECT 1 FROM pg_database WHERE datname = '\''mvc_v1_test'\''"'); \
+	if [ "$$exists" = 1 ]; then \
+		printf '%s\n' 'Test database mvc_v1_test already exists; leaving it intact'; \
+	else \
+		$(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d postgres -c "CREATE DATABASE mvc_v1_test"'; \
+	fi
+
+test-db-reset: test-db-create
+	@$(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d mvc_v1_test -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"'
+	@$(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d mvc_v1_test' < docs/db_schema_only.sql
+	@$(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d mvc_v1_test' < tests/Fixtures/database/articles.sql
+	@stats=$$($(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d mvc_v1_test -Atc "SELECT COUNT(*), MIN(id), MAX(id) FROM blog_posts"'); \
+	test "$$stats" = '3|1|3' || { printf 'Expected 3|1|3 after test database reset, got %s\n' "$$stats" >&2; exit 1; }
+
+test-db-check: check-env
+	@database=$$($(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d mvc_v1_test -Atc "SELECT current_database()"'); \
+	printf 'database=%s\n' "$$database"; \
+	test "$$database" = 'mvc_v1_test' || { printf 'Expected current database mvc_v1_test, got %s\n' "$$database" >&2; exit 1; }
+	@stats=$$($(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d mvc_v1_test -Atc "SELECT COUNT(*), MIN(id), MAX(id) FROM blog_posts"'); \
+	printf 'articles=%s\n' "$$stats"; \
+	test "$$stats" = '3|1|3' || { printf 'Expected 3|1|3 in mvc_v1_test, got %s\n' "$$stats" >&2; exit 1; }
+
+test-db-drop: check-env
+	@test "$(CONFIRM)" = mvc_v1_test || (printf '%s\n' 'Refusing drop. Re-run with: make test-db-drop CONFIRM=mvc_v1_test' >&2; exit 1)
+	@$(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -v ON_ERROR_STOP=1 -U "$$POSTGRES_USER" -d postgres -c "DROP DATABASE IF EXISTS mvc_v1_test WITH (FORCE)"'
 
 demo-data: check-env
 	@count=$$($(COMPOSE) exec -T --user postgres postgres sh -lc 'psql -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -Atc "SELECT COUNT(*) FROM blog_posts"'); \

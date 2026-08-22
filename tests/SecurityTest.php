@@ -21,6 +21,35 @@ final class SecurityTest extends TestCase
         );
     }
 
+    #[TestDox('Null и неподдерживаемые значения дают безопасную пустую строку')]
+    public function testEscapesNullAndUnsupportedValuesAsEmptyStrings(): void
+    {
+        self::assertSame('', SecurityHelper::escapeHtml(null));
+        self::assertSame('', SecurityHelper::escapeHtml(['not-scalar']));
+        self::assertSame('', SecurityHelper::escapeHtml(new \stdClass()));
+    }
+
+    #[TestDox('Скалярные значения преобразуются и экранируются')]
+    public function testConvertsAndEscapesScalarValues(): void
+    {
+        self::assertSame('42', SecurityHelper::escapeHtml(42));
+        self::assertSame('1', SecurityHelper::escapeHtml(true));
+        self::assertSame('&lt;safe&gt;', SecurityHelper::escapeHtml('<safe>'));
+    }
+
+    #[TestDox('Stringable-объект преобразуется и экранируется')]
+    public function testConvertsAndEscapesStringableValue(): void
+    {
+        $value = new class implements \Stringable {
+            public function __toString(): string
+            {
+                return '<stringable & value>';
+            }
+        };
+
+        self::assertSame('&lt;stringable &amp; value&gt;', SecurityHelper::escapeHtml($value));
+    }
+
     #[TestDox('CSRF-токен создаётся в ожидаемом формате и сохраняется в сессии')]
     public function testGeneratesAndStoresCsrfToken(): void
     {
@@ -79,6 +108,7 @@ final class SecurityTest extends TestCase
     public function testRecognizesPostRequest(): void
     {
         self::assertTrue(SecurityHelper::isPostRequest('POST'));
+        self::assertTrue(SecurityHelper::isPostRequest('post'));
         self::assertFalse(SecurityHelper::isPostRequest('GET'));
     }
 

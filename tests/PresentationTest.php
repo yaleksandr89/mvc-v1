@@ -216,6 +216,43 @@ final class PresentationTest extends TestCase
         self::assertArrayNotHasKey('presentation_null', $_SESSION);
     }
 
+    #[TestDox('Новое flash-сообщение заменяет предыдущее и извлекается один раз')]
+    public function testFlashMessageReplacesOldValueAndCanBePulled(): void
+    {
+        $_SESSION['flash'] = ['message' => 'old', 'type' => 'warning'];
+
+        addFlashMessage('new', 'danger');
+
+        self::assertSame(
+            ['message' => 'new', 'type' => 'danger'],
+            pullSessionValue('flash')
+        );
+        self::assertArrayNotHasKey('flash', $_SESSION);
+    }
+
+    #[TestDox('Новые ошибки валидации заменяют прежние данные сессии')]
+    public function testValidationFlashMessageReplacesOldValue(): void
+    {
+        $_SESSION['validation'] = ['old' => ['old' => 'old']];
+        $validation = ['title' => ['unique' => 'Duplicate']];
+
+        validationFlashMessage($validation);
+
+        self::assertSame($validation, $_SESSION['validation']);
+    }
+
+    #[TestDox('Новые значения формы заменяют прежние данные и извлекаются один раз')]
+    public function testOldFormValueReplacesOldValueAndCanBePulled(): void
+    {
+        $_SESSION['old_form_value'] = ['title' => 'old'];
+        $values = ['title' => 'new', 'excerpt' => 'new excerpt'];
+
+        oldFormValue($values);
+
+        self::assertSame($values, pullSessionValue('old_form_value'));
+        self::assertArrayNotHasKey('old_form_value', $_SESSION);
+    }
+
     /**
      * @return array{title: string, excerpt: string, content_html: string}
      */

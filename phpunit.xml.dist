@@ -14,6 +14,11 @@
         </testsuite>
     </testsuites>
 
+    <php>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="DB_NAME" value="mvc_v1_test" force="true"/>
+    </php>
+
     <source>
         <include>
             <directory suffix=".php">app/Controllers</directory>

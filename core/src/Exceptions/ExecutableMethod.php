@@ -14,7 +14,7 @@ class ExecutableMethod extends Exception
             $code = 500;
         }
 
-        $nameException = explode('\\', __CLASS__)[2];
+        $nameException = basename(str_replace('\\', '/', __CLASS__));
         $message = "Ошибка [$nameException]: " . $message;
 
         parent::__construct($message, $code, $previous);
