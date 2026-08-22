@@ -28,11 +28,11 @@ $(SERVICE):
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help init check-env config build up down restart ps log log-all in php composer composer-install test analyse check smoke db-check demo-data postgres-reinit
+.PHONY: help init check-env config build up down restart ps log log-all in php composer composer-install test test-dox coverage coverage-html analyse check smoke db-check demo-data postgres-reinit
 
 help:
 	@printf '%s\n' 'Bootstrap / Первичная настройка:'
-	@printf '%s\n' '  make init                              Create .env.docker and logs/ / Создать .env.docker и logs/'
+	@printf '%s\n' '  make init                              Create .env.docker, logs/ and runtime/cache/ / Создать .env.docker, logs/ и runtime/cache/'
 	@printf '%s\n' '  make check-env                         Validate Docker environment / Проверить Docker-окружение'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Docker lifecycle / Управление Docker:'
@@ -55,7 +55,11 @@ help:
 	@printf '%s\n' '  make php CMD="..."                     Run PHP as app / Запустить PHP от app'
 	@printf '%s\n' '  make composer CMD="..."                Run Composer as app / Запустить Composer от app'
 	@printf '%s\n' '  make composer-install                  Install dev dependencies from lock / Установить зависимости из lock'
-	@printf '%s\n' '  make test | analyse | check            Run existing Composer quality scripts / Запустить проверки Composer'
+	@printf '%s\n' '  make test                              Run PHPUnit / Запустить PHPUnit'
+	@printf '%s\n' '  make test-dox                          Run PHPUnit TestDox / Запустить PHPUnit TestDox'
+	@printf '%s\n' '  make coverage                          Print coverage and write Clover XML / Вывести покрытие и записать Clover XML'
+	@printf '%s\n' '  make coverage-html                     Write HTML coverage report / Создать HTML-отчёт покрытия'
+	@printf '%s\n' '  make analyse | check                   Run Composer quality scripts / Запустить проверки Composer'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Destructive maintenance / Деструктивные операции:'
 	@printf '%s\n' '  make postgres-reinit CONFIRM=postgres18 Recreate PostgreSQL volume with an empty schema / Пересоздать volume PostgreSQL с пустой схемой'
@@ -69,7 +73,7 @@ init:
 	else \
 		printf '%s\n' '.env.docker already exists; leaving it unchanged'; \
 	fi
-	@mkdir -p logs
+	@mkdir -p logs runtime/cache
 
 check-env:
 	@test -f "$(ENV_FILE)" || (printf '%s\n' 'Missing .env.docker. Run: make init' >&2; exit 1)
@@ -116,7 +120,25 @@ composer-install: check-env
 	@$(COMPOSE) exec --user app php composer install --no-interaction --prefer-dist
 
 test: check-env
-	@$(COMPOSE) exec --user app php composer test
+	@$(COMPOSE) exec --user app php ./vendor/bin/phpunit --configuration=phpunit.xml.dist
+
+test-dox: check-env
+	@$(COMPOSE) exec --user app php ./vendor/bin/phpunit --configuration=phpunit.xml.dist --testdox
+
+coverage: check-env
+	@$(COMPOSE) exec --user app -e XDEBUG_MODE=coverage php \
+		./vendor/bin/phpunit \
+		--configuration=phpunit.xml.dist \
+		--coverage-clover runtime/coverage.xml \
+		--coverage-text \
+		--show-uncovered-for-coverage-text
+
+coverage-html: check-env
+	@$(COMPOSE) exec --user app php rm -rf -- runtime/coverage
+	@$(COMPOSE) exec --user app -e XDEBUG_MODE=coverage php \
+		./vendor/bin/phpunit \
+		--configuration=phpunit.xml.dist \
+		--coverage-html runtime/coverage
 
 analyse: check-env
 	@$(COMPOSE) exec --user app php composer analyse

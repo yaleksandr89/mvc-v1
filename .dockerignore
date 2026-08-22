@@ -4,3 +4,4 @@
 .env.docker
 vendor
 logs/*
+runtime/

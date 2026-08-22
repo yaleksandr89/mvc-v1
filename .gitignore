@@ -12,3 +12,4 @@ composer.phar
 /.env.docker
 /logs/*
 !/logs/.gitkeep
+/runtime/

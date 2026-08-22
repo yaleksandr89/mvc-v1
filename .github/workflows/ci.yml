@@ -2,47 +2,74 @@ name: CI
 
 on:
   push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 permissions:
   contents: read
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   quality:
+    name: Docker / PHP 8.5 / PostgreSQL 18.4
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          coverage: none
-          extensions: mbstring, pdo_pgsql
+      - name: Initialize environment
+        run: make init
 
-      - name: Validate root Composer manifest
-        run: composer validate --strict --no-check-publish
+      - name: Validate Docker Compose configuration
+        run: make config
+
+      - name: Build Docker runtime
+        run: make build
+
+      - name: Start Docker runtime
+        run: make up
+
+      - name: Install Composer dependencies
+        run: make composer-install
 
       - name: Validate embedded framework Composer manifest
-        run: composer validate --strict --no-check-publish core/composer.json
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Audit dependencies
-        run: composer audit --locked
+        run: make composer CMD="validate --strict --no-check-publish core/composer.json"
 
       - name: Lint PHP sources
         run: |
-          find app core/src config public views tests -type f -name '*.php' -print0 \
-            | xargs -0 -n1 php -l
+          docker compose -p mvc-v1 --env-file .env.docker exec --user app php sh -lc \
+            "find app core/src config public views tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l"
 
-      - name: Run regression tests
-        run: composer test
+      - name: Run quality gate
+        run: make check
 
-      - name: Run static analysis
-        run: composer analyse
+      - name: Generate coverage
+        run: make coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          use_oidc: true
+          files: ./runtime/coverage.xml
+          disable_search: true
+          fail_ci_if_error: true
+
+      - name: Load demo data
+        run: make demo-data
+
+      - name: Check PostgreSQL
+        run: make db-check
+
+      - name: Run runtime smoke test
+        run: make smoke
+
+      - name: Stop Docker runtime
+        if: always()
+        run: make down
