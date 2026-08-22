@@ -6,6 +6,22 @@ use App\Helper\SecurityHelper;
 $metaTitle = $title ?? '';
 $metaDescription = $description ?? '';
 $metaKeywords = $keywords ?? '';
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+if (!is_string($requestPath) || $requestPath === '') {
+    $requestPath = '/';
+}
+
+if ($requestPath !== '/' && str_ends_with($requestPath, '/')) {
+    $requestPath = substr($requestPath, 0, -1);
+}
+
+$activeNavigation = match (true) {
+    $requestPath === '/' => 'home',
+    $requestPath === '/articles', preg_match('#^/articles/\d+/(show|edit)$#', $requestPath) === 1 => 'articles',
+    $requestPath === '/articles/create' => 'create',
+    $requestPath === '/contacts' => 'contacts',
+    default => null,
+};
 $flash = $_SESSION['flash'] ?? null;
 if (!is_array($flash)) {
     $flash = null;
@@ -45,111 +61,7 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
     <meta name="msapplication-config" content="<?= PROJECT_IMG ?>/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="<?= PROJECT_CSS ?>/css@3.css">
     <link href="<?= PROJECT_CSS ?>/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .custom-active a {
-            color: #ff8d2d;
-        }
-
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
-
-        .b-example-divider {
-            width: 100%;
-            height: 3rem;
-            background-color: rgba(0, 0, 0, .1);
-            border: solid rgba(0, 0, 0, .15);
-            border-width: 1px 0;
-            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-        }
-
-        .b-example-vr {
-            flex-shrink: 0;
-            width: 1.5rem;
-            height: 100vh;
-        }
-
-        .bi {
-            vertical-align: -.125em;
-            fill: currentColor;
-        }
-
-        .nav-scroller {
-            position: relative;
-            z-index: 2;
-            height: 2.75rem;
-            overflow-y: hidden;
-        }
-
-        .nav-scroller .nav {
-            display: flex;
-            flex-wrap: nowrap;
-            padding-bottom: 1rem;
-            margin-top: -1px;
-            overflow-x: auto;
-            text-align: center;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .btn-bd-primary {
-            --bd-violet-bg: #ff8d2d;
-            --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-            --bs-btn-font-weight: 600;
-            --bs-btn-color: var(--bs-white);
-            --bs-btn-bg: var(--bd-violet-bg);
-            --bs-btn-border-color: var(--bd-violet-bg);
-            --bs-btn-hover-color: var(--bs-white);
-            --bs-btn-hover-bg: #e67518;
-            --bs-btn-hover-border-color: #e67518;
-            --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-            --bs-btn-active-color: var(--bs-btn-hover-color);
-            --bs-btn-active-bg: #ffab5e;
-            --bs-btn-active-border-color: #ffab5e;
-        }
-
-        .bd-mode-toggle {
-            z-index: 1500;
-        }
-
-        .bd-mode-toggle .dropdown-menu .active .bi {
-            display: block !important;
-        }
-
-        .animate-txt {
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%), radial-gradient(at top center, rgba(255, 255, 255, 0.40) 0%, rgba(0, 0, 0, 0.40) 120%) #989898 no-repeat;
-            background-blend-mode: multiply, multiply;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        h1.animate-txt {
-            font-size: 3rem;
-        }
-
-        h2.animate-txt {
-            font-size: 2rem;
-        }
-
-        .outline-customize:focus {
-            border-color: rgb(189 45 116 / 25%);
-            box-shadow: 0 0 0 0.25rem rgb(189 45 116 / 16%);
-        }
-    </style>
-    <link href="<?= PROJECT_CSS ?>/navbar-static.css" rel="stylesheet">
     <link href="<?= PROJECT_CSS ?>/custom.css" rel="stylesheet">
 
     <title><?= SecurityHelper::escapeHtml($metaTitle) ?></title>
@@ -235,17 +147,17 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <li class="nav-item" data-id="">
-                        <a class="nav-link" aria-current="page" href="/">Главная</a>
+                    <li class="nav-item">
+                        <a class="nav-link<?= $activeNavigation === 'home' ? ' active' : '' ?>"<?= $activeNavigation === 'home' ? ' aria-current="page"' : '' ?> href="/">Главная</a>
                     </li>
-                    <li class="nav-item" data-id="articles">
-                        <a class="nav-link" href="/articles">Статьи</a>
+                    <li class="nav-item">
+                        <a class="nav-link<?= $activeNavigation === 'articles' ? ' active' : '' ?>"<?= $activeNavigation === 'articles' ? ' aria-current="page"' : '' ?> href="/articles">Статьи</a>
                     </li>
-                    <li class="nav-item" data-id="create">
-                        <a class="nav-link" href="/articles/create">Создать статью</a>
+                    <li class="nav-item">
+                        <a class="nav-link<?= $activeNavigation === 'create' ? ' active' : '' ?>"<?= $activeNavigation === 'create' ? ' aria-current="page"' : '' ?> href="/articles/create">Создать статью</a>
                     </li>
-                    <li class="nav-item" data-id="contacts">
-                        <a class="nav-link" href="/contacts">Контакты</a>
+                    <li class="nav-item">
+                        <a class="nav-link<?= $activeNavigation === 'contacts' ? ' active' : '' ?>"<?= $activeNavigation === 'contacts' ? ' aria-current="page"' : '' ?> href="/contacts">Контакты</a>
                     </li>
                 </ul>
             </div>
@@ -264,17 +176,8 @@ if (!is_string($flashType) || !in_array($flashType, $allowedFlashTypes, true)) {
     <?= $content ?>
 </main>
 <footer class="footer mt-3">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <footer class="footer">
-                    <p class="text-light m-0"><?= date('Y') ?> | Тестовый сайт</p>
-                </footer>
-            </div>
-        </div>
-    </div>
+    <p class="text-light m-0"><?= date('Y') ?> | Тестовый сайт</p>
 </footer>
 <script src="<?= PROJECT_JS ?>/bootstrap.bundle.min.js"></script>
-<script src="<?= PROJECT_JS ?>/custom.js"></script>
 </body>
 </html>

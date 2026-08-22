@@ -59,7 +59,7 @@ deleteSessionKey('old_form_value');
     <div class="card-header">
         <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
-    <div class="card-body pl-5 pr-5">
+    <div class="card-body px-3 px-md-5">
         <div class="card mb-3">
             <div class="card-body d-flex flex-column">
                 <?php if ('edit' === $type): ?>
@@ -141,30 +141,32 @@ deleteSessionKey('old_form_value');
                             <?php unset($errorsContentHtml); ?>
                         <?php endif; ?>
                     </div>
-                    <div class="mt-auto d-flex justify-content-between">
+                    <div class="mt-auto d-flex flex-column flex-md-row justify-content-between gap-3">
                         <?php if ('edit' === $type): ?>
-                            <div>
-                                <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-lg btn-outline-dark">
                                     Обновить
                                 </button>
                                 <button
                                     type="submit"
                                     form="delete-article-form"
-                                    class="btn btn-lg btn-outline-danger btn_link_dark ms-2"
+                                    class="btn btn-lg btn-outline-danger"
                                 >
                                     Удалить
                                 </button>
                             </div>
-                            <a href="/articles" class="btn btn-lg btn-outline-dark">
+                            <a href="/articles" class="btn btn-lg btn-outline-dark align-self-md-center">
                                 К списку статей
                             </a>
                         <?php else: ?>
-                            <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
-                                <?= 'Создать' ?>
-                            </button>
-                            <a href="/articles" class="btn btn-lg btn-outline-dark btn_link_dark">
-                                К списку статей
-                            </a>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-lg btn-outline-dark">
+                                    <?= 'Создать' ?>
+                                </button>
+                                <a href="/articles" class="btn btn-lg btn-outline-dark">
+                                    К списку статей
+                                </a>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </form>

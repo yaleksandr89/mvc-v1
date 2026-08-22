@@ -11,7 +11,7 @@ use App\Helper\SecurityHelper;
     <div class="card-header">
         <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
-    <div class="card-body pl-5 pr-5">
+    <div class="card-body px-3 px-md-5">
         <h2>Формулировка</h2>
         <p>
             Написать иерархию классов, состоящую из базового класса и класса наследника. Базовый класс должен иметь

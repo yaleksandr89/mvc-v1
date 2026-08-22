@@ -11,7 +11,7 @@ use App\Helper\SecurityHelper;
     <div class="card-header">
         <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
-    <div class="card-body pl-5 pr-5">
+    <div class="card-body px-3 px-md-5">
         <div class="text-center mt-3 mb-3">
             <a class="btn link_dark telegram mb-2" href="<?= SecurityHelper::escapeHtml($contacts['telegram']) ?>" target="_blank"
                rel="nofollow noopener">
