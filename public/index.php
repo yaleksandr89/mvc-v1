@@ -24,7 +24,19 @@ if (!is_string($requestUri)) {
 }
 
 $track = new Router()->getTrack($routes, $requestUri);
-$page = new Dispatcher()->getPage($track);
-$layoutData = LayoutPresenter::prepare($requestUri, pullSessionValue('flash'));
+$result = new Dispatcher()->dispatch($track);
 
-echo new View()->render($page, $layoutData);
+if ($result instanceof Page) {
+    $layoutData = LayoutPresenter::prepare($requestUri, pullSessionValue('flash'));
+    $response = new View()->render($result, $layoutData);
+} else {
+    $response = $result;
+}
+
+http_response_code($response->getStatus());
+
+foreach ($response->getHeaders() as $name => $value) {
+    header("$name: $value", replace: true);
+}
+
+echo $response->getBody();

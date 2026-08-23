@@ -7,11 +7,12 @@ use RuntimeException;
 use Throwable;
 use Yaa\Framework\Exceptions\ConnectClass;
 use Yaa\Framework\Exceptions\ConnectFile;
+use Yaa\Framework\Exceptions\DatabaseException;
 use Yaa\Framework\Exceptions\ExecutableMethod;
 
 class Dispatcher
 {
-    public function getPage(Track $track): Page
+    public function dispatch(Track $track): Page|Response
     {
         try {
             $controllerName = $track->getController();
@@ -52,17 +53,21 @@ class Dispatcher
             }
 
             $result = $controller->{$action}($track->getParams());
-            if (!$result instanceof Page) {
-                throw new RuntimeException("$fullName::$action() must return " . Page::class . '.');
+            if (!$result instanceof Page && !$result instanceof Response) {
+                throw new RuntimeException(
+                    "$fullName::$action() must return " . Page::class . ' or ' . Response::class . '.',
+                );
             }
 
             return $result;
+        } catch (DatabaseException) {
+            return new Response('Internal server error.', 500);
         } catch (Throwable $error) {
-            $this->handleFailure($error);
+            return $this->handleFailure($error);
         }
     }
 
-    private function handleFailure(Throwable $error): never
+    private function handleFailure(Throwable $error): Response
     {
         @file_put_contents(
             LOG . '/dispatcher-errors.txt',
@@ -76,8 +81,6 @@ class Dispatcher
             FILE_APPEND
         );
 
-        http_response_code(500);
-        echo 'Internal server error.';
-        exit;
+        return new Response('Internal server error.', 500);
     }
 }

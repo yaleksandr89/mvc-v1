@@ -153,6 +153,54 @@ final class CoreTest extends TestCase
         );
     }
 
+    #[TestDox('Строковое представление пагинации совпадает с её HTML-render контрактом')]
+    public function testPaginationStringMatchesRenderedHtml(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/articles?filter=recent&page=3';
+        $pagination = new Pagination(3, 5, 40);
+
+        self::assertSame($pagination->renderHtml(), (string)$pagination);
+    }
+
+    #[TestDox('env соблюдает приоритет process environment над $_ENV и default')]
+    public function testEnvironmentValuePrecedence(): void
+    {
+        $key = 'MVC_V1_TEST_ENV_PRECEDENCE_413C';
+        $originalProcessValue = getenv($key);
+        $environmentHadKey = array_key_exists($key, $_ENV);
+        $originalEnvironmentValue = $_ENV[$key] ?? null;
+
+        try {
+            putenv("$key=process-value");
+            $_ENV[$key] = 'environment-value';
+            self::assertSame('process-value', env($key, 'default-value'));
+
+            putenv($key);
+            self::assertSame('environment-value', env($key, 'default-value'));
+
+            unset($_ENV[$key]);
+            self::assertSame('default-value', env($key, 'default-value'));
+        } finally {
+            if ($originalProcessValue === false) {
+                putenv($key);
+            } else {
+                putenv("$key=$originalProcessValue");
+            }
+
+            if ($environmentHadKey) {
+                $_ENV[$key] = $originalEnvironmentValue;
+            } else {
+                unset($_ENV[$key]);
+            }
+        }
+
+        self::assertSame($originalProcessValue, getenv($key));
+        self::assertSame($environmentHadKey, array_key_exists($key, $_ENV));
+        if ($environmentHadKey) {
+            self::assertSame($originalEnvironmentValue, $_ENV[$key]);
+        }
+    }
+
     #[TestDox('Корневой маршрут сохраняет контроллер и действие')]
     public function testMatchesRootRoute(): void
     {

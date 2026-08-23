@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use Yaa\Framework\RedirectResponse;
+
 session_start();
 
 const WORK_DIR = __DIR__ . '/../app';
@@ -21,10 +23,9 @@ function env(string $key, mixed $default = null): mixed
     return array_key_exists($key, $_ENV) ? $_ENV[$key] : $default;
 }
 
-function redirect(string $path, int $code = 302): never
+function redirect(string $path, int $code = 302): RedirectResponse
 {
-    header(header: 'Location: ' . $path, response_code: $code);
-    exit;
+    return new RedirectResponse($path, $code);
 }
 
 function deleteSessionKey(string $key): void

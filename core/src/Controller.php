@@ -14,13 +14,18 @@ class Controller
     /**
      * @param array<string, mixed> $data
      */
-    protected function render(string $view, array $data = []): Page
+    protected function render(
+        string $view,
+        array $data = [],
+        int $status = 200,
+    ): Page
     {
         return new Page(
             $this->layout,
             $this->meta,
             $view,
-            $data
+            $data,
+            $status,
         );
     }
 

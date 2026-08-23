@@ -13,18 +13,20 @@ class View
     /**
      * @param array<string, mixed> $layoutData
      */
-    public function render(Page $page, array $layoutData = []): string
+    public function render(Page $page, array $layoutData = []): Response
     {
         $bufferLevel = ob_get_level();
 
         try {
-            return $this->renderLayout($page, $this->renderView($page), $layoutData);
+            $html = $this->renderLayout($page, $this->renderView($page), $layoutData);
+
+            return new Response($html, $page->getStatus());
         } catch (Throwable $error) {
             while (ob_get_level() > $bufferLevel) {
                 ob_end_clean();
             }
 
-            $this->handleFailure($error);
+            return $this->handleFailure($error);
         }
     }
 
@@ -86,7 +88,7 @@ class View
         return $rendered;
     }
 
-    private function handleFailure(Throwable $error): never
+    private function handleFailure(Throwable $error): Response
     {
         @file_put_contents(
             LOG . '/view-errors.txt',
@@ -100,8 +102,6 @@ class View
             FILE_APPEND
         );
 
-        http_response_code(500);
-        echo 'Internal server error.';
-        exit;
+        return new Response('Internal server error.', 500);
     }
 }

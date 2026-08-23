@@ -6,6 +6,7 @@ namespace Yaa\Framework;
 use PDO;
 use PDOException;
 use PDOStatement;
+use Yaa\Framework\Exceptions\DatabaseException;
 use Yaa\Framework\Traits\SingletonTrait;
 
 /** @phpstan-consistent-constructor */
@@ -84,9 +85,10 @@ abstract class Model
             FILE_APPEND
         );
 
-        http_response_code(500);
-        echo 'Internal server error.';
-        exit;
+        throw new DatabaseException(
+            'Database operation failed.',
+            previous: $error,
+        );
     }
 
     public function getColumn(string $sql): mixed

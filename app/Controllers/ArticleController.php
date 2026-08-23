@@ -12,6 +12,7 @@ use Random\RandomException;
 use Yaa\Framework\Controller;
 use Yaa\Framework\Page;
 use Yaa\Framework\Pagination;
+use Yaa\Framework\Response;
 
 class ArticleController extends Controller
 {
@@ -72,7 +73,6 @@ class ArticleController extends Controller
          *     updated_at: string
          * } $article
          */
-
         $this->meta = [
             'title' => $article['title'],
             'description' => $article['excerpt'],
@@ -87,7 +87,7 @@ class ArticleController extends Controller
         );
     }
 
-    public function create(): Page
+    public function create(): Page|Response
     {
         $this->meta = [
             'title' => 'Создать статью',
@@ -112,7 +112,11 @@ class ArticleController extends Controller
         }
 
         if (SecurityHelper::isPostRequest($requestMethod)) {
-            self::requireValidCsrfToken();
+            $csrfResponse = self::csrfFailureResponse();
+
+            if ($csrfResponse !== null) {
+                return $csrfResponse;
+            }
 
             $title = is_string($_POST['title'] ?? null) ? $_POST['title'] : '';
             $excerpt = is_string($_POST['excerpt'] ?? null) ? $_POST['excerpt'] : '';
@@ -126,18 +130,18 @@ class ArticleController extends Controller
                 if (!$article) {
                     oldFormValue($_POST);
                     addFlashMessage('Ошибка при сохранении статьи', 'danger');
-                    redirect('/articles/create');
+                    return redirect('/articles/create');
                 }
 
                 addFlashMessage('Статья успешно создана');
-                redirect("/articles/{$article['id']}/edit");
+                return redirect("/articles/{$article['id']}/edit");
             }
 
             oldFormValue($_POST);
             validationFlashMessage($errors);
             addFlashMessage('Ошибка валидации данных', 'danger');
 
-            redirect('/articles/create');
+            return redirect('/articles/create');
         }
 
         $formData = ArticleFormPresenter::prepare(
@@ -156,8 +160,9 @@ class ArticleController extends Controller
 
     /**
      * @param array{id: string} $params
+     * @throws RandomException
      */
-    public function edit(array $params): Page
+    public function edit(array $params): Page|Response
     {
         $id = (int)$params['id'];
         $article = ArticleModal::getInstance()->getById($id);
@@ -176,7 +181,6 @@ class ArticleController extends Controller
          *     updated_at: string
          * } $article
          */
-
         $this->meta = [
             'title' => $article['title'],
             'description' => "Страница для редактирования '{$article['title']}'",
@@ -194,7 +198,11 @@ class ArticleController extends Controller
         }
 
         if (SecurityHelper::isPostRequest($requestMethod)) {
-            self::requireValidCsrfToken();
+            $csrfResponse = self::csrfFailureResponse();
+
+            if ($csrfResponse !== null) {
+                return $csrfResponse;
+            }
 
             $title = is_string($_POST['title'] ?? null) ? $_POST['title'] : '';
             $excerpt = is_string($_POST['excerpt'] ?? null) ? $_POST['excerpt'] : '';
@@ -206,18 +214,18 @@ class ArticleController extends Controller
                 if (!ArticleModal::getInstance()->edit($id, $title, $excerpt, $content_html)) {
                     oldFormValue($_POST);
                     addFlashMessage('Ошибка при редактировании статьи', 'danger');
-                    redirect("/articles/$id/edit");
+                    return redirect("/articles/$id/edit");
                 }
 
                 addFlashMessage('Статья успешно Обновлена');
-                redirect("/articles/$id/edit");
+                return redirect("/articles/$id/edit");
             }
 
             oldFormValue($_POST);
             validationFlashMessage($errors);
             addFlashMessage('Ошибка валидации данных', 'danger');
 
-            redirect("/articles/$id/edit");
+            return redirect("/articles/$id/edit");
         }
 
         $formData = ArticleFormPresenter::prepare(
@@ -237,7 +245,7 @@ class ArticleController extends Controller
     /**
      * @param array{id: string} $params
      */
-    public function delete(array $params): Page
+    public function delete(array $params): Page|Response
     {
         $requestMethod = $_SERVER['REQUEST_METHOD'] ?? '';
         if (!is_string($requestMethod)) {
@@ -245,11 +253,18 @@ class ArticleController extends Controller
         }
 
         if (!SecurityHelper::isPostRequest($requestMethod)) {
-            header('Allow: POST');
-            self::stopRequest(405, 'Method Not Allowed');
+            return new Response(
+                'Method Not Allowed',
+                405,
+                ['Allow' => 'POST'],
+            );
         }
 
-        self::requireValidCsrfToken();
+        $csrfResponse = self::csrfFailureResponse();
+
+        if ($csrfResponse !== null) {
+            return $csrfResponse;
+        }
 
         $id = (int)$params['id'];
 
@@ -258,21 +273,16 @@ class ArticleController extends Controller
         }
 
         addFlashMessage('Статья успешно удалена');
-        redirect('/articles');
+        return redirect('/articles');
     }
 
-    private static function requireValidCsrfToken(): void
+    private static function csrfFailureResponse(): ?Response
     {
-        if (!SecurityHelper::isValidCsrfToken($_SESSION, $_POST['_csrf'] ?? null)) {
-            self::stopRequest(403, 'Forbidden');
+        if (SecurityHelper::isValidCsrfToken($_SESSION, $_POST['_csrf'] ?? null)) {
+            return null;
         }
-    }
 
-    private static function stopRequest(int $status, string $message): never
-    {
-        http_response_code($status);
-        echo $message;
-        exit;
+        return new Response('Forbidden', 403);
     }
 
     private static function getPaginator(): Pagination

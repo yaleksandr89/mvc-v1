@@ -15,8 +15,10 @@ class ErrorController extends Controller
             'description' => 'Запрошенная страница не найдена!',
             'keywords' => 'страница не найдена, page not found, 404',
         ];
-        http_response_code(404);
 
-        return $this->render('errors/not-found');
+        return $this->render(
+            'errors/not-found',
+            status: 404,
+        );
     }
 }
