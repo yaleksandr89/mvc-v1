@@ -12,34 +12,18 @@ PHP, Composer, PHPUnit и PHPStan запускаются внутри PHP-кон
 
 ## Первый запуск
 
-```bash
-make init
-make build
-make up
-make composer-install
-make demo-data
-```
-
-`make init`:
-
-- создаёт `.env.docker` на основе [`.env.docker.example`](../.env.docker.example), если файла ещё нет;
-- подставляет текущие host UID/GID;
-- создаёт `logs/` и `runtime/cache/`.
+| Команда | Что делает | Примечание |
+|---|---|---|
+| `make init` | Создаёт `.env.docker`, `logs/` и `runtime/cache/` | `.env.docker` создаётся только при отсутствии |
+| `make build` | Собирает Docker-образ PHP | |
+| `make up` | Запускает Nginx, PHP-FPM и PostgreSQL | Ждёт готовности сервисов |
+| `make composer-install` | Устанавливает зависимости из `composer.lock` | Выполняется внутри PHP-контейнера |
+| `make demo-data` | Загружает 50 демонстрационных статей | Только в пустую `blog_posts` |
+| `make db-check` | Показывает версию PostgreSQL и состояние `blog_posts` | Удобная проверка после первого запуска |
 
 После запуска приложение по умолчанию доступно на `http://localhost:8080`.
 
-Полезная проверка состояния:
-
-```bash
-make ps
-make db-check
-```
-
-Остановить контейнеры, сохранив PostgreSQL volume:
-
-```bash
-make down
-```
+Остановить окружение можно командой `make down`: контейнеры будут остановлены, а том PostgreSQL сохранится.
 
 ## Docker Compose
 
@@ -49,29 +33,9 @@ make down
 - `nginx` — Nginx 1.30.4;
 - `postgres` — PostgreSQL 18.4.
 
-PHP-контейнер собирается из [`docker/php/Dockerfile`](../docker/php/Dockerfile). Пользователь `app` получает UID/GID пользователя хоста, чтобы `vendor`, runtime-артефакты и другие создаваемые файлы не становились root-owned.
+PHP-контейнер собирается из [`docker/php/Dockerfile`](../docker/php/Dockerfile). Пользователь `app` получает UID/GID пользователя хоста, поэтому `vendor`, отчёты и другие файлы, создаваемые внутри контейнера, не должны становиться принадлежащими `root`.
 
-Основные команды:
-
-```bash
-make build
-make up
-make down
-make restart php
-make restart nginx
-make restart postgres
-make log php
-make log nginx
-make log postgres
-make log-all
-make in php
-```
-
-Проверить все доступные Make targets можно обычной командой:
-
-```bash
-make
-```
+Полный список команд для управления окружением приведён в разделе [«Все команды Make»](#все-команды-make).
 
 ## Переменные окружения
 
@@ -79,165 +43,134 @@ make
 
 Основные группы настроек:
 
-- `HOST_UID`, `HOST_GID` — права файлов на хосте;
+- `HOST_UID`, `HOST_GID` — UID/GID пользователя хоста;
 - `APP_PORT` — внешний HTTP-порт, по умолчанию `8080`;
-- `DB_FORWARD_PORT` — проброс PostgreSQL на хост;
-- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` — локальный PostgreSQL;
+- `DB_FORWARD_PORT` — порт PostgreSQL на хосте;
+- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` — параметры локальной PostgreSQL;
 - `APP_ENV`, `APP_NAMESPACE`, `APP_TIMEZONE` — настройки приложения;
-- `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` — подключение приложения к БД.
+- `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` — подключение приложения к базе.
 
-Значения в example-файле предназначены только для локальной разработки. Production secrets в Git не добавляются.
+Значения в файле-примере предназначены только для локальной разработки. Реальные секреты в Git добавлять не нужно.
 
 Для ручного запуска без Docker используется отдельный шаблон [`.env.example`](../.env.example).
 
 ## PostgreSQL и демонстрационные данные
 
-При первом старте нового PostgreSQL volume схема создаётся из [`docs/db_schema_only.sql`](db_schema_only.sql).
+При первом старте нового тома PostgreSQL схема создаётся из [`docs/db_schema_only.sql`](db_schema_only.sql). Для демонстрации можно загрузить 50 статей из [`docs/db_demo_data.sql`](db_demo_data.sql).
 
-Заполнить пустую таблицу 50 демонстрационными статьями:
+| Команда | Что делает | Примечание |
+|---|---|---|
+| `make db-check` | Проверяет версию PostgreSQL и состояние `blog_posts` | |
+| `make demo-data` | Загружает 50 демонстрационных статей | Работает только с пустой `blog_posts` |
+| `make postgres-reinit CONFIRM=postgres18` | Полностью пересоздаёт локальный том PostgreSQL | Удаляет текущие локальные данные |
+| `make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1` | Пересоздаёт PostgreSQL и сразу загружает 50 статей | Удаляет текущие локальные данные |
 
-```bash
-make demo-data
-```
-
-Команда специально отказывается работать, если `blog_posts` уже содержит строки.
-
-Проверить версию PostgreSQL и состояние таблицы:
-
-```bash
-make db-check
-```
-
-Полное пересоздание локального PostgreSQL volume является деструктивной операцией и требует явного подтверждения:
-
-```bash
-make postgres-reinit CONFIRM=postgres18
-```
-
-С демонстрационными данными:
-
-```bash
-make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1
-```
+> [!IMPORTANT]
+> `make demo-data` не перезаписывает существующие статьи. Если таблица уже заполнена, команда завершится с ошибкой без изменения данных. Полный сброс доступен только через `postgres-reinit` с явным подтверждением.
 
 ## Отдельная тестовая база
 
-PHPUnit не работает с основной `mvc_v1`. Для тестов используется отдельная база `mvc_v1_test`.
+PHPUnit не работает с основной базой `mvc_v1`. Для тестов используется отдельная `mvc_v1_test`.
 
-Основные команды:
+| Команда | Что делает | Примечание |
+|---|---|---|
+| `make test-db-create` | Создаёт `mvc_v1_test`, если её ещё нет | Существующую базу не удаляет |
+| `make test-db-reset` | Пересоздаёт схему и загружает три тестовые статьи | Используется автоматически перед тестами |
+| `make test-db-check` | Проверяет имя базы и состояние тестовых данных | Ожидается `3|1|3` |
+| `make test-db-drop CONFIRM=mvc_v1_test` | Удаляет только `mvc_v1_test` | Требует явного подтверждения |
 
-```bash
-make test-db-create
-make test-db-reset
-make test-db-check
-```
+`make test`, `make test-dox`, `make coverage`, `make coverage-html` и `make check` сами сбрасывают тестовую базу перед запуском.
 
-`make test`, `make test-dox`, `make coverage`, `make coverage-html` и `make check` сами вызывают reset тестовой базы перед запуском.
+## Тесты, анализ и покрытие
 
-Тестовый fixture восстанавливает три детерминированные статьи. Удаление самой тестовой базы требует отдельного подтверждения:
+| Команда | Что делает | Примечание |
+|---|---|---|
+| `make test` | Запускает PHPUnit | |
+| `make test-dox` | Запускает PHPUnit с читаемыми названиями сценариев | |
+| `make analyse` | Запускает PHPStan | |
+| `make check` | Выполняет Composer validation, Composer audit, PHPStan и PHPUnit | Основная комплексная проверка |
+| `make coverage` | Показывает покрытие и создаёт Clover XML | `runtime/coverage.xml` |
+| `make coverage-html` | Создаёт HTML-отчёт покрытия | `runtime/coverage/index.html` |
+| `make smoke` | Выполняет сквозную HTTP-проверку | Требует 50 демонстрационных статей |
 
-```bash
-make test-db-drop CONFIRM=mvc_v1_test
-```
+Покрытие используется как диагностический инструмент, а не как публичный показатель качества. CI передаёт Clover в Codecov через OIDC. Отдельного требования достигать 100% нет: тесты должны защищать реальное поведение проекта, а не искусственно исполнять недостижимые ветви ради процента.
 
-## Тесты и статический анализ
+## Сквозная HTTP-проверка
 
-Основные проверки:
+`make smoke` запускает настоящий HTTP-сценарий через поднятое Docker-окружение и проверяет:
 
-```bash
-make test
-make test-dox
-make analyse
-make check
-```
-
-- `make test` запускает PHPUnit;
-- `make test-dox` выводит те же сценарии в читаемом TestDox-формате;
-- `make analyse` запускает PHPStan;
-- `make check` выполняет Composer validation, Composer audit, PHPStan и PHPUnit.
-
-Запустить произвольную PHP- или Composer-команду внутри контейнера можно так:
-
-```bash
-make php CMD="-v"
-make composer CMD="validate"
-```
-
-## Покрытие
-
-Покрытие является диагностическим инструментом, а не публичным KPI проекта.
-
-Текстовый отчёт и Clover XML:
-
-```bash
-make coverage
-```
-
-Clover сохраняется в:
-
-```text
-runtime/coverage.xml
-```
-
-HTML-отчёт:
-
-```bash
-make coverage-html
-```
-
-Результат:
-
-```text
-runtime/coverage/index.html
-```
-
-CI передаёт Clover в Codecov через OIDC. Отдельного требования достигать 100% нет: тесты должны защищать реальное поведение проекта, а не искусственно исполнять defensive/unreachable branches ради процента.
-
-## Runtime smoke
-
-После загрузки 50 demo articles можно запустить:
-
-```bash
-make smoke
-```
-
-Smoke выполняет настоящий HTTP-сценарий через поднятый Docker stack и проверяет, среди прочего:
-
-- `200` для страниц;
-- CSRF failure `403`;
-- CRUD redirects `302` и `Location`;
-- `405 Method Not Allowed` с `Allow: POST`;
+- `200` для обычных страниц;
+- `403` при неверном CSRF-токене;
+- перенаправления `302` и заголовок `Location`;
+- `405 Method Not Allowed` и заголовок `Allow: POST`;
 - `404` после удаления статьи;
-- восстановление исходного количества demo rows.
+- восстановление исходного количества демонстрационных строк.
 
-Это дополняет PHPUnit: unit/integration tests работают внутри процесса, а smoke проверяет связку Nginx → PHP-FPM → приложение → PostgreSQL.
+Эта проверка дополняет PHPUnit: тесты проверяют код и интеграцию внутри PHP-процесса, а `make smoke` проходит весь путь Nginx → PHP-FPM → приложение → PostgreSQL.
 
 ## GitHub Actions
 
-Workflow [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) запускается для push и pull request.
+Сценарий [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) запускается при отправке изменений в репозиторий и для pull request.
 
-В чистом runner он:
+В чистом окружении GitHub Actions он:
 
 1. создаёт локальное окружение;
-2. проверяет Docker Compose config;
-3. собирает и запускает Docker stack;
-4. устанавливает зависимости из lock;
-5. проверяет embedded framework Composer manifest;
-6. выполняет PHP syntax lint;
+2. проверяет конфигурацию Docker Compose;
+3. собирает и запускает контейнеры;
+4. устанавливает зависимости из `composer.lock`;
+5. проверяет Composer-файл встроенного MVC-ядра;
+6. проверяет синтаксис PHP;
 7. запускает `make check`;
-8. генерирует coverage и отправляет Clover в Codecov;
-9. загружает demo data;
+8. создаёт отчёт покрытия и передаёт Clover в Codecov;
+9. загружает демонстрационные данные;
 10. проверяет PostgreSQL;
-11. запускает runtime smoke;
-12. удаляет isolated test database и останавливает stack.
+11. запускает `make smoke`;
+12. удаляет тестовую базу и останавливает контейнеры.
 
-CI не выполняет deployment.
+Развёртывание приложения этот сценарий не выполняет.
+
+## Все команды Make
+
+`make` без аргументов выводит встроенную справку. Ниже перечислены все команды, определённые текущим [`Makefile`](../Makefile).
+
+| Команда | Что делает | Примечание |
+|---|---|---|
+| `make` / `make help` | Показывает справку по командам | |
+| `make init` | Создаёт `.env.docker`, `logs/` и `runtime/cache/` | Не перезаписывает существующий `.env.docker` |
+| `make check-env` | Проверяет наличие `.env.docker` и Docker Compose | |
+| `make config` | Проверяет итоговую конфигурацию Docker Compose | |
+| `make build` | Собирает Docker-образ PHP | |
+| `make up` | Запускает окружение и ждёт готовности сервисов | |
+| `make down` | Останавливает окружение | Том PostgreSQL сохраняется |
+| `make restart <service>` | Перезапускает выбранный сервис | `php`, `nginx` или `postgres` |
+| `make ps` | Показывает состояние контейнеров проекта | |
+| `make log <service>` | Показывает журнал выбранного сервиса в реальном времени | `php`, `nginx` или `postgres` |
+| `make log-all` | Показывает журналы всех сервисов в реальном времени | |
+| `make in <service>` | Открывает оболочку выбранного контейнера | `php`, `nginx` или `postgres` |
+| `make php CMD="..."` | Запускает произвольную PHP-команду от пользователя `app` | Например: `make php CMD="-v"` |
+| `make composer CMD="..."` | Запускает произвольную команду Composer | Например: `make composer CMD="validate"` |
+| `make composer-install` | Устанавливает зависимости из `composer.lock` | |
+| `make test` | Запускает PHPUnit | Перед запуском сбрасывает тестовую базу |
+| `make test-dox` | Запускает PHPUnit в формате TestDox | Перед запуском сбрасывает тестовую базу |
+| `make coverage` | Показывает покрытие и создаёт Clover XML | Перед запуском сбрасывает тестовую базу |
+| `make coverage-html` | Создаёт HTML-отчёт покрытия | Перед запуском сбрасывает тестовую базу |
+| `make analyse` | Запускает PHPStan | |
+| `make check` | Запускает Composer validation, Composer audit, PHPStan и PHPUnit | Перед запуском сбрасывает тестовую базу |
+| `make smoke` | Запускает сквозную CRUD/CSRF-проверку через HTTP | Основная база должна содержать 50 демонстрационных статей |
+| `make db-check` | Показывает версию PostgreSQL и состояние `blog_posts` | |
+| `make demo-data` | Загружает 50 демонстрационных статей | Только в пустую `blog_posts` |
+| `make test-db-create` | Создаёт `mvc_v1_test`, если она отсутствует | |
+| `make test-db-reset` | Пересоздаёт схему и тестовые данные | Удаляет только схему внутри `mvc_v1_test` |
+| `make test-db-check` | Проверяет тестовую базу | |
+| `make test-db-drop CONFIRM=mvc_v1_test` | Удаляет `mvc_v1_test` | Требует точного подтверждения |
+| `make postgres-reinit CONFIRM=postgres18` | Пересоздаёт локальный том PostgreSQL | Удаляет локальные данные основной базы |
+| `make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1` | Пересоздаёт PostgreSQL и загружает 50 статей | Удаляет локальные данные основной базы |
 
 ## Права на файлы
 
-Write-producing PHP/Composer-команды выполняются в контейнере от пользователя `app`, связанного с host UID/GID через `.env.docker`.
+PHP- и Composer-команды, которые создают файлы, выполняются в контейнере от пользователя `app`, связанного с UID/GID пользователя хоста через `.env.docker`.
 
-Поэтому штатная работа через Make не должна создавать root-owned файлы в checkout. Исправлять права массовыми `chmod`/`chown` для обычного цикла разработки не требуется.
+Поэтому штатная работа через Make не должна создавать в рабочей копии файлы, принадлежащие `root`. Массовые `chmod`, `chown` и удаление каталогов для обычного цикла разработки не требуются.
 
 ## Запуск без Docker
 
@@ -248,15 +181,15 @@ Docker Compose — рекомендуемый и воспроизводимый 
 - PHP 8.5 с `mbstring`, `pdo` и `pdo_pgsql`;
 - Composer;
 - PostgreSQL;
-- Nginx или другой веб-сервер с document root на `public/`.
+- Nginx или другой веб-сервер с корневым каталогом на `public/`.
 
 Используйте [`.env.example`](../.env.example) как шаблон окружения.
 
-Схема и demo data находятся в:
+Схема и демонстрационные данные находятся в:
 
 - [`docs/db_schema_only.sql`](db_schema_only.sql);
 - [`docs/db_demo_data.sql`](db_demo_data.sql).
 
-Пример минимальной конфигурации Nginx + PHP-FPM: [`docs/conf/nginx-configuration.conf`](conf/nginx-configuration.conf). Перед использованием в нём нужно адаптировать `server_name`, `root` и `fastcgi_pass` под свою систему.
+Пример минимальной конфигурации Nginx + PHP-FPM: [`docs/conf/nginx-configuration.conf`](conf/nginx-configuration.conf). Перед использованием нужно адаптировать `server_name`, `root` и `fastcgi_pass` под свою систему.
 
-Для production-развёртывания этот пример сам по себе недостаточен: TLS, process supervision, секреты, backups и эксплуатационные политики находятся вне scope учебного проекта.
+Для боевого развёртывания этого примера недостаточно: TLS, управление процессами, секреты, резервные копии и эксплуатационные политики находятся за рамками учебного проекта.
