@@ -7,6 +7,14 @@
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
+<p align="center">
+  <img
+    src="docs/img/mvc-v1-readme-cover.png"
+    alt="MVC на PHP — учебный блог с собственным MVC-ядром, PostgreSQL и Docker Compose"
+    width="100%"
+  >
+</p>
+
 ## Выберите язык
 
 | Русский | English | Español | 中文 | Français | Deutsch |
