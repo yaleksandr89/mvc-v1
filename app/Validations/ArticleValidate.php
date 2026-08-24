@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Validations;
 
@@ -6,14 +7,21 @@ use App\Models\ArticleModal;
 
 class ArticleValidate
 {
-    public static function validate(array $data): array
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public static function validate(
+        string $title,
+        string $excerpt,
+        string $contentHtml,
+        ?int $id = null
+    ): array
     {
         $errors = [];
 
-        $id = $data['id'] ?? null;
-        $title = mb_strtolower(trim($data['title']));
-        $excerpt = mb_strtolower(trim($data['excerpt']));
-        $contentHtml = mb_strtolower(trim($data['content_html']));
+        $title = mb_strtolower(trim($title));
+        $excerpt = trim($excerpt);
+        $contentHtml = trim($contentHtml);
 
         // Название
         if (empty($title)) {
@@ -23,8 +31,8 @@ class ArticleValidate
             $errors['title']['minLength'] = 'Минимум 15 символов';
         }
         if (
-            ($article = ArticleModal::getInstance()->getByColumn('title', $title)) &&
-            $article['id'] !== $id
+            ($article = ArticleModal::getInstance()->getByTitle($title)) &&
+            ((int)$article['id'] !== $id)
         ) {
             $errors['title']['unique'] = 'Название уже существует';
         }

@@ -1,0 +1,88 @@
+name: Bug report / Сообщить об ошибке
+description: Report a reproducible problem in the mvc-v1 educational MVC project. / Сообщите о воспроизводимой проблеме в учебном MVC-проекте mvc-v1.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not publish passwords, `.env` contents, cookies/session IDs, tokens, or production data.
+        Не публикуйте пароли, содержимое `.env`, cookies/session IDs, токены или production-данные.
+
+        Security-sensitive issues must follow the security policy: https://github.com/yaleksandr89/mvc-v1/security/policy
+        Проблемы, затрагивающие безопасность, направляйте по политике безопасности.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area / Затронутая область
+      options:
+        - Routing / Маршрутизация
+        - Controller / Контроллер
+        - Model / PDO / Модель / PDO
+        - Validation / Валидация
+        - View / Output / Представление / Вывод
+        - Session / CSRF / Сессия / CSRF
+        - PostgreSQL / PostgreSQL
+        - Setup / Configuration / Установка / Конфигурация
+        - Other / Другое
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version / Версия PHP
+      placeholder: "PHP 8.5.x"
+    validations:
+      required: true
+  - type: input
+    id: project-version
+    attributes:
+      label: Project version or commit / Версия проекта или коммит
+      placeholder: "e.g. 1.0.0 or abc1234 / например, 1.0.0 или abc1234"
+    validations:
+      required: true
+  - type: input
+    id: postgresql-version
+    attributes:
+      label: PostgreSQL version (optional) / Версия PostgreSQL (необязательно)
+      placeholder: "e.g. PostgreSQL 18.x / например, PostgreSQL 18.x"
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (optional) / Окружение (необязательно)
+      description: "OS, web server, and relevant configuration without secrets. / ОС, веб-сервер и важная конфигурация без секретов."
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce / Шаги воспроизведения
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result / Ожидаемый результат
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result / Фактический результат
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs or details (optional) / Очищенные логи или детали (необязательно)
+      description: Remove sensitive values before submitting. / Удалите чувствительные значения перед отправкой.
+      render: text
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations / Подтверждения
+      options:
+        - label: I removed sensitive data. / Я удалил(а) чувствительные данные.
+          required: true
+        - label: I searched existing Issues. / Я проверил(а) существующие Issues.
+          required: true

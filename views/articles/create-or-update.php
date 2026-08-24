@@ -1,68 +1,75 @@
 <?php
+declare(strict_types=1);
+
+use App\Helper\SecurityHelper;
+
 /**
- * @var array $article
  * @var string $h1
  * @var string $desc
  * @var string $nameMethod
+ * @var 'create'|'edit' $type
+ * @var string $formAction
+ * @var string|null $deleteAction
+ * @var string $csrfToken
+ * @var string $title
+ * @var string $excerpt
+ * @var string $contentHtml
+ * @var list<string> $errorsTitle
+ * @var list<string> $errorsExcerpt
+ * @var list<string> $errorsContentHtml
+ * @var ''|' is-invalid' $titleIsInvalid
+ * @var ''|' is-invalid' $excerptIsInvalid
+ * @var ''|' is-invalid' $contentHtmlIsInvalid
  */
-
-['title' => $title, 'excerpt' => $excerpt, 'content_html' => $contentHtml] = $article;
-
-$errorsTitle = [];
-$errorsExcerpt = [];
-$errorsContentHtml = [];
-$titleIsInvalid = '';
-$excerptIsInvalid = '';
-$contentHtmlIsInvalid = '';
-if (array_key_exists('validation', $_SESSION)) {
-    $errorsTitle = $_SESSION['validation']['title'] ?? [];
-    $errorsExcerpt = $_SESSION['validation']['excerpt'] ?? [];
-    $errorsContentHtml = $_SESSION['validation']['content_html'] ?? [];
-
-    $titleIsInvalid = count($errorsTitle) > 0 ? ' is-invalid' : '';
-    $excerptIsInvalid = count($errorsExcerpt) > 0 ? ' is-invalid' : '';
-    $contentHtmlIsInvalid = count($errorsContentHtml) > 0 ? ' is-invalid' : '';
-    deleteSessionKey('validation');
-}
-
-$title = $_SESSION['old_form_value']['title'] ?? $title;
-$excerpt = $_SESSION['old_form_value']['excerpt'] ?? $excerpt;
-$contentHtml = $_SESSION['old_form_value']['content_html'] ?? $contentHtml;
-deleteSessionKey('old_form_value');
 ?>
 
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
-    <h1><?= $h1 ?></h1>
-    <span><?= $desc ?></span>
+    <h1><?= SecurityHelper::escapeHtml($h1) ?></h1>
+    <span><?= SecurityHelper::escapeHtml($desc) ?></span>
 </div>
 <div class="card">
     <div class="card-header">
-        <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
+        <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
-    <div class="card-body pl-5 pr-5">
+    <div class="card-body px-3 px-md-5">
         <div class="card mb-3">
             <div class="card-body d-flex flex-column">
                 <?php if ('edit' === $type): ?>
-                    <form action="/articles/<?= $article['id'] ?>/edit" method="POST">
+                    <form
+                        id="delete-article-form"
+                        action="<?= SecurityHelper::escapeHtml($deleteAction) ?>"
+                        method="POST"
+                    >
+                        <input
+                            type="hidden"
+                            name="_csrf"
+                            value="<?= SecurityHelper::escapeHtml($csrfToken) ?>"
+                        >
+                    </form>
+                    <form action="<?= SecurityHelper::escapeHtml($formAction) ?>" method="POST">
                 <?php else: ?>
-                    <form action="/articles/create" method="POST">
+                    <form action="<?= SecurityHelper::escapeHtml($formAction) ?>" method="POST">
                 <?php endif; ?>
+                    <input
+                        type="hidden"
+                        name="_csrf"
+                        value="<?= SecurityHelper::escapeHtml($csrfToken) ?>"
+                    >
                     <div class="mb-3">
                         <label for="title" class="form-label">Название:</label>
                         <input
                                 type="text"
                                 id="title"
-                                class="form-control<?= $titleIsInvalid ?>"
+                                class="form-control<?= SecurityHelper::escapeHtml($titleIsInvalid) ?>"
                                 name="title"
-                                value="<?= $title ?>"
+                                value="<?= SecurityHelper::escapeHtml($title) ?>"
                                 aria-describedby="titleFeedback"
                                 required
                         >
                         <?php if (count($errorsTitle) > 0): ?>
                             <?php foreach ($errorsTitle as $errorTitle): ?>
                                 <div id="titleFeedback" class="invalid-feedback">
-                                    <?= $errorTitle ?>
-                                    <?php unset($errorTitle); ?>
+                                    <?= SecurityHelper::escapeHtml($errorTitle) ?>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -71,60 +78,64 @@ deleteSessionKey('old_form_value');
                         <label for="excerpt" class="form-label">Краткое содержание:</label>
                         <textarea
                                 id="excerpt"
-                                class="form-control<?= $excerptIsInvalid ?>"
+                                class="form-control<?= SecurityHelper::escapeHtml($excerptIsInvalid) ?>"
                                 name="excerpt"
                                 rows="3"
                                 aria-describedby="excerptFeedback"
                                 required
-                        ><?= $excerpt ?></textarea>
+                        ><?= SecurityHelper::escapeHtml($excerpt) ?></textarea>
                         <?php if (count($errorsExcerpt) > 0): ?>
                             <?php foreach ($errorsExcerpt as $errorExcerpt): ?>
                                 <div id="excerptFeedback" class="invalid-feedback">
-                                    <?= $errorExcerpt ?>
+                                    <?= SecurityHelper::escapeHtml($errorExcerpt) ?>
                                 </div>
                             <?php endforeach; ?>
-                            <?php unset($errorsExcerpt); ?>
                         <?php endif; ?>
                     </div>
                     <div class="mb-3">
                         <label for="contentHtmlFeedback" class="form-label">Содержание:</label>
                         <textarea
                                 id="contentHtmlFeedback"
-                                class="form-control<?= $contentHtmlIsInvalid ?>"
+                                class="form-control<?= SecurityHelper::escapeHtml($contentHtmlIsInvalid) ?>"
                                 name="content_html"
                                 rows="6"
                                 aria-describedby="contentHtmlFeedback"
                                 required
-                        ><?= $contentHtml ?></textarea>
+                        ><?= SecurityHelper::escapeHtml($contentHtml) ?></textarea>
                         <?php if (count($errorsContentHtml) > 0): ?>
                             <?php foreach ($errorsContentHtml as $errorContentHtml): ?>
                                 <div id="contentHtmlFeedback" class="invalid-feedback">
-                                    <?= $errorContentHtml ?>
+                                    <?= SecurityHelper::escapeHtml($errorContentHtml) ?>
                                 </div>
                             <?php endforeach; ?>
-                            <?php unset($errorsContentHtml); ?>
                         <?php endif; ?>
                     </div>
-                    <div class="mt-auto d-flex justify-content-between">
+                    <div class="mt-auto d-flex flex-column flex-md-row justify-content-between gap-3">
                         <?php if ('edit' === $type): ?>
-                            <div>
-                                <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-lg btn-outline-dark">
                                     Обновить
                                 </button>
-                                <a href="/articles/<?= $article['id'] ?>/delete" class="btn btn-lg btn-outline-danger btn_link_dark ms-2">
+                                <button
+                                    type="submit"
+                                    form="delete-article-form"
+                                    class="btn btn-lg btn-outline-danger"
+                                >
                                     Удалить
-                                </a>
+                                </button>
                             </div>
-                            <a href="/articles" class="btn btn-lg btn-outline-dark">
+                            <a href="/articles" class="btn btn-lg btn-outline-dark align-self-md-center">
                                 К списку статей
                             </a>
                         <?php else: ?>
-                            <button type="submit" class="btn btn-lg btn-outline-dark btn_link_dark">
-                                <?= 'Создать' ?>
-                            </button>
-                            <a href="/articles" class="btn btn-lg btn-outline-dark btn_link_dark">
-                                К списку статей
-                            </a>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-lg btn-outline-dark">
+                                    Создать
+                                </button>
+                                <a href="/articles" class="btn btn-lg btn-outline-dark">
+                                    К списку статей
+                                </a>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </form>

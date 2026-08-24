@@ -1,22 +1,80 @@
 {
-  "autoload": {
-    "psr-4": {
-      "App\\": "app"
+    "name": "yaleksandr89/mvc-v1",
+    "description": "Educational PHP MVC implementation with a small custom framework and PostgreSQL CRUD demo.",
+    "homepage": "https://github.com/yaleksandr89/mvc-v1",
+    "keywords": [
+        "php",
+        "mvc",
+        "custom-framework",
+        "postgresql",
+        "pdo",
+        "crud",
+        "educational"
+    ],
+    "authors": [
+        {
+            "name": "Александр Юрченко",
+            "email": "y.aleksandr89@yandex.ru",
+            "homepage": "https://github.com/yaleksandr89",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/yaleksandr89/mvc-v1/issues",
+        "source": "https://github.com/yaleksandr89/mvc-v1",
+        "security": "https://github.com/yaleksandr89/mvc-v1/security/policy",
+        "forum": "https://github.com/yaleksandr89/mvc-v1/discussions"
+    },
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://boosty.to/backendbezpafosa"
+        },
+        {
+            "type": "other",
+            "url": "https://sponsr.ru/backendbezpafosa/"
+        }
+    ],
+    "type": "project",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "core"
+        }
+    ],
+    "require": {
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-pdo_pgsql": "*",
+        "php": "^8.5",
+        "yaa/mvc-framework": "dev-master"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^13.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --configuration=phpunit.xml.dist",
+        "analyse": "phpstan analyse --no-progress",
+        "check": [
+            "@composer validate --strict --no-check-publish",
+            "@composer audit --locked",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true
     }
-  },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "core"
-    }
-  ],
-  "require": {
-    "ext-mbstring": "*",
-    "ext-pdo": "*",
-    "php": "^8",
-    "yaa/mvc-framework": "dev-master"
-  },
-  "require-dev": {
-    "symfony/var-dumper": "^7"
-  }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.0/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         cacheDirectory="runtime/cache/phpunit"
+         beStrictAboutOutputDuringTests="true"
+         failOnEmptyTestSuite="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         colors="true">
+    <testsuites>
+        <testsuite name="application">
+            <directory suffix="Test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="DB_NAME" value="mvc_v1_test" force="true"/>
+    </php>
+
+    <source>
+        <include>
+            <directory suffix=".php">app/Controllers</directory>
+            <directory suffix=".php">app/Helper</directory>
+            <directory suffix=".php">app/Models</directory>
+            <directory suffix=".php">app/Presentation</directory>
+            <directory suffix=".php">app/Validations</directory>
+            <directory suffix=".php">core/src</directory>
+            <file>config/app.php</file>
+        </include>
+    </source>
+</phpunit>

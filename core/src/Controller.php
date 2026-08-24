@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
@@ -7,26 +8,36 @@ class Controller
     protected string $layout = LAYOUT;
 
     // Мета данные: title, description, keywords
-    protected array $meta;
+    /** @var array<string, mixed> */
+    protected array $meta = [];
 
-    // Общее количество записей
-    protected int $total = 0;
-
-    protected function render(string $view, array $data = []): Page
+    /**
+     * @param array<string, mixed> $data
+     */
+    protected function render(
+        string $view,
+        array $data = [],
+        int $status = 200,
+    ): Page
     {
         return new Page(
             $this->layout,
             $this->meta,
             $view,
-            $data
+            $data,
+            $status,
         );
     }
 
     protected static function getCurrentPage(): int
     {
-        return array_key_exists('page', $_GET)
-            ? (int)$_GET['page']
-            : 1;
+        $page = $_GET['page'] ?? null;
+
+        if (!is_int($page) && !is_string($page)) {
+            return 1;
+        }
+
+        return (int)$page;
     }
 
     protected static function getPerPage(int $perPage = 10): int
@@ -34,10 +45,14 @@ class Controller
         return $perPage;
     }
 
+    /**
+     * @param class-string<Model> $classModel
+     */
     protected static function getTotalPages(string $classModel, string $tableName): int
     {
-        /** @var Model $classModel - класс, который является дочернего класса Model */
-        return $classModel::getInstance()
+        $total = $classModel::getInstance()
             ->getColumn("SELECT COUNT(*) AS count FROM $tableName");
+
+        return is_numeric($total) ? (int)$total : 0;
     }
 }

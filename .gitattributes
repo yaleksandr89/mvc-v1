@@ -1,0 +1,28 @@
+* text=auto eol=lf
+
+*.php text
+*.js text
+*.css text
+*.md text
+*.sql text
+*.conf text
+*.example text
+*.json text
+*.xml text
+*.webmanifest text
+*.svg text
+*.yml text
+*.yaml text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.zip binary
+*.gz binary

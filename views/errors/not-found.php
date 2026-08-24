@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <div id="notfound">
     <div class="notfound">
         <div class="notfound-404">

@@ -1,37 +1,41 @@
+<?php
+declare(strict_types=1);
+
+use App\Helper\SecurityHelper;
+
+/**
+ * @var string $h1
+ * @var string $desc
+ * @var string $nameMethod
+ * @var array{
+ *     telegram: array{label: string, url: string},
+ *     vk: array{label: string, url: string},
+ *     email: array{label: string, url: string},
+ *     linkedin: array{label: string, url: string},
+ *     github: array{label: string, url: string}
+ * } $contacts
+ */
+?>
 <div class="alert alert-secondary pt-3 pb-3" role="alert">
-    <h1><?= $h1 ?></h1>
-    <span><?= $desc ?></span>
+    <h1><?= SecurityHelper::escapeHtml($h1) ?></h1>
+    <span><?= SecurityHelper::escapeHtml($desc) ?></span>
 </div>
 <div class="card">
     <div class="card-header">
-        <span>Используемый контроллер: <code><?= $nameMethod ?></code></span>
+        <span>Используемый контроллер: <code><?= SecurityHelper::escapeHtml($nameMethod) ?></code></span>
     </div>
-    <div class="card-body pl-5 pr-5">
+    <div class="card-body px-3 px-md-5">
         <div class="text-center mt-3 mb-3">
-            <a class="btn link_dark telegram mb-2" href="<?= $contacts['telegram'] ?>" target="_blank"
-               rel="nofollow noopener">
-                Telegram<span class="blink">_</span>
-            </a>
-            <a class="btn link_dark skype mb-2" href="<?= $contacts['skype'] ?>">
-                Skype<span class="blink">_</span>
-            </a>
-            <a class="btn link_dark vk mb-2" href="<?= $contacts['vkontakte'] ?>"
-               target="_blank" rel="nofollow noopener">
-                Vkontakte<span class="blink">_</span>
-            </a>
-            <a class="btn link_dark email mb-2"
-               href="<?= $contacts['email'] ?>!"
-               target="_blank" rel="nofollow noopener">
-                Email<span class="blink">_</span>
-            </a>
-            <a class="btn link_dark linkedin mb-2" href="<?= $contacts['linkedin'] ?>"
-               target="_blank" rel="nofollow noopener">
-                Linkedin<span class="blink">_</span>
-            </a>
-            <a class="btn link_dark github mb-2" href="<?= $contacts['github'] ?>"
-               target="_blank" rel="nofollow noopener">
-                Github<span class="blink">_</span>
-            </a>
+            <?php foreach ($contacts as $modifier => $contact): ?>
+                <a
+                    class="btn link_dark <?= SecurityHelper::escapeHtml($modifier) ?> mb-2"
+                    href="<?= SecurityHelper::escapeHtml($contact['url']) ?>"
+                    target="_blank"
+                    rel="nofollow noopener"
+                >
+                    <?= SecurityHelper::escapeHtml($contact['label']) ?><span class="blink">_</span>
+                </a>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>

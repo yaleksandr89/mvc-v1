@@ -1,0 +1,12 @@
+parameters:
+    level: 8
+    parallel:
+        maximumNumberOfProcesses: 1
+    paths:
+        - app
+        - core/src
+        - config
+        - public
+        - tests
+    scanFiles:
+        - public/index.php

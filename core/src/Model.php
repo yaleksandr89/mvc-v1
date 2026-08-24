@@ -1,86 +1,105 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
 use PDO;
 use PDOException;
 use PDOStatement;
+use Yaa\Framework\Exceptions\DatabaseException;
 use Yaa\Framework\Traits\SingletonTrait;
 
-class Model
+/** @phpstan-consistent-constructor */
+abstract class Model
 {
     use SingletonTrait;
 
     private static ?PDO $dbh = null;
 
-    private function __construct()
+    protected function __construct()
     {
-        $dns = sprintf(
-            'pgsql:host=%s;dbname=%s',
-            env('DB_HOST'),
-            env('DB_NAME')
-        );
-
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ];
-
         try {
-            self::$dbh = new PDO($dns, env('DB_USER'), env('DB_PASS'), $options);
-        } catch (PDOException $error) {
-            file_put_contents(
-                LOG . '/database-errors.txt',
-                '(' . date('Y-m-d H:i:s') . ') ' .
-                $error->getMessage() . PHP_EOL,
-                FILE_APPEND
-            );
+            $host = env('DB_HOST');
+            $database = env('DB_NAME');
+            $user = env('DB_USER');
+            $password = env('DB_PASS');
+            if (
+                !is_string($host) ||
+                !is_string($database) ||
+                !is_string($user) ||
+                !is_string($password)
+            ) {
+                throw new PDOException('Database configuration must contain string values.');
+            }
 
-            http_response_code($error->getCode());
-            echo $error->getMessage();
-            exit;
+            $dsn = sprintf('pgsql:host=%s;dbname=%s', $host, $database);
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+
+            self::$dbh = new PDO($dsn, $user, $password, $options);
+        } catch (PDOException $error) {
+            $this->handleDatabaseFailure($error, __METHOD__);
         }
     }
 
-    protected function db_query($sql_query, $params_execute = []): false|PDOStatement
+    /**
+     * @param array<array-key, mixed> $paramsExecute
+     */
+    protected function db_query(string $sqlQuery, array $paramsExecute = []): PDOStatement
     {
-        $sth = self::$dbh->prepare($sql_query);
-
-        $verifiedParams = [];
-        foreach ($params_execute as $placeholder => $item) {
-            if (is_int($item)) {
-                $sth->bindParam(count($params_execute), $placeholder, PDO::PARAM_INT);
-                if (is_string($placeholder)) {
-                    $verifiedParams[$placeholder] = $item;
-                } else {
-                    $verifiedParams[] = $item;
-                }
-            } elseif (is_string($item)) {
-                $sth->bindParam(count($params_execute), $placeholder, PDO::PARAM_STR);
-                if (is_string($placeholder)) {
-                    $verifiedParams[$placeholder] = $item;
-                } else {
-                    $verifiedParams[] = $item;
-                }
-            }
+        $sth = $this->connection()->prepare($sqlQuery);
+        if ($sth === false) {
+            throw new PDOException('Failed to prepare database query.');
         }
 
-        $sth->execute($verifiedParams);
+        if (!$sth->execute($paramsExecute)) {
+            throw new PDOException('Failed to execute database query.');
+        }
 
         return $sth;
     }
 
-    protected function getLastInsertId(): bool|string
+    private function connection(): PDO
     {
-        return self::$dbh->lastInsertId();
+        if (self::$dbh === null) {
+            throw new PDOException('Database connection is not initialized.');
+        }
+
+        return self::$dbh;
     }
 
-    public function getColumn(string $sql)
+    protected function handleDatabaseFailure(PDOException $error, string $context): never
     {
-        return $this
-            ->db_query($sql)
-            ->fetchColumn();
+        @file_put_contents(
+            LOG . '/database-errors.txt',
+            sprintf(
+                "(%s) [%s] %s%s",
+                date('Y-m-d H:i:s'),
+                $context,
+                $error->getMessage(),
+                PHP_EOL
+            ),
+            FILE_APPEND
+        );
+
+        throw new DatabaseException(
+            'Database operation failed.',
+            previous: $error,
+        );
+    }
+
+    public function getColumn(string $sql): mixed
+    {
+        try {
+            return $this
+                ->db_query($sql)
+                ->fetchColumn();
+        } catch (PDOException $error) {
+            $this->handleDatabaseFailure($error, __METHOD__);
+        }
     }
 
     private function __clone()

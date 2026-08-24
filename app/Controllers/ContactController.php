@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -20,15 +21,12 @@ class ContactController extends Controller
         $desc = 'Страница с произвольным содержанием';
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
-        $contacts = [
-            'telegram' => '//t.me/yaleksandr89',
-            'skype' => 'skype:y.aleksandr89?chat',
-            'vkontakte' => '//vk.com/y.aleksandr89',
-            'email' => 'mailto:yaleksandr89@yandex.ru?subject=MVC%20V1',
-            'linkedin' => '//www.linkedin.com/in/yaleksandr89/',
-            'github' => '//github.com/yaleksandr89',
-        ];
+        /** @var array<string, array{label: string, url: string}> $contacts */
+        $contacts = require dirname(__DIR__, 2) . '/config/contacts.php';
 
-        return $this->render('contacts/index', compact('h1', 'desc', 'nameMethod', 'contacts'));
+        return $this->render(
+            'contacts/index',
+            compact('h1', 'desc', 'nameMethod', 'contacts')
+        );
     }
 }

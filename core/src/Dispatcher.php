@@ -1,21 +1,42 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
+use RuntimeException;
+use Throwable;
 use Yaa\Framework\Exceptions\ConnectClass;
 use Yaa\Framework\Exceptions\ConnectFile;
+use Yaa\Framework\Exceptions\DatabaseException;
 use Yaa\Framework\Exceptions\ExecutableMethod;
 
 class Dispatcher
 {
-    public function getPage(Track $track): ?Page
+    public function dispatch(Track $track): Page|Response
     {
-        $className = ucfirst($track->getController()) . 'Controller';
-        $path = WORK_DIR . "/Controllers/$className.php";
-        $fullName = $_ENV['APP_NAMESPACE'] . "Controllers\\$className";
-
         try {
-            if (file_exists($path)) {
+            $controllerName = $track->getController();
+            $action = $track->getAction();
+            if (
+                preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $controllerName) !== 1 ||
+                preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $action) !== 1
+            ) {
+                throw new ConnectClass('Controller or action name has an invalid format.');
+            }
+
+            $appNamespace = env('APP_NAMESPACE');
+            if (
+                !is_string($appNamespace) ||
+                preg_match('/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)+$/D', $appNamespace) !== 1
+            ) {
+                throw new ConnectClass('APP_NAMESPACE is missing or invalid.');
+            }
+
+            $className = ucfirst($controllerName) . 'Controller';
+            $path = WORK_DIR . "/Controllers/$className.php";
+            $fullName = $appNamespace . "Controllers\\$className";
+
+            if (is_file($path)) {
                 include_once $path;
             } else {
                 throw new ConnectFile("$path не найден.");
@@ -27,27 +48,39 @@ class Dispatcher
                 throw new ConnectClass("$className не найден.");
             }
 
-            if (method_exists($controller, $track->getAction())) {
-                $result = $controller->{$track->getAction()}($track->getParams());
-                if ($result) {
-                    return $result;
-                }
-
-                return new Page(LAYOUT);
+            if (!is_callable([$controller, $action])) {
+                throw new ExecutableMethod("$action не найден или недоступен в классе $className.");
             }
 
-            throw new ExecutableMethod("{$track->getAction()} не найден в класс $className.");
-        } catch (ConnectFile|ConnectClass|ExecutableMethod $error) {
-            file_put_contents(
-                LOG . '/dispatcher-errors.txt',
-                '(' . date('Y-m-d H:i:s') . ') ' .
-                $error->getMessage() . PHP_EOL,
-                FILE_APPEND
-            );
+            $result = $controller->{$action}($track->getParams());
+            if (!$result instanceof Page && !$result instanceof Response) {
+                throw new RuntimeException(
+                    "$fullName::$action() must return " . Page::class . ' or ' . Response::class . '.',
+                );
+            }
 
-            http_response_code($error->getCode());
-            echo $error->getMessage();
-            exit;
+            return $result;
+        } catch (DatabaseException) {
+            return new Response('Internal server error.', 500);
+        } catch (Throwable $error) {
+            return $this->handleFailure($error);
         }
+    }
+
+    private function handleFailure(Throwable $error): Response
+    {
+        @file_put_contents(
+            LOG . '/dispatcher-errors.txt',
+            sprintf(
+                "(%s) [%s] %s%s",
+                date('Y-m-d H:i:s'),
+                $error::class,
+                $error->getMessage(),
+                PHP_EOL
+            ),
+            FILE_APPEND
+        );
+
+        return new Response('Internal server error.', 500);
     }
 }

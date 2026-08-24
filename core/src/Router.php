@@ -1,23 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
 class Router
 {
+    /**
+     * @param list<Route> $routes
+     */
     public function getTrack(array $routes, string $uri): Track
     {
+        $path = explode('?', $uri, 2)[0];
+
         foreach ($routes as $route) {
-            $uriParts = explode('?', $uri, 2);
-            $path = $uriParts[0];
-
             $pattern = $this->createPattern($route->getPath());
-            if (preg_match($pattern, $path, $params)) {
-                $getParams = [];
-                if (isset($uriParts[1])) {
-                    parse_str($uriParts[1], $getParams);
-                }
-
-                $params = array_merge($params, $getParams);
+            if (preg_match($pattern, $path, $params) === 1) {
                 $params = $this->clearParams($params);
 
                 return new Track($route->getController(), $route->getAction(), $params);
@@ -29,10 +26,30 @@ class Router
 
     private function createPattern(string $path): string
     {
-        return '#^' . preg_replace('#/:([^/]+)#', '/(?<$1>[^/]+)', $path) . '/?$#';
+        if ($path === '/') {
+            return '#^/$#';
+        }
+
+        $segments = explode('/', $path);
+        foreach ($segments as &$segment) {
+            if (preg_match('/^:([A-Za-z_][A-Za-z0-9_]*)$/D', $segment, $matches) === 1) {
+                $segment = '(?<' . $matches[1] . '>[^/]+)';
+                continue;
+            }
+
+            $segment = preg_quote($segment, '#');
+        }
+        unset($segment);
+
+        return '#^' . implode('/', $segments) . '/?$#';
     }
 
-    private function clearParams(?array $params): array
+    /**
+     * @param array<array-key, string> $params
+     *
+     * @return array<string, string>
+     */
+    private function clearParams(array $params): array
     {
         $result = [];
 

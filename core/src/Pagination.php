@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
+
+use InvalidArgumentException;
 
 class Pagination
 {
@@ -25,6 +28,13 @@ class Pagination
         public int $perPage = 1,
         public int $total = 1,
     ) {
+        if ($this->perPage <= 0) {
+            throw new InvalidArgumentException('Items per page must be greater than zero.');
+        }
+        if ($this->total < 0) {
+            throw new InvalidArgumentException('Total items must not be negative.');
+        }
+
         $this->countPages = $this->getCountPages();
         $this->currentPage = $this->getCurrentPage();
         $this->uri = $this->getParams();
@@ -33,7 +43,7 @@ class Pagination
 
     private function getCountPages(): int
     {
-        return ceil($this->total / $this->perPage) ?: 1;
+        return max(1, (int)ceil($this->total / $this->perPage));
     }
 
     private function getCurrentPage(): int
@@ -61,23 +71,31 @@ class Pagination
 
     private function getParams(): string
     {
-        $url = parse_url($_SERVER['REQUEST_URI']);
-        $uri = $url['path'];
-
-        if (array_key_exists('query', $url) && '' !== $url['query']) {
-            $uri .= '?';
-
-            $params = explode('&', $url['query']);
-            foreach ($params as $param) {
-                if (str_contains($param, 'page=')) {
-                    continue;
-                }
-
-                $uri .= ltrim($param . '&', " \t\n\r\0\x0B&");
-            }
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        if (!is_string($requestUri) || $requestUri === '') {
+            $requestUri = '/';
         }
 
-        return $uri;
+        $url = parse_url($requestUri);
+        if ($url === false) {
+            return '/';
+        }
+
+        $path = $url['path'] ?? '/';
+        if ($path === '') {
+            $path = '/';
+        }
+
+        $params = [];
+        $query = $url['query'] ?? '';
+        if ($query !== '') {
+            parse_str($query, $params);
+            unset($params['page']);
+        }
+
+        $rebuiltQuery = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+
+        return $rebuiltQuery === '' ? $path : $path . '?' . $rebuiltQuery;
     }
 
     public function renderHtml(): string
@@ -91,7 +109,7 @@ class Pagination
 
         // Добавлять или нет кнопку назад
         if ($this->currentPage > 1) {
-            $backUrl = $this->getLink($this->currentPage - 1);
+            $backUrl = $this->escapeAttribute($this->getLink($this->currentPage - 1));
             $back = <<<BACK
             <li class="page-item">
                 <a class="page-link" href="$backUrl">&lt;</a>
@@ -101,7 +119,7 @@ class Pagination
 
         // Добавлять или нет кнопку вперед
         if ($this->currentPage < $this->countPages) {
-            $forwardUrl = $this->getLink($this->currentPage + 1);
+            $forwardUrl = $this->escapeAttribute($this->getLink($this->currentPage + 1));
             $forward = <<<FORWARD
             <li class="page-item">
                 <a class="page-link" href="$forwardUrl">&gt;</a>
@@ -111,7 +129,7 @@ class Pagination
 
         // Для начальной страницы
         if ($this->currentPage > $this->midSize + 1) {
-            $startPageUrl = $this->getLink(1);
+            $startPageUrl = $this->escapeAttribute($this->getLink(1));
             $startPage = <<<START_PAGE
             <li class="page-item">
                 <a class='page-link' href="$startPageUrl">&laquo;</a>
@@ -121,7 +139,7 @@ class Pagination
 
         // Для конечной страницы
         if ($this->currentPage < ($this->countPages - $this->midSize)) {
-            $endPageUrl = $this->getLink($this->countPages);
+            $endPageUrl = $this->escapeAttribute($this->getLink($this->countPages));
             $endPage = <<<END_PAGE
             <li class="page-item">
                 <a class='page-link' href="$endPageUrl">&raquo;</a>
@@ -131,7 +149,7 @@ class Pagination
 
         // Ссылки слева
         for ($i = $this->midSize; $i > 0; $i--) {
-            $numPageLeftUrl = $this->getLink($this->currentPage - $i);
+            $numPageLeftUrl = $this->escapeAttribute($this->getLink($this->currentPage - $i));
             $numPageLeft = $this->currentPage - $i;
             if ($numPageLeft > 0) {
                 $pagesLeft .= <<<PAGES_LEFT
@@ -144,7 +162,7 @@ class Pagination
 
         // Ссылки справа
         for ($i = 1; $i <= $this->midSize; $i++) {
-            $numPageRightUrl = $this->getLink($this->currentPage + $i);
+            $numPageRightUrl = $this->escapeAttribute($this->getLink($this->currentPage + $i));
             $numPageRight = $this->currentPage + $i;
             if ($numPageRight <= $this->countPages) {
                 $pagesRight .= <<<PAGES_RIGHT
@@ -171,21 +189,24 @@ class Pagination
     private function getLink(int $page): string
     {
         if (1 === $page) {
-            return rtrim($this->uri, " \t\n\r\0\x0B&?");
+            return $this->uri;
         }
 
-        if (str_contains($this->uri, '&') || str_contains($this->uri, '?')) {
-            return $this->uri . 'page=' . $page;
-        }
+        $separator = str_contains($this->uri, '?') ? '&' : '?';
 
-        return $this->uri . '?page=' . $page;
+        return $this->uri . $separator . 'page=' . $page;
+    }
+
+    private function escapeAttribute(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     private function getMidSize(): int
     {
         return $this->countPages <= $this->allPages
             ? $this->countPages
-            : $this->midSize ?? 2;
+            : 2;
     }
 
     public function __toString(): string

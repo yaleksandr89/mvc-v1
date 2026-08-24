@@ -1,74 +1,107 @@
 <?php
+declare(strict_types=1);
 
 namespace Yaa\Framework;
 
+use RuntimeException;
+use Throwable;
 use Yaa\Framework\Exceptions\ConnectLayout;
 use Yaa\Framework\Exceptions\RenderPage;
 
 class View
 {
-    public function render(Page $page): false|string
+    /**
+     * @param array<string, mixed> $layoutData
+     */
+    public function render(Page $page, array $layoutData = []): Response
     {
-        return $this->renderLayout($page, $this->renderView($page));
-    }
+        $bufferLevel = ob_get_level();
 
-    private function renderLayout(Page $page, $content): false|string
-    {
         try {
-            $layoutPath = PROJECT_VIEW."/layouts/{$page->getLayout()}.php";
-            if (file_exists($layoutPath)) {
-                ob_start();
+            $html = $this->renderLayout($page, $this->renderView($page), $layoutData);
 
-                $meta = $page->getMeta();
-                extract($meta, EXTR_PREFIX_SAME, 'copy');
-                include_once $layoutPath;
-
-                return ob_get_clean();
+            return new Response($html, $page->getStatus());
+        } catch (Throwable $error) {
+            while (ob_get_level() > $bufferLevel) {
+                ob_end_clean();
             }
-            throw new ConnectLayout("не удалось подключить шаблон [{$page->getLayout()}], расположенный [$layoutPath].");
-        } catch (ConnectLayout $error) {
-            file_put_contents(
-                LOG.'/view-errors.txt',
-                '('.date('Y-m-d H:i:s').') '.
-                $error->getMessage().PHP_EOL,
-                FILE_APPEND
-            );
 
-            http_response_code($error->getCode());
-            echo $error->getMessage();
-            exit;
+            return $this->handleFailure($error);
         }
     }
 
-    private function renderView(Page $page): false|string
+    /**
+     * @param array<string, mixed> $layoutData
+     *
+     * @throws ConnectLayout
+     */
+    private function renderLayout(Page $page, string $content, array $layoutData): string
     {
-        try {
-            $viewPath = 'Path not defined';
-            if ($page->getView()) {
-                $viewPath = PROJECT_VIEW."/{$page->getView()}.php";
-                if (file_exists($viewPath)) {
-                    ob_start();
-
-                    $data = $page->getData();
-                    extract($data, EXTR_PREFIX_SAME, 'copy');
-                    include_once $viewPath;
-
-                    return ob_get_clean();
-                }
-            }
-            $currentView = explode('/', $page->getView());
-            throw new RenderPage("не удалось подключить [$currentView[1]], расположенный [$viewPath].");
-        } catch (RenderPage $error) {
-            file_put_contents(
-                LOG.'/view-errors.txt',
-                '('.date('Y-m-d H:i:s').') '.
-                $error->getMessage().PHP_EOL,
-                FILE_APPEND
+        $layoutPath = PROJECT_VIEW . "/layouts/{$page->getLayout()}.php";
+        if (!is_file($layoutPath)) {
+            throw new ConnectLayout(
+                "не удалось подключить шаблон [{$page->getLayout()}], расположенный [$layoutPath]."
             );
-
-            http_response_code($error->getCode());
-            echo $error->getMessage();
-            exit;
         }
+
+        ob_start();
+
+        $meta = $page->getMeta();
+        extract($meta, EXTR_PREFIX_SAME, 'copy');
+        extract($layoutData, EXTR_SKIP);
+        include $layoutPath;
+
+        $rendered = ob_get_clean();
+        if ($rendered === false) {
+            throw new RuntimeException("Failed to collect rendered layout buffer for $layoutPath.");
+        }
+
+        return $rendered;
+    }
+
+    /**
+     * @throws RenderPage
+     */
+    private function renderView(Page $page): string
+    {
+        $view = $page->getView();
+        if ($view === null) {
+            return '';
+        }
+
+        $viewPath = PROJECT_VIEW . "/$view.php";
+        if (!is_file($viewPath)) {
+            throw new RenderPage("не удалось подключить представление [$view], расположенное [$viewPath].");
+        }
+
+        ob_start();
+
+        $data = $page->getData();
+        extract($data, EXTR_PREFIX_SAME, 'copy');
+        include $viewPath;
+
+        $rendered = ob_get_clean();
+        if ($rendered === false) {
+            throw new RuntimeException("Failed to collect rendered view buffer for $viewPath.");
+        }
+
+        return $rendered;
+    }
+
+    private function handleFailure(Throwable $error): Response
+    {
+        @file_put_contents(
+            LOG . '/view-errors.txt',
+            sprintf(
+                "(%s) [%s] %s%s",
+                date('Y-m-d H:i:s'),
+                $error::class,
+                $error->getMessage(),
+                PHP_EOL
+            ),
+            FILE_APPEND
+        );
+
+        return new Response('Internal server error.', 500);
     }
 }
