@@ -23,6 +23,27 @@ function env(string $key, mixed $default = null): mixed
     return array_key_exists($key, $_ENV) ? $_ENV[$key] : $default;
 }
 
+function loadEnvFile(string $path): void
+{
+    if (!is_file($path)) {
+        return;
+    }
+
+    $values = @parse_ini_file($path, false, INI_SCANNER_RAW);
+    if ($values === false) {
+        throw new RuntimeException("Unable to parse environment file: $path");
+    }
+
+    foreach ($values as $key => $value) {
+        if (getenv($key) !== false || array_key_exists($key, $_ENV)) {
+            continue;
+        }
+
+        putenv("$key=$value");
+        $_ENV[$key] = $value;
+    }
+}
+
 function redirect(string $path, int $code = 302): RedirectResponse
 {
     return new RedirectResponse($path, $code);

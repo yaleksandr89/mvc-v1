@@ -201,6 +201,78 @@ final class CoreTest extends TestCase
         }
     }
 
+    #[TestDox('Файл .env добавляет отсутствующее значение в окружение')]
+    public function testLoadsMissingEnvironmentValueFromFile(): void
+    {
+        $key = 'MVC_V1_TEST_ENV_FILE_FALLBACK_414A';
+        $path = tempnam(sys_get_temp_dir(), 'mvc-v1-env-');
+        self::assertNotFalse($path);
+        $originalProcessValue = getenv($key);
+        $environmentHadKey = array_key_exists($key, $_ENV);
+        $originalEnvironmentValue = $_ENV[$key] ?? null;
+
+        try {
+            putenv($key);
+            unset($_ENV[$key]);
+            file_put_contents($path, "$key=file-value\n");
+
+            loadEnvFile($path);
+
+            self::assertSame('file-value', getenv($key));
+            self::assertSame('file-value', $_ENV[$key]);
+        } finally {
+            unlink($path);
+
+            if ($originalProcessValue === false) {
+                putenv($key);
+            } else {
+                putenv("$key=$originalProcessValue");
+            }
+
+            if ($environmentHadKey) {
+                $_ENV[$key] = $originalEnvironmentValue;
+            } else {
+                unset($_ENV[$key]);
+            }
+        }
+    }
+
+    #[TestDox('Файл .env не переопределяет существующее process environment значение')]
+    public function testDoesNotOverrideExistingProcessEnvironmentValueFromFile(): void
+    {
+        $key = 'MVC_V1_TEST_ENV_FILE_PRECEDENCE_414A';
+        $path = tempnam(sys_get_temp_dir(), 'mvc-v1-env-');
+        self::assertNotFalse($path);
+        $originalProcessValue = getenv($key);
+        $environmentHadKey = array_key_exists($key, $_ENV);
+        $originalEnvironmentValue = $_ENV[$key] ?? null;
+
+        try {
+            putenv("$key=process-value");
+            unset($_ENV[$key]);
+            file_put_contents($path, "$key=file-value\n");
+
+            loadEnvFile($path);
+
+            self::assertSame('process-value', getenv($key));
+            self::assertArrayNotHasKey($key, $_ENV);
+        } finally {
+            unlink($path);
+
+            if ($originalProcessValue === false) {
+                putenv($key);
+            } else {
+                putenv("$key=$originalProcessValue");
+            }
+
+            if ($environmentHadKey) {
+                $_ENV[$key] = $originalEnvironmentValue;
+            } else {
+                unset($_ENV[$key]);
+            }
+        }
+    }
+
     #[TestDox('Корневой маршрут сохраняет контроллер и действие')]
     public function testMatchesRootRoute(): void
     {

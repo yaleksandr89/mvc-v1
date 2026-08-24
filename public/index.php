@@ -8,6 +8,7 @@ define('BASE_PATH', dirname(__DIR__));
 use App\Presentation\LayoutPresenter;
 
 require_once BASE_PATH . '/config/app.php';
+loadEnvFile(BASE_PATH . '/.env');
 require_once BASE_PATH . '/vendor/autoload.php';
 $routes = include BASE_PATH . '/config/routes.php';
 
