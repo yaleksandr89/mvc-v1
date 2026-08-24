@@ -1,9 +1,9 @@
 # MVC на PHP
 
 [![Source Code](https://img.shields.io/badge/source-yaleksandr89%2Fmvc--v1-blue.svg?style=flat-square)](https://github.com/yaleksandr89/mvc-v1)
+[![CI](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml)
 [![PHP](https://img.shields.io/badge/PHP-8.5-777BB4.svg?style=flat-square&logo=php&logoColor=white)](https://www.php.net/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.4-4169E1.svg?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.8-7952B3.svg?style=flat-square&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
@@ -87,7 +87,7 @@ public/index.php → код состояния + заголовки + тело
 | `make coverage-html` | Создаёт HTML-отчёт покрытия | Результат: `runtime/coverage/index.html` |
 | `make smoke` | Проверяет приложение через настоящий HTTP-запрос | Нужны 50 демонстрационных статей |
 
-Тесты используют отдельную базу `mvc_v1_test`. В CI отчёт Clover передаётся в Codecov как диагностический инструмент: покрытие помогает находить слабые места, но не используется как публичный процент качества.
+Тесты используют отдельную базу `mvc_v1_test`, поэтому основная база разработки при их запуске не затрагивается.
 
 Полный список команд Make и устройство CI приведены в [руководстве по разработке](docs/development.md).
 
@@ -97,7 +97,6 @@ public/index.php → код состояния + заголовки + тело
 - отдельный контейнер зависимостей не добавлен;
 - ORM и дополнительный слой репозиториев не добавлены, работа с PostgreSQL идёт через PDO;
 - отдельная цепочка промежуточных обработчиков и система событий не вводились;
-- проект не пытается заменить Symfony, Laravel или другой промышленный фреймворк.
 
 Более подробно эти решения и границы ответственности описаны в [документе об архитектуре](docs/architecture.md).
 
