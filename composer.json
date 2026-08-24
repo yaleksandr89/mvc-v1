@@ -48,7 +48,6 @@
         "ext-pdo": "*",
         "ext-pdo_pgsql": "*",
         "php": "^8.5",
-        "symfony/dotenv": "^7.4",
         "yaa/mvc-framework": "dev-master"
     },
     "require-dev": {

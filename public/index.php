@@ -6,15 +6,11 @@ namespace Yaa\Framework;
 define('BASE_PATH', dirname(__DIR__));
 
 use App\Presentation\LayoutPresenter;
-use Symfony\Component\Dotenv\Dotenv;
 
 require_once BASE_PATH . '/config/app.php';
 require_once BASE_PATH . '/vendor/autoload.php';
 $routes = include BASE_PATH . '/config/routes.php';
 
-if (is_file(BASE_PATH . '/.env')) {
-    new Dotenv()->load(BASE_PATH . '/.env');
-}
 $timezone = env('APP_TIMEZONE', 'Europe/Moscow');
 date_default_timezone_set(is_string($timezone) ? $timezone : 'Europe/Moscow');
 
