@@ -4,13 +4,13 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| **Русский** | [English](../docs/contributing/CONTRIBUTING_en.md) | [Español](../docs/contributing/CONTRIBUTING_es.md) | [中文](../docs/contributing/CONTRIBUTING_zh.md) | [Français](../docs/contributing/CONTRIBUTING_fr.md) | [Deutsch](../docs/contributing/CONTRIBUTING_de.md) |
+| **Русский** | [English](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_en.md) | [Español](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_es.md) | [中文](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_zh.md) | [Français](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_fr.md) | [Deutsch](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_de.md) |
 
 Спасибо за интерес к `mvc-v1`. Это учебный PHP MVC-проект с небольшим самописным фреймворком.
 
 ## Перед началом
 
-Проверьте существующие Issues и Pull Requests, опишите задачу небольшим и понятным объёмом. Вопросы, затрагивающие безопасность, сообщайте по [политике безопасности](SECURITY.md), а не в публичном Issue.
+Проверьте существующие Issues и Pull Requests, опишите задачу небольшим и понятным объёмом. Вопросы, затрагивающие безопасность, сообщайте по [политике безопасности](https://github.com/yaleksandr89/mvc-v1/security/policy), а не в публичном Issue.
 
 ## Контракт проекта
 
