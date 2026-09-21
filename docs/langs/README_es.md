@@ -7,13 +7,7 @@
 [![CI](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](../../LICENSE.md)
 
-<p align="center">
-  <img
-    src="../img/mvc-v1-readme-cover.png"
-    alt="MVC en PHP — blog educativo con un núcleo MVC propio, PostgreSQL y Docker Compose"
-    width="100%"
-  >
-</p>
+![MVC en PHP — blog educativo con un núcleo MVC propio, PostgreSQL y Docker Compose](../img/mvc-v1-readme-cover.png)
 
 ## Elige un idioma
 
