@@ -7,13 +7,7 @@
 [![CI](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](../../LICENSE.md)
 
-<p align="center">
-  <img
-    src="../img/mvc-v1-readme-cover.png"
-    alt="PHP MVC——使用自研 MVC 核心、PostgreSQL 和 Docker Compose 的教学博客"
-    width="100%"
-  >
-</p>
+![PHP MVC——使用自研 MVC 核心、PostgreSQL 和 Docker Compose 的教学博客](../img/mvc-v1-readme-cover.png)
 
 ## 选择语言
 
