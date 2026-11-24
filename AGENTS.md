@@ -47,7 +47,7 @@
 - `make composer-install` installs the locked dependencies. `make analyse` runs PHPStan (currently level 8); `make test` runs PHPUnit; `make check` resets the test database and then runs strict Composer validation, locked audit, PHP CS Fixer, PHPStan and PHPUnit. The standalone style targets do not reset the database.
 - `make test`, `make test-dox`, `make check`, `make coverage` and `make coverage-html` reset the isolated `mvc_v1_test` database. Verify the disposable local target and test database safeguards before running them. Never run them against production or an unverified shared PostgreSQL server.
 - `make smoke` requires the local application and its expected demo dataset; it exercises the real HTTP path. `make db-check` inspects PostgreSQL. Do not seed, reset or drop databases or volumes without an approved isolated target and required confirmation. `make postgres-reinit` destroys the local PostgreSQL volume.
-- Maintain deterministic tests for relevant behavior, security boundaries and regressions; preserve PHPUnit bootstrap safeguards and the existing coverage/Codecov contract. Use focused checks during edits and the relevant aggregate gate before closure. Do not invent test results.
+- Maintain deterministic tests for relevant behavior, security boundaries and regressions; preserve PHPUnit bootstrap safeguards and the existing diagnostic coverage commands. Use focused checks during edits and the relevant aggregate gate before closure. Do not invent test results.
 
 ## Documentation and Git
 

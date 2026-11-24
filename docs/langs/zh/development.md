@@ -105,7 +105,7 @@ PHP CS Fixer 作为开发依赖安装。规则和格式化范围在 [`.php-cs-fi
 
 不使用 Docker 时，用 `composer cs:check` 检查风格，用 `composer cs:fix` 修复风格。通过 Make 运行时，这些命令以 `app` 用户身份在 PHP 容器内执行。格式化工具缓存保存在 `runtime/cache/php-cs-fixer.cache`，不纳入 Git。单独的风格检查和格式化命令不需要数据库连接。
 
-覆盖率用作诊断工具，而非公开质量指标。CI 通过 OIDC 将 Clover 发送到 Codecov。没有必须达到 100% 的单独要求：测试应保护项目的实际行为，而不是为了百分比人为执行不可达分支。
+覆盖率用作诊断工具，而非公开质量指标。CI 生成 Clover 覆盖率报告，不向外部服务发送。没有必须达到 100% 的单独要求：测试应保护项目的实际行为，而不是为了百分比人为执行不可达分支。
 
 ## 端到端 HTTP 检查
 
@@ -133,7 +133,7 @@ PHP CS Fixer 作为开发依赖安装。规则和格式化范围在 [`.php-cs-fi
 5. 验证内置 MVC 核心的 Composer 文件；
 6. 检查 PHP 语法；
 7. 运行 `make check`：Composer 严格验证、依赖审计、风格检查、PHPStan 和 PHPUnit；
-8. 生成覆盖率报告并将 Clover 发送到 Codecov；
+8. 生成 Clover 覆盖率报告；
 9. 加载演示数据；
 10. 检查 PostgreSQL；
 11. 运行 `make smoke`；
