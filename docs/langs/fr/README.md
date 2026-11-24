@@ -58,18 +58,18 @@ Les détails de l'environnement, la base de données de test isolée, les autres
 
 ## Fonctionnement de l'application
 
-```text
-Requête HTTP
-    ↓
-Router
-    ↓
-Dispatcher
-    ↓
-Page | Response
-    ↓
-Page → View → Response
-    ↓
-public/index.php → code d'état + en-têtes + corps
+```mermaid
+flowchart TD
+    A["Requête HTTP → public/index.php"]
+    B["Router → Track → Dispatcher → Controller"]
+    C["Page → View → Response"]
+    D["Response / RedirectResponse"]
+    E["public/index.php<br/>Code d’état + en-têtes + corps"]
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
 ```
 
 `Page` décrit une page qui doit encore être rendue, tandis que `Response` et `RedirectResponse` représentent des réponses HTTP déjà complètes. Le code d'état, les en-têtes et le corps sont envoyés uniquement depuis le point d'entrée `public/index.php`.

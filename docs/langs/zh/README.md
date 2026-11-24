@@ -58,18 +58,18 @@
 
 ## 应用如何工作
 
-```text
-HTTP 请求
-    ↓
-Router
-    ↓
-Dispatcher
-    ↓
-Page | Response
-    ↓
-Page → View → Response
-    ↓
-public/index.php → 状态码 + 响应头 + 响应体
+```mermaid
+flowchart TD
+    A["HTTP 请求 → public/index.php"]
+    B["Router → Track → Dispatcher → Controller"]
+    C["Page → View → Response"]
+    D["Response / RedirectResponse"]
+    E["public/index.php<br/>状态码 + 响应头 + 响应体"]
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
 ```
 
 `Page` 描述仍需渲染的页面，而 `Response` 和 `RedirectResponse` 表示已经完整构建的 HTTP 响应。状态码、响应头和响应体只会在入口脚本 `public/index.php` 中发送。

@@ -58,18 +58,18 @@
 
 ## Как устроено приложение
 
-```text
-HTTP-запрос
-    ↓
-Router
-    ↓
-Dispatcher
-    ↓
-Page | Response
-    ↓
-Page → View → Response
-    ↓
-public/index.php → код состояния + заголовки + тело
+```mermaid
+flowchart TD
+    A["HTTP-запрос → public/index.php"]
+    B["Router → Track → Dispatcher → Controller"]
+    C["Page → View → Response"]
+    D["Response / RedirectResponse"]
+    E["public/index.php<br/>Код состояния + заголовки + тело"]
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
 ```
 
 `Page` описывает страницу, которую ещё нужно отрендерить, а `Response` и `RedirectResponse` представляют уже готовые HTTP-ответы. Код состояния, заголовки и тело отправляются только во входном скрипте `public/index.php`.
