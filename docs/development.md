@@ -114,7 +114,7 @@ PHPUnit не работает с основной базой `mvc_v1`. Для т
 
 ## GitHub Actions
 
-Сценарий [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) запускается при отправке изменений в репозиторий и для pull request.
+Сценарий [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) запускается для pull request в `master`, при отправке изменений в `master` и вручную через Actions → CI → Run workflow.
 
 В чистом окружении GitHub Actions он:
 

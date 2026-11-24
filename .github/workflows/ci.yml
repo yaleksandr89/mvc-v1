@@ -1,8 +1,10 @@
 name: CI
 
 on:
-  push:
   pull_request:
+    branches:
+      - master
+  push:
     branches:
       - master
   workflow_dispatch:
@@ -22,7 +24,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
 
       - name: Initialize environment
         run: make init
@@ -54,7 +58,7 @@ jobs:
         run: make coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           use_oidc: true
           files: ./runtime/coverage.xml
