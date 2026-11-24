@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -7,20 +8,20 @@ use InvalidArgumentException;
 
 class Pagination
 {
-    // Количество страниц
     public int $countPages;
 
-    // Текущая страница
     public int $currentPage;
 
-    // Строка запроса
     public string $uri;
 
-    // Количество страниц "по бокам"
+    // RU: Количество соседних номеров страниц с каждой стороны текущей страницы.
+    // EN: Number of neighboring page numbers on each side of the current page.
     private int $midSize;
 
-    // Сколько страниц показывать, если их общее количество небольшое
-    // Пример: если >=5 - показываются все страницы в пагинации, если <5 - используется $midSize
+    // RU: Если страниц не больше этого порога, показываются все номера;
+    // иначе окно ограничивается двумя соседними номерами с каждой стороны текущей страницы.
+    // EN: When the page count is at or below this threshold, all page numbers are shown;
+    // otherwise the window is limited to two neighboring page numbers on each side of the current page.
     public int $allPages = 5;
 
     public function __construct(
@@ -43,21 +44,19 @@ class Pagination
 
     private function getCountPages(): int
     {
-        return max(1, (int)ceil($this->total / $this->perPage));
+        return max(1, (int) ceil($this->total / $this->perPage));
     }
 
     private function getCurrentPage(): int
     {
-        // Если указанно отрицательное значение либо текс (при (int) приводится к нулю
+        // RU: Номер вне диапазона заменяется номером ближайшей доступной страницы.
+        // EN: Out-of-range numbers are clamped to the nearest available page.
         if ($this->page < 1) {
             $this->page = 1;
-            // при необходимости можно вернуть 404
         }
 
-        // Если указанно значение, которое больше общего количества записей
         if ($this->page > $this->countPages) {
             $this->page = $this->countPages;
-            // при необходимости можно вернуть 404
         }
 
         return $this->page;
@@ -65,7 +64,8 @@ class Pagination
 
     public function getStart(): int
     {
-        // Получаем динамическое число от которого надо начинать выборку (часто используется при SQL запросе 'LIMIT $start, $perPage')
+        // RU: Номер страницы начинается с единицы, а смещение SQL OFFSET — с нуля.
+        // EN: Page numbers start at one, while SQL OFFSET starts at zero.
         return ($this->page - 1) * $this->perPage;
     }
 
@@ -107,7 +107,6 @@ class Pagination
         $pagesLeft = '';
         $pagesRight = '';
 
-        // Добавлять или нет кнопку назад
         if ($this->currentPage > 1) {
             $backUrl = $this->escapeAttribute($this->getLink($this->currentPage - 1));
             $back = <<<BACK
@@ -117,7 +116,6 @@ class Pagination
             BACK;
         }
 
-        // Добавлять или нет кнопку вперед
         if ($this->currentPage < $this->countPages) {
             $forwardUrl = $this->escapeAttribute($this->getLink($this->currentPage + 1));
             $forward = <<<FORWARD
@@ -127,7 +125,6 @@ class Pagination
             FORWARD;
         }
 
-        // Для начальной страницы
         if ($this->currentPage > $this->midSize + 1) {
             $startPageUrl = $this->escapeAttribute($this->getLink(1));
             $startPage = <<<START_PAGE
@@ -137,7 +134,6 @@ class Pagination
             START_PAGE;
         }
 
-        // Для конечной страницы
         if ($this->currentPage < ($this->countPages - $this->midSize)) {
             $endPageUrl = $this->escapeAttribute($this->getLink($this->countPages));
             $endPage = <<<END_PAGE
@@ -147,7 +143,6 @@ class Pagination
             END_PAGE;
         }
 
-        // Ссылки слева
         for ($i = $this->midSize; $i > 0; $i--) {
             $numPageLeftUrl = $this->escapeAttribute($this->getLink($this->currentPage - $i));
             $numPageLeft = $this->currentPage - $i;
@@ -160,7 +155,6 @@ class Pagination
             }
         }
 
-        // Ссылки справа
         for ($i = 1; $i <= $this->midSize; $i++) {
             $numPageRightUrl = $this->escapeAttribute($this->getLink($this->currentPage + $i));
             $numPageRight = $this->currentPage + $i;

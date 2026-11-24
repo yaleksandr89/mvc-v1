@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -45,9 +46,9 @@ final class ArticleModalTest extends DatabaseTestCase
         foreach ($articles as $article) {
             self::assertSame(
                 ['id', 'title', 'excerpt', 'content_html', 'published_at', 'updated_at'],
-                array_keys($article)
+                array_keys($article),
             );
-            $byId[(int)$article['id']] = $article;
+            $byId[(int) $article['id']] = $article;
         }
 
         self::assertSame('Case Insensitive PostgreSQL Lookup', $byId[1]['title']);
@@ -61,8 +62,8 @@ final class ArticleModalTest extends DatabaseTestCase
         $firstPage = ArticleModal::getInstance()->getAllWithPaginate(new Pagination(1, 2, 3));
         $secondPage = ArticleModal::getInstance()->getAllWithPaginate(new Pagination(2, 2, 3));
 
-        self::assertSame([3, 2], array_map(static fn (array $row): int => (int)$row['id'], $firstPage));
-        self::assertSame([1], array_map(static fn (array $row): int => (int)$row['id'], $secondPage));
+        self::assertSame([3, 2], array_map(static fn(array $row): int => (int) $row['id'], $firstPage));
+        self::assertSame([1], array_map(static fn(array $row): int => (int) $row['id'], $secondPage));
     }
 
     #[TestDox('Поиск статьи по ID различает существующую и отсутствующую запись')]
@@ -84,8 +85,8 @@ final class ArticleModalTest extends DatabaseTestCase
 
         self::assertIsArray($exact);
         self::assertIsArray($caseVariant);
-        self::assertSame(1, (int)$exact['id']);
-        self::assertSame(1, (int)$caseVariant['id']);
+        self::assertSame(1, (int) $exact['id']);
+        self::assertSame(1, (int) $caseVariant['id']);
         self::assertFalse($model->getByTitle('Missing deterministic article'));
     }
 
@@ -96,11 +97,11 @@ final class ArticleModalTest extends DatabaseTestCase
         $created = $model->create(
             'Generated Integration Article',
             str_repeat('Generated deterministic excerpt ', 2),
-            str_repeat('Generated deterministic article content ', 3)
+            str_repeat('Generated deterministic article content ', 3),
         );
 
         self::assertIsArray($created);
-        self::assertSame(4, (int)$created['id']);
+        self::assertSame(4, (int) $created['id']);
         self::assertSame('Generated Integration Article', $created['title']);
         self::assertNotSame('', $created['published_at']);
         self::assertNotSame('', $created['updated_at']);
@@ -118,7 +119,7 @@ final class ArticleModalTest extends DatabaseTestCase
             1,
             'Updated Integration Article',
             str_repeat('Updated deterministic excerpt ', 2),
-            str_repeat('Updated deterministic article content ', 3)
+            str_repeat('Updated deterministic article content ', 3),
         ));
 
         $updated = $model->getById(1);
@@ -143,6 +144,6 @@ final class ArticleModalTest extends DatabaseTestCase
     #[TestDox('Унаследованный getColumn читает реальный агрегат PostgreSQL')]
     public function testGetsAggregateColumnFromPostgreSql(): void
     {
-        self::assertSame(3, (int)ArticleModal::getInstance()->getColumn('SELECT COUNT(*) FROM blog_posts'));
+        self::assertSame(3, (int) ArticleModal::getInstance()->getColumn('SELECT COUNT(*) FROM blog_posts'));
     }
 }

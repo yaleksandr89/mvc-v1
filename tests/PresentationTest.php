@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -54,7 +55,7 @@ final class PresentationTest extends TestCase
     {
         self::assertSame(
             ['message' => 'Saved', 'type' => 'danger'],
-            LayoutPresenter::prepare('/', ['message' => 'Saved', 'type' => 'danger'])['flash']
+            LayoutPresenter::prepare('/', ['message' => 'Saved', 'type' => 'danger'])['flash'],
         );
     }
 
@@ -63,11 +64,11 @@ final class PresentationTest extends TestCase
     {
         self::assertSame(
             ['message' => 'Saved', 'type' => 'success'],
-            LayoutPresenter::prepare('/', ['message' => 'Saved'])['flash']
+            LayoutPresenter::prepare('/', ['message' => 'Saved'])['flash'],
         );
         self::assertSame(
             ['message' => 'Saved', 'type' => 'success'],
-            LayoutPresenter::prepare('/', ['message' => 'Saved', 'type' => 'invalid'])['flash']
+            LayoutPresenter::prepare('/', ['message' => 'Saved', 'type' => 'invalid'])['flash'],
         );
     }
 
@@ -79,8 +80,8 @@ final class PresentationTest extends TestCase
             ['message' => '', 'type' => 'success'],
             LayoutPresenter::prepare(
                 '/',
-                ['message' => ['not-a-string'], 'type' => 10]
-            )['flash']
+                ['message' => ['not-a-string'], 'type' => 10],
+            )['flash'],
         );
     }
 
@@ -115,7 +116,7 @@ final class PresentationTest extends TestCase
             $validation,
             $oldInput,
             'csrf',
-            'create'
+            'create',
         );
 
         self::assertSame(['Required'], $form['errorsTitle']);
@@ -133,7 +134,7 @@ final class PresentationTest extends TestCase
             [],
             [],
             'csrf-token',
-            'edit'
+            'edit',
         );
 
         self::assertSame('/articles/42/edit', $form['formAction']);
@@ -150,7 +151,7 @@ final class PresentationTest extends TestCase
             ['title' => 'not-an-array', 'excerpt' => [false, 3]],
             ['title' => ['not-a-string'], 'excerpt' => 12, 'content_html' => null],
             'csrf',
-            'create'
+            'create',
         );
 
         self::assertSame([], $form['errorsTitle']);
@@ -186,7 +187,7 @@ final class PresentationTest extends TestCase
             [],
             [],
             'csrf',
-            'edit'
+            'edit',
         );
     }
 
@@ -225,7 +226,7 @@ final class PresentationTest extends TestCase
 
         self::assertSame(
             ['message' => 'new', 'type' => 'danger'],
-            pullSessionValue('flash')
+            pullSessionValue('flash'),
         );
         self::assertArrayNotHasKey('flash', $_SESSION);
     }

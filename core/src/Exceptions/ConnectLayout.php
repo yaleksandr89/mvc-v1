@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework\Exceptions;
 
-use Throwable;
 use Exception;
+use Throwable;
 
 class ConnectLayout extends Exception
 {

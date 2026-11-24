@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 const HTTP_BASE_URL = 'http://nginx';
@@ -80,7 +81,7 @@ function request(string $method, string $path, array &$cookies, ?array $form = n
     }
 
     return [
-        'status' => (int)$statusMatch[1],
+        'status' => (int) $statusMatch[1],
         'headers' => $parsedHeaders,
         'body' => $body,
     ];
@@ -110,7 +111,7 @@ function assertStatus(array $response, int $expected, string $message): void
 {
     assertSmoke(
         $response['status'] === $expected,
-        $message . " (expected $expected, got {$response['status']})"
+        $message . " (expected $expected, got {$response['status']})",
     );
 }
 
@@ -125,7 +126,7 @@ function csrfToken(string $body): string
 
 function articleCount(PDO $pdo): int
 {
-    return (int)pdoQuery($pdo, 'SELECT COUNT(*) FROM blog_posts')->fetchColumn();
+    return (int) pdoQuery($pdo, 'SELECT COUNT(*) FROM blog_posts')->fetchColumn();
 }
 
 function pdoQuery(PDO $pdo, string $sql): PDOStatement
@@ -144,7 +145,7 @@ function articleIdFromEditLocation(string $location): int
         throw new RuntimeException('Create redirect Location must point to the edit page.');
     }
 
-    return (int)$match[1];
+    return (int) $match[1];
 }
 
 function pass(string $message): void
@@ -161,20 +162,15 @@ try {
     $dsn = sprintf(
         'pgsql:host=%s;dbname=%s',
         requireEnvironment('DB_HOST'),
-        requireEnvironment('DB_NAME')
+        requireEnvironment('DB_NAME'),
     );
-    $pdo = new PDO(
-        $dsn,
-        requireEnvironment('DB_USER'),
-        requireEnvironment('DB_PASS'),
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]
-    );
+    $pdo = new PDO($dsn, requireEnvironment('DB_USER'), requireEnvironment('DB_PASS'), [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]);
 
-    $serverVersion = (string)pdoQuery($pdo, 'SHOW server_version')->fetchColumn();
+    $serverVersion = (string) pdoQuery($pdo, 'SHOW server_version')->fetchColumn();
     assertSmoke(str_starts_with($serverVersion, '18.4'), 'PostgreSQL server version must start with 18.4.');
     pass("PostgreSQL version starts with 18.4 ($serverVersion)");
 
@@ -182,22 +178,22 @@ try {
         $pdo,
         'SELECT COUNT(*) AS row_count, MIN(id) AS min_id, MAX(id) AS max_id,
                 COUNT(*) FILTER (WHERE updated_at < published_at) AS invalid_dates
-         FROM blog_posts'
+         FROM blog_posts',
     )->fetch();
     assertSmoke(is_array($seedStats), 'Seed statistics query returned no row.');
-    assertSmoke((int)$seedStats['row_count'] === 50, 'Bootstrap row count must be 50.');
-    assertSmoke((int)$seedStats['min_id'] === 1, 'Bootstrap minimum ID must be 1.');
-    assertSmoke((int)$seedStats['max_id'] === 50, 'Bootstrap maximum seed ID must be 50.');
-    assertSmoke((int)$seedStats['invalid_dates'] === 0, 'No updated_at value may precede published_at.');
+    assertSmoke((int) $seedStats['row_count'] === 50, 'Bootstrap row count must be 50.');
+    assertSmoke((int) $seedStats['min_id'] === 1, 'Bootstrap minimum ID must be 1.');
+    assertSmoke((int) $seedStats['max_id'] === 50, 'Bootstrap maximum seed ID must be 50.');
+    assertSmoke((int) $seedStats['invalid_dates'] === 0, 'No updated_at value may precede published_at.');
     pass('bootstrap has 50 rows, IDs 1..50, and valid timestamp ordering');
 
-    $seedTitle = (string)pdoQuery($pdo, 'SELECT title FROM blog_posts WHERE id = 1')->fetchColumn();
+    $seedTitle = (string) pdoQuery($pdo, 'SELECT title FROM blog_posts WHERE id = 1')->fetchColumn();
     $duplicateState = null;
     $pdo->beginTransaction();
     try {
         $duplicate = $pdo->prepare(
             'INSERT INTO blog_posts (id, title, excerpt, content_html)
-             VALUES (:id, :title, :excerpt, :content_html)'
+             VALUES (:id, :title, :excerpt, :content_html)',
         );
         $duplicate->execute([
             ':id' => 1000000,
@@ -221,7 +217,7 @@ try {
     assertStatus($list, 200, 'GET /articles must succeed.');
     assertSmoke(
         str_contains($list['body'], 'Практичный чек-лист backend-релиза'),
-        'Article list must contain the known seed title.'
+        'Article list must contain the known seed title.',
     );
     pass('GET /articles returns 200 and contains the known seed article');
 
@@ -247,14 +243,14 @@ try {
         'POST',
         '/articles/create',
         $cookies,
-        ['_csrf' => $createToken] + $createValues
+        ['_csrf' => $createToken] + $createValues,
     );
 
     $createdLookup = $pdo->prepare('SELECT id FROM blog_posts WHERE title = :title');
     $createdLookup->execute([':title' => $createValues['title']]);
     $createdValue = $createdLookup->fetchColumn();
     if ($createdValue !== false) {
-        $createdId = (int)$createdValue;
+        $createdId = (int) $createdValue;
     }
 
     assertStatus($created, 302, 'Valid create must redirect.');
@@ -282,7 +278,7 @@ try {
         'POST',
         "/articles/$createdId/edit",
         $cookies,
-        ['_csrf' => $editToken] + $updatedValues
+        ['_csrf' => $editToken] + $updatedValues,
     );
     assertStatus($updated, 302, 'Valid edit must redirect.');
 
@@ -296,7 +292,7 @@ try {
     assertStatus($methodRejected, 405, 'GET delete must be rejected.');
     assertSmoke(
         strtoupper($methodRejected['headers']['allow'] ?? '') === 'POST',
-        'GET delete response must include Allow: POST.'
+        'GET delete response must include Allow: POST.',
     );
     pass('GET delete returns 405 with Allow: POST');
 
@@ -304,19 +300,19 @@ try {
     assertStatus($deleteRejected, 403, 'Delete without valid CSRF token must be rejected.');
     $exists = $pdo->prepare('SELECT COUNT(*) FROM blog_posts WHERE id = :id');
     $exists->execute([':id' => $createdId]);
-    assertSmoke((int)$exists->fetchColumn() === 1, 'CSRF-rejected delete must preserve the article.');
+    assertSmoke((int) $exists->fetchColumn() === 1, 'CSRF-rejected delete must preserve the article.');
     pass('POST delete without CSRF returns 403 and preserves the article');
 
     $deleted = request(
         'POST',
         "/articles/$createdId/delete",
         $cookies,
-        ['_csrf' => $editToken]
+        ['_csrf' => $editToken],
     );
     assertStatus($deleted, 302, 'Valid delete must redirect.');
     assertSmoke(
         ($deleted['headers']['location'] ?? '') === '/articles',
-        'Delete redirect Location must be /articles.'
+        'Delete redirect Location must be /articles.',
     );
 
     $missing = request('GET', "/articles/$createdId/show", $cookies);

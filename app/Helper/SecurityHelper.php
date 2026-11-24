@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Helper;
@@ -21,9 +22,9 @@ class SecurityHelper
         }
 
         return htmlspecialchars(
-            (string)$value,
+            (string) $value,
             ENT_QUOTES | ENT_SUBSTITUTE,
-            'UTF-8'
+            'UTF-8',
         );
     }
 
@@ -52,10 +53,10 @@ class SecurityHelper
         $sessionToken = $session[self::CSRF_SESSION_KEY] ?? null;
 
         if (
-            !is_string($sessionToken) ||
-            $sessionToken === '' ||
-            !is_string($token) ||
-            $token === ''
+            !is_string($sessionToken)
+            || $sessionToken === ''
+            || !is_string($token)
+            || $token === ''
         ) {
             return false;
         }

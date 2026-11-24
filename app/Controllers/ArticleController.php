@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controllers;
@@ -45,7 +46,7 @@ class ArticleController extends Controller
                 'articles',
                 'paginator',
                 'csrfToken',
-            )
+            ),
         );
     }
 
@@ -56,7 +57,7 @@ class ArticleController extends Controller
     {
         $nameMethod = StrHelper::prepareNameMethod(__METHOD__);
 
-        $id = (int)$params['id'];
+        $id = (int) $params['id'];
         $article = ArticleModal::getInstance()->getById($id);
 
         if ($article === false) {
@@ -83,7 +84,7 @@ class ArticleController extends Controller
 
         return $this->render(
             'articles/article',
-            compact('desc', 'nameMethod', 'article')
+            compact('desc', 'nameMethod', 'article'),
         );
     }
 
@@ -149,12 +150,12 @@ class ArticleController extends Controller
             pullSessionValue('validation', []),
             pullSessionValue('old_form_value', []),
             SecurityHelper::csrfToken($_SESSION),
-            $type
+            $type,
         );
 
         return $this->render(
             'articles/create-or-update',
-            array_merge(compact('h1', 'desc', 'nameMethod'), $formData)
+            array_merge(compact('h1', 'desc', 'nameMethod'), $formData),
         );
     }
 
@@ -164,7 +165,7 @@ class ArticleController extends Controller
      */
     public function edit(array $params): Page|Response
     {
-        $id = (int)$params['id'];
+        $id = (int) $params['id'];
         $article = ArticleModal::getInstance()->getById($id);
 
         if ($article === false) {
@@ -233,12 +234,12 @@ class ArticleController extends Controller
             pullSessionValue('validation', []),
             pullSessionValue('old_form_value', []),
             SecurityHelper::csrfToken($_SESSION),
-            $type
+            $type,
         );
 
         return $this->render(
             'articles/create-or-update',
-            array_merge(compact('h1', 'desc', 'nameMethod'), $formData)
+            array_merge(compact('h1', 'desc', 'nameMethod'), $formData),
         );
     }
 
@@ -266,7 +267,7 @@ class ArticleController extends Controller
             return $csrfResponse;
         }
 
-        $id = (int)$params['id'];
+        $id = (int) $params['id'];
 
         if (!ArticleModal::getInstance()->delete($id)) {
             return new ErrorController()->notFound();
@@ -290,7 +291,7 @@ class ArticleController extends Controller
         return new Pagination(
             static::getCurrentPage(),
             static::getPerPage(5),
-            static::getTotalPages(ArticleModal::class, 'blog_posts')
+            static::getTotalPages(ArticleModal::class, 'blog_posts'),
         );
     }
 }

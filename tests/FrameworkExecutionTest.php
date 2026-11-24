@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -9,6 +10,7 @@ use InvalidArgumentException;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
+use RuntimeException;
 use Tests\Support\DatabaseTestCase;
 use Yaa\Framework\Dispatcher;
 use Yaa\Framework\Exceptions\ConnectClass;
@@ -84,7 +86,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
         self::assertInstanceOf(Page::class, $page);
         self::assertSame('articles/article', $page->getView());
         self::assertSame('Framework Dispatch Happy Path', $page->getMeta()['title']);
-        self::assertSame(3, (int)$page->getData()['article']['id']);
+        self::assertSame(3, (int) $page->getData()['article']['id']);
         self::assertSame('Framework Dispatch Happy Path', $page->getData()['article']['title']);
     }
 
@@ -123,7 +125,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
         self::assertInstanceOf(Page::class, $page);
         $layoutData = LayoutPresenter::prepare(
             '/',
-            ['message' => 'Layout integration marker', 'type' => 'info']
+            ['message' => 'Layout integration marker', 'type' => 'info'],
         );
 
         $response = new View()->render($page, $layoutData);
@@ -140,23 +142,18 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     #[TestDox('Layout-данные не подменяют содержимое view и meta-заголовок')]
     public function testLayoutDataCannotReplaceContentOrMetaTitle(): void
     {
-        $page = new Page(
-            'default',
-            [
-                'title' => 'Trusted Page Title',
-                'description' => 'Trusted description',
-                'keywords' => 'trusted keywords',
-            ],
-            'main/index',
-            [
-                'h1' => 'Trusted View Content',
-                'desc' => 'Trusted view description',
-                'nameMethod' => 'TrustedController@Index',
-            ]
-        );
+        $page = new Page('default', [
+            'title' => 'Trusted Page Title',
+            'description' => 'Trusted description',
+            'keywords' => 'trusted keywords',
+        ], 'main/index', [
+            'h1' => 'Trusted View Content',
+            'desc' => 'Trusted view description',
+            'nameMethod' => 'TrustedController@Index',
+        ]);
         $layoutData = array_merge(
             LayoutPresenter::prepare('/', null),
-            ['content' => 'Injected Layout Content', 'title' => 'Injected Layout Title']
+            ['content' => 'Injected Layout Content', 'title' => 'Injected Layout Title'],
         );
 
         $response = new View()->render($page, $layoutData);
@@ -171,14 +168,11 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     #[TestDox('Layout отображается с пустым content для Page без view')]
     public function testRendersLayoutForNullView(): void
     {
-        $page = new Page(
-            'default',
-            [
-                'title' => 'Layout Without View',
-                'description' => 'Null view contract',
-                'keywords' => 'null view',
-            ]
-        );
+        $page = new Page('default', [
+            'title' => 'Layout Without View',
+            'description' => 'Null view contract',
+            'keywords' => 'null view',
+        ]);
 
         $response = new View()->render($page, LayoutPresenter::prepare('/', null));
         $html = $response->getBody();
@@ -210,7 +204,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
         foreach ([new Track('../main', 'index'), new Track('main', '../index')] as $track) {
             [$response, $appended] = $this->runWithRestoredLog(
                 LOG . '/dispatcher-errors.txt',
-                static fn (): Page|Response => new Dispatcher()->dispatch($track),
+                static fn(): Page|Response => new Dispatcher()->dispatch($track),
             );
 
             self::assertInstanceOf(Response::class, $response);
@@ -234,7 +228,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
 
             [$response, $appended] = $this->runWithRestoredLog(
                 LOG . '/dispatcher-errors.txt',
-                static fn (): Page|Response => new Dispatcher()->dispatch(new Track('main', 'index')),
+                static fn(): Page|Response => new Dispatcher()->dispatch(new Track('main', 'index')),
             );
 
             self::assertInstanceOf(Response::class, $response);
@@ -267,7 +261,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     {
         [$response, $appended] = $this->runWithRestoredLog(
             LOG . '/dispatcher-errors.txt',
-            static fn (): Page|Response => new Dispatcher()->dispatch(new Track('missing', 'index')),
+            static fn(): Page|Response => new Dispatcher()->dispatch(new Track('missing', 'index')),
         );
 
         self::assertInstanceOf(Response::class, $response);
@@ -282,7 +276,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     {
         [$response, $appended] = $this->runWithRestoredLog(
             LOG . '/dispatcher-errors.txt',
-            static fn (): Page|Response => new Dispatcher()->dispatch(new Track('main', 'missingAction')),
+            static fn(): Page|Response => new Dispatcher()->dispatch(new Track('main', 'missingAction')),
         );
 
         self::assertInstanceOf(Response::class, $response);
@@ -297,7 +291,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         [$methodResponse, $methodLog] = $this->runWithRestoredLog(
             LOG . '/dispatcher-errors.txt',
-            static fn (): Page|Response => new Dispatcher()->dispatch(
+            static fn(): Page|Response => new Dispatcher()->dispatch(
                 new Track('article', 'delete', ['id' => '2']),
             ),
         );
@@ -313,7 +307,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
         $_POST = ['_csrf' => 'invalid'];
         [$csrfResponse, $csrfLog] = $this->runWithRestoredLog(
             LOG . '/dispatcher-errors.txt',
-            static fn (): Page|Response => new Dispatcher()->dispatch(
+            static fn(): Page|Response => new Dispatcher()->dispatch(
                 new Track('article', 'delete', ['id' => '2']),
             ),
         );
@@ -330,7 +324,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     {
         [$response, $appended] = $this->runWithRestoredLog(
             LOG . '/dispatcher-errors.txt',
-            static fn (): Page|Response => new Dispatcher()->dispatch(new Track('../unsafe', 'index')),
+            static fn(): Page|Response => new Dispatcher()->dispatch(new Track('../unsafe', 'index')),
         );
 
         self::assertInstanceOf(Response::class, $response);
@@ -350,7 +344,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
 
         [$response, $appended] = $this->runWithRestoredLog(
             LOG . '/view-errors.txt',
-            static fn (): Response => new View()->render($page),
+            static fn(): Response => new View()->render($page),
         );
 
         self::assertInstanceOf(Response::class, $response);
@@ -369,7 +363,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
 
         [$response, $appended] = $this->runWithRestoredLog(
             LOG . '/view-errors.txt',
-            static fn (): Response => new View()->render($page),
+            static fn(): Response => new View()->render($page),
         );
 
         self::assertInstanceOf(Response::class, $response);
@@ -383,24 +377,19 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     #[TestDox('TypeError существующего шаблона очищает его buffer и логируется один раз')]
     public function testExistingTemplateTypeErrorRestoresBufferAndLogsOnce(): void
     {
-        $page = new Page(
-            'default',
-            [],
-            'articles/list',
-            [
-                'h1' => 'Type error contract',
-                'desc' => 'Type error contract',
-                'nameMethod' => 'Test@TypeError',
-                'csrfToken' => 'csrf',
-                'articles' => 'not-an-article-list',
-                'paginator' => 'unused',
-            ],
-        );
+        $page = new Page('default', [], 'articles/list', [
+            'h1' => 'Type error contract',
+            'desc' => 'Type error contract',
+            'nameMethod' => 'Test@TypeError',
+            'csrfToken' => 'csrf',
+            'articles' => 'not-an-article-list',
+            'paginator' => 'unused',
+        ]);
         $bufferLevel = ob_get_level();
 
         [$response, $appended] = $this->runWithRestoredLog(
             LOG . '/view-errors.txt',
-            static fn (): Response => new View()->render($page),
+            static fn(): Response => new View()->render($page),
         );
 
         self::assertInstanceOf(Response::class, $response);
@@ -425,7 +414,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
                     return $error;
                 }
 
-                throw new \RuntimeException('Expected a DatabaseException failure.');
+                throw new RuntimeException('Expected a DatabaseException failure.');
             },
         );
 
@@ -471,7 +460,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     #[TestDox('Исключение $exceptionClass сохраняет диагностический контракт')]
     public function testFrameworkExceptionConstructorContract(
         string $exceptionClass,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $previous = new Exception('previous');
         $default = new $exceptionClass('diagnostic', previous: $previous);
@@ -496,7 +485,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
             $result = $operation();
             $after = is_file($path) ? file_get_contents($path) : '';
             if (!is_string($after)) {
-                throw new \RuntimeException("Unable to read log file $path.");
+                throw new RuntimeException("Unable to read log file $path.");
             }
 
             $before = $snapshot['contents'];
@@ -519,7 +508,7 @@ final class FrameworkExecutionTest extends DatabaseTestCase
 
         $contents = file_get_contents($path);
         if (!is_string($contents)) {
-            throw new \RuntimeException("Unable to snapshot log file $path.");
+            throw new RuntimeException("Unable to snapshot log file $path.");
         }
 
         return ['exists' => true, 'contents' => $contents];
@@ -530,14 +519,14 @@ final class FrameworkExecutionTest extends DatabaseTestCase
     {
         if (!$snapshot['exists']) {
             if (is_file($path) && !unlink($path)) {
-                throw new \RuntimeException("Unable to remove test-created log file $path.");
+                throw new RuntimeException("Unable to remove test-created log file $path.");
             }
 
             return;
         }
 
         if (file_put_contents($path, $snapshot['contents']) === false) {
-            throw new \RuntimeException("Unable to restore log file $path.");
+            throw new RuntimeException("Unable to restore log file $path.");
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -7,8 +8,12 @@ class Controller
 {
     protected string $layout = LAYOUT;
 
-    // Мета данные: title, description, keywords
-    /** @var array<string, mixed> */
+    /**
+     * RU: Метаданные для шаблона страницы: title, description и keywords.
+     * EN: Metadata for the page layout: title, description, and keywords.
+     *
+     * @var array<string, mixed>
+     */
     protected array $meta = [];
 
     /**
@@ -18,8 +23,7 @@ class Controller
         string $view,
         array $data = [],
         int $status = 200,
-    ): Page
-    {
+    ): Page {
         return new Page(
             $this->layout,
             $this->meta,
@@ -37,7 +41,7 @@ class Controller
             return 1;
         }
 
-        return (int)$page;
+        return (int) $page;
     }
 
     protected static function getPerPage(int $perPage = 10): int
@@ -53,6 +57,6 @@ class Controller
         $total = $classModel::getInstance()
             ->getColumn("SELECT COUNT(*) AS count FROM $tableName");
 
-        return is_numeric($total) ? (int)$total : 0;
+        return is_numeric($total) ? (int) $total : 0;
     }
 }

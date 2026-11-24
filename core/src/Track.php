@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -11,9 +12,8 @@ readonly class Track
     public function __construct(
         private string $controller,
         private string $action,
-        private array $params = []
-    ) {
-    }
+        private array $params = [],
+    ) {}
 
     public function getAction(): string
     {

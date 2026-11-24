@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
 
-define('BASE_PATH', dirname(__DIR__));
-
 use App\Presentation\LayoutPresenter;
+
+define('BASE_PATH', dirname(__DIR__));
 
 require_once BASE_PATH . '/config/app.php';
 loadEnvFile(BASE_PATH . '/.env');

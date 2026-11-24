@@ -28,7 +28,7 @@ $(SERVICE):
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help init check-env config build up down restart ps log log-all in php composer composer-install test test-dox coverage coverage-html analyse check smoke db-check demo-data postgres-reinit test-db-create test-db-reset test-db-check test-db-drop
+.PHONY: help init check-env config build up down restart ps log log-all in php composer composer-install test test-dox coverage coverage-html cs-check cs-fix analyse check smoke db-check demo-data postgres-reinit test-db-create test-db-reset test-db-check test-db-drop
 
 help:
 	@printf '%s\n' 'Bootstrap / Первичная настройка:'
@@ -62,6 +62,8 @@ help:
 	@printf '%s\n' '  make test-dox                          Run PHPUnit TestDox / Запустить PHPUnit TestDox'
 	@printf '%s\n' '  make coverage                          Print coverage and write Clover XML / Вывести покрытие и записать Clover XML'
 	@printf '%s\n' '  make coverage-html                     Write HTML coverage report / Создать HTML-отчёт покрытия'
+	@printf '%s\n' '  make cs-check                          Check PHP style / Проверить стиль PHP'
+	@printf '%s\n' '  make cs-fix                            Format PHP sources / Отформатировать PHP-код'
 	@printf '%s\n' '  make analyse | check                   Run Composer quality scripts / Запустить проверки Composer'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Destructive maintenance / Деструктивные операции:'
@@ -143,6 +145,12 @@ coverage-html: test-db-reset
 		./vendor/bin/phpunit \
 		--configuration=phpunit.xml.dist \
 		--coverage-html runtime/coverage
+
+cs-check: check-env
+	@$(COMPOSE) exec --user app php composer cs:check
+
+cs-fix: check-env
+	@$(COMPOSE) exec --user app php composer cs:fix
 
 analyse: check-env
 	@$(COMPOSE) exec --user app php composer analyse

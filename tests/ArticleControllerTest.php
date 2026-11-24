@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -77,7 +78,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         self::assertSame(2, $paginator->currentPage);
         self::assertSame(
             [3, 2, 1],
-            array_map(static fn (array $article): int => (int)$article['id'], $articles),
+            array_map(static fn(array $article): int => (int) $article['id'], $articles),
         );
         self::assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $data['csrfToken']);
         self::assertSame($data['csrfToken'], $_SESSION['_csrf_token']);
@@ -145,7 +146,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         $this->csrfToken();
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = ['_csrf' => 'invalid'] + $this->validArticleValues('Rejected Controller Article');
-        $beforeCount = (int)$this->scalar('SELECT COUNT(*) FROM blog_posts');
+        $beforeCount = (int) $this->scalar('SELECT COUNT(*) FROM blog_posts');
 
         $response = new ArticleController()->create();
 
@@ -153,7 +154,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         self::assertNotInstanceOf(RedirectResponse::class, $response);
         self::assertSame(403, $response->getStatus());
         self::assertSame('Forbidden', $response->getBody());
-        self::assertSame($beforeCount, (int)$this->scalar('SELECT COUNT(*) FROM blog_posts'));
+        self::assertSame($beforeCount, (int) $this->scalar('SELECT COUNT(*) FROM blog_posts'));
         self::assertArrayNotHasKey('flash', $_SESSION);
         self::assertArrayNotHasKey('old_form_value', $_SESSION);
     }
@@ -169,14 +170,14 @@ final class ArticleControllerTest extends DatabaseTestCase
             'excerpt' => 'short',
             'content_html' => 'short',
         ];
-        $beforeCount = (int)$this->scalar('SELECT COUNT(*) FROM blog_posts');
+        $beforeCount = (int) $this->scalar('SELECT COUNT(*) FROM blog_posts');
 
         $response = new ArticleController()->create();
 
         self::assertInstanceOf(RedirectResponse::class, $response);
         self::assertSame(302, $response->getStatus());
         self::assertSame(['Location' => '/articles/create'], $response->getHeaders());
-        self::assertSame($beforeCount, (int)$this->scalar('SELECT COUNT(*) FROM blog_posts'));
+        self::assertSame($beforeCount, (int) $this->scalar('SELECT COUNT(*) FROM blog_posts'));
         self::assertSame($_POST, $_SESSION['old_form_value']);
         self::assertArrayHasKey('minLength', $_SESSION['validation']['title']);
         self::assertSame(
@@ -196,7 +197,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         $created = $this->rowByTitle('Created Controller Article');
 
         self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame(4, (int)$created['id']);
+        self::assertSame(4, (int) $created['id']);
         self::assertSame($_POST['excerpt'], $created['excerpt']);
         self::assertSame($_POST['content_html'], $created['content_html']);
         self::assertSame(302, $response->getStatus());
@@ -311,7 +312,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         self::assertSame(405, $response->getStatus());
         self::assertSame('Method Not Allowed', $response->getBody());
         self::assertSame(['Allow' => 'POST'], $response->getHeaders());
-        self::assertSame(1, (int)$this->scalar('SELECT COUNT(*) FROM blog_posts WHERE id = 2'));
+        self::assertSame(1, (int) $this->scalar('SELECT COUNT(*) FROM blog_posts WHERE id = 2'));
     }
 
     #[TestDox('POST удаления с неверным CSRF возвращает 403 и сохраняет статью')]
@@ -328,7 +329,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         self::assertSame(403, $response->getStatus());
         self::assertSame('Forbidden', $response->getBody());
         self::assertSame([], $response->getHeaders());
-        self::assertSame(1, (int)$this->scalar('SELECT COUNT(*) FROM blog_posts WHERE id = 2'));
+        self::assertSame(1, (int) $this->scalar('SELECT COUNT(*) FROM blog_posts WHERE id = 2'));
     }
 
     #[TestDox('POST удаления отсутствующей статьи с корректным CSRF возвращает 404 Page')]
@@ -343,7 +344,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         self::assertInstanceOf(Page::class, $page);
         self::assertSame(404, $page->getStatus());
         self::assertSame('errors/not-found', $page->getView());
-        self::assertSame(3, (int)$this->scalar('SELECT COUNT(*) FROM blog_posts'));
+        self::assertSame(3, (int) $this->scalar('SELECT COUNT(*) FROM blog_posts'));
     }
 
     #[TestDox('Корректный POST удаления удаляет строку и перенаправляет к списку')]
@@ -356,7 +357,7 @@ final class ArticleControllerTest extends DatabaseTestCase
         $response = new ArticleController()->delete(['id' => '2']);
 
         self::assertInstanceOf(RedirectResponse::class, $response);
-        self::assertSame(0, (int)$this->scalar('SELECT COUNT(*) FROM blog_posts WHERE id = 2'));
+        self::assertSame(0, (int) $this->scalar('SELECT COUNT(*) FROM blog_posts WHERE id = 2'));
         self::assertSame(302, $response->getStatus());
         self::assertSame(['Location' => '/articles'], $response->getHeaders());
         self::assertSame(

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -135,7 +136,7 @@ final class CoreTest extends TestCase
         self::assertSame('/articles?homepage=x&filter=y', $pagination->uri);
         self::assertStringContainsString(
             'href="/articles?homepage=x&amp;filter=y&amp;page=3"',
-            $pagination->renderHtml()
+            $pagination->renderHtml(),
         );
     }
 
@@ -149,7 +150,7 @@ final class CoreTest extends TestCase
         self::assertStringNotContainsString('" onmouseover="', $html);
         self::assertStringContainsString(
             'search=%22%20onmouseover%3D%22alert%281%29',
-            $html
+            $html,
         );
     }
 
@@ -159,7 +160,7 @@ final class CoreTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/articles?filter=recent&page=3';
         $pagination = new Pagination(3, 5, 40);
 
-        self::assertSame($pagination->renderHtml(), (string)$pagination);
+        self::assertSame($pagination->renderHtml(), (string) $pagination);
     }
 
     #[TestDox('env соблюдает приоритет process environment над $_ENV и default')]
