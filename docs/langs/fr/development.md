@@ -105,7 +105,7 @@ La référence de revue est PER Coding Style 3.1 et PSR-1 ; le formateur appliqu
 
 Sans Docker, utilisez `composer cs:check` pour vérifier le style et `composer cs:fix` pour le corriger. Avec Make, ces commandes s'exécutent dans le conteneur PHP sous l'utilisateur `app`. Le cache du formateur est stocké dans `runtime/cache/php-cs-fixer.cache` et n'est pas suivi par Git. Les commandes indépendantes de vérification et de formatage ne nécessitent pas de connexion à la base de données.
 
-La couverture sert d'outil de diagnostic, et non d'indicateur public de qualité. La CI transmet Clover à Codecov via OIDC. Il n'existe pas d'exigence distincte d'atteindre 100 % : les tests doivent protéger le comportement réel du projet, et non exécuter artificiellement des branches inaccessibles pour un pourcentage.
+La couverture sert d'outil de diagnostic, et non d'indicateur public de qualité. La CI génère un rapport de couverture Clover sans l’envoyer à des services externes. Il n'existe pas d'exigence distincte d'atteindre 100 % : les tests doivent protéger le comportement réel du projet, et non exécuter artificiellement des branches inaccessibles pour un pourcentage.
 
 ## Vérification HTTP de bout en bout
 
@@ -133,7 +133,7 @@ Dans un environnement GitHub Actions vierge, il :
 5. valide le fichier Composer du noyau MVC intégré ;
 6. vérifie la syntaxe PHP ;
 7. lance `make check` : validation stricte de Composer, audit des dépendances, vérification du style, PHPStan et PHPUnit ;
-8. crée un rapport de couverture et transmet Clover à Codecov ;
+8. crée un rapport de couverture Clover ;
 9. charge les données de démonstration ;
 10. vérifie PostgreSQL ;
 11. lance `make smoke` ;

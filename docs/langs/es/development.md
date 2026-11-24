@@ -105,7 +105,7 @@ El estándar base de revisión es PER Coding Style 3.1 y PSR-1; el formateador a
 
 Sin Docker, utiliza `composer cs:check` para comprobar el estilo y `composer cs:fix` para corregirlo. Con Make, estos comandos se ejecutan en el contenedor PHP como usuario `app`. La caché del formateador se guarda en `runtime/cache/php-cs-fixer.cache` y no se incluye en Git. Los comandos independientes de comprobación y formato no requieren conexión a la base de datos.
 
-La cobertura se utiliza como herramienta de diagnóstico, no como indicador público de calidad. CI envía Clover a Codecov mediante OIDC. No hay un requisito independiente de alcanzar el 100%: las pruebas deben proteger el comportamiento real del proyecto, no ejecutar artificialmente ramas inalcanzables por un porcentaje.
+La cobertura se utiliza como herramienta de diagnóstico, no como indicador público de calidad. CI genera un informe de cobertura Clover sin enviarlo a servicios externos. No hay un requisito independiente de alcanzar el 100%: las pruebas deben proteger el comportamiento real del proyecto, no ejecutar artificialmente ramas inalcanzables por un porcentaje.
 
 ## Comprobación HTTP de extremo a extremo
 
@@ -133,7 +133,7 @@ En un entorno limpio de GitHub Actions:
 5. valida el archivo Composer del núcleo MVC integrado;
 6. comprueba la sintaxis PHP;
 7. ejecuta `make check`: validación estricta de Composer, auditoría de dependencias, comprobación de estilo, PHPStan y PHPUnit;
-8. crea un informe de cobertura y envía Clover a Codecov;
+8. crea un informe de cobertura Clover;
 9. carga los datos de demostración;
 10. comprueba PostgreSQL;
 11. ejecuta `make smoke`;
