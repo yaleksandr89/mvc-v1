@@ -5,15 +5,15 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.4-4169E1.svg?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![CI](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](../../LICENSE)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](../../../LICENSE)
 
-![PHP MVC——使用自研 MVC 核心、PostgreSQL 和 Docker Compose 的教学博客](../img/mvc-v1-readme-cover.png)
+![PHP MVC——使用自研 MVC 核心、PostgreSQL 和 Docker Compose 的教学博客](../../assets/mvc-v1-readme-cover.png)
 
 ## 选择语言
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../README.md) | [English](./README_en.md) | [Español](./README_es.md) | **已选择** | [Français](./README_fr.md) | [Deutsch](./README_de.md) |
+| [Русский](../../../README.md) | [English](../en/README.md) | [Español](../es/README.md) | **已选择** | [Français](../fr/README.md) | [Deutsch](../de/README.md) |
 
 这是我较早独立实现 MVC 的项目之一，没有直接依赖现成框架。示例是一个简单的文章博客：路由、控制器、模型、视图和 CRUD 被组织在一起，因此可以直接沿着项目自身的代码追踪一次请求的完整路径。
 
@@ -54,7 +54,7 @@
 > [!IMPORTANT]
 > `make demo-data` 仅适用于空的 `blog_posts` 表。如果表中已经有数据，命令会停止且不会覆盖现有内容。若要完全重建本地 PostgreSQL 存储并立即导入演示数据，请使用 `make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1`；该命令会删除本地 PostgreSQL volume。
 
-环境说明、独立测试数据库、其他命令以及不使用 Docker 的手动运行方式都记录在[开发指南](../development.md)中。
+环境说明、独立测试数据库、其他命令以及不使用 Docker 的手动运行方式都记录在[开发指南](development.md)中。
 
 ## 应用如何工作
 
@@ -76,7 +76,7 @@ public/index.php → 状态码 + 响应头 + 响应体
 
 文章模型通过 PDO 直接访问 PostgreSQL。真正的故障在应用内部仍以异常表示，由相应层记录日志，并转换为安全的 `500` 响应，不向用户暴露技术细节。
 
-路由、职责边界以及完整请求路径详见[架构说明](../architecture.md)。
+路由、职责边界以及完整请求路径详见[架构说明](architecture.md)。
 
 ## 检查与覆盖率
 
@@ -84,14 +84,16 @@ public/index.php → 状态码 + 响应头 + 响应体
 |---|---|---|
 | `make test` | 运行 PHPUnit | 运行前会重置独立测试数据库 |
 | `make test-dox` | 以易读的场景名称运行 PHPUnit | |
-| `make check` | 检查 Composer、依赖、PHPStan 和 PHPUnit | 主要综合检查 |
+| `make cs-check` | 检查 PHP 代码风格 | 存在违规时显示 diff；不修改源文件 |
+| `make cs-fix` | 格式化 PHP 代码 | 修改源文件；不重置测试数据库 |
+| `make check` | 检查 Composer、依赖、PHP 代码风格（PHP CS Fixer）、PHPStan 和 PHPUnit | 主要综合检查；运行前重置测试数据库 |
 | `make coverage` | 显示覆盖率并生成 Clover XML | 输出：`runtime/coverage.xml` |
 | `make coverage-html` | 生成 HTML 覆盖率报告 | 输出：`runtime/coverage/index.html` |
 | `make smoke` | 通过真实 HTTP 请求检查应用 | 需要 50 篇演示文章 |
 
 测试使用独立的 `mvc_v1_test` 数据库，因此运行测试时不会修改主要开发数据库。
 
-完整的 Make 命令列表和 CI 配置见[开发指南](../development.md)。
+完整的 Make 命令列表和 CI 配置见[开发指南](development.md)。
 
 ## 有意保持简单的部分
 
@@ -100,7 +102,7 @@ public/index.php → 状态码 + 响应头 + 响应体
 - 未添加 ORM 或额外的 Repository 层，PostgreSQL 访问直接通过 PDO 完成；
 - 未引入中间件链或事件系统。
 
-这些选择及职责边界在[架构说明](../architecture.md)中有更详细的说明。
+这些选择及职责边界在[架构说明](architecture.md)中有更详细的说明。
 
 ## 反馈
 

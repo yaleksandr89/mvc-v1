@@ -4,7 +4,7 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../.github/SECURITY.md) | [English](SECURITY_en.md) | **Español** | [中文](SECURITY_zh.md) | [Français](SECURITY_fr.md) | [Deutsch](SECURITY_de.md) |
+| [Русский](../../../.github/SECURITY.md) | [English](../en/SECURITY.md) | **Español** | [中文](../zh/SECURITY.md) | [Français](../fr/SECURITY.md) | [Deutsch](../de/SECURITY.md) |
 
 Informe las posibles vulnerabilidades de forma responsable. `mvc-v1` es un proyecto MVC educativo, pero los problemas de seguridad en routing, CRUD, acceso a PostgreSQL, tratamiento de entrada de usuario y representación de datos se toman tan en serio como en cualquier repositorio público.
 

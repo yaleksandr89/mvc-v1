@@ -4,13 +4,13 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../.github/CONTRIBUTING.md) | [English](CONTRIBUTING_en.md) | [Español](CONTRIBUTING_es.md) | **中文** | [Français](CONTRIBUTING_fr.md) | [Deutsch](CONTRIBUTING_de.md) |
+| [Русский](../../../.github/CONTRIBUTING.md) | [English](../en/CONTRIBUTING.md) | [Español](../es/CONTRIBUTING.md) | **中文** | [Français](../fr/CONTRIBUTING.md) | [Deutsch](../de/CONTRIBUTING.md) |
 
 感谢您关注 `mvc-v1`。这是一个带有小型自定义框架的教育性 PHP MVC 项目。
 
 ## 开始之前
 
-请先查看已有的 Issues 和 Pull Requests，并保持工作范围清晰、集中。安全相关问题请通过[安全政策](../../.github/SECURITY.md)报告，不要公开提交 Issue。
+请先查看已有的 Issues 和 Pull Requests，并保持工作范围清晰、集中。安全相关问题请通过[安全政策](../../../.github/SECURITY.md)报告，不要公开提交 Issue。
 
 ## 项目约定
 
@@ -28,6 +28,8 @@
 
 ## 本地检查
 
+使用 Docker Compose 时，请使用 `make composer-install`、`make check`、`make cs-check` 和 `make cs-fix`。`make check` 会重置独立测试数据库 `mvc_v1_test`；直接运行 Composer 时，请在运行测试前自行准备该独立数据库。
+
 ```shell
 composer install
 composer check
@@ -36,11 +38,16 @@ composer check
 针对性检查请使用：
 
 ```shell
+composer cs:check
 composer test
 composer analyse
 ```
 
-项目目前没有 formatter 或 code-style 命令。修改运行时或数据库行为时，请说明已执行的验证。
+`composer check` 依次执行 Composer 严格验证、对 `composer.lock` 中依赖项的安全审计、PHP CS Fixer 风格检查、PHPStan 和 PHPUnit。
+
+如需修复风格问题，请使用 `composer cs:fix`：该命令会修改 PHP 文件。单独运行 `composer cs:check` 和 `composer cs:fix` 不需要连接数据库。
+
+修改运行时或数据库行为时，请说明已执行的验证。
 
 ## Pull Request
 

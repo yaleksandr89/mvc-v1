@@ -4,7 +4,7 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| **Русский** | [English](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_en.md) | [Español](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_es.md) | [中文](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_zh.md) | [Français](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_fr.md) | [Deutsch](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/contributing/CONTRIBUTING_de.md) |
+| **Русский** | [English](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/en/CONTRIBUTING.md) | [Español](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/es/CONTRIBUTING.md) | [中文](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/zh/CONTRIBUTING.md) | [Français](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/fr/CONTRIBUTING.md) | [Deutsch](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/de/CONTRIBUTING.md) |
 
 Спасибо за интерес к `mvc-v1`. Это учебный PHP MVC-проект с небольшим самописным фреймворком.
 
@@ -28,6 +28,8 @@
 
 ## Локальные проверки
 
+При работе через Docker Compose используйте `make composer-install`, `make check`, `make cs-check` и `make cs-fix`. `make check` сбрасывает отдельную тестовую базу `mvc_v1_test`; при прямом запуске Composer подготовьте эту изолированную базу перед тестами самостоятельно.
+
 ```shell
 composer install
 composer check
@@ -36,11 +38,16 @@ composer check
 Для целевой проверки используйте:
 
 ```shell
+composer cs:check
 composer test
 composer analyse
 ```
 
-Команды форматирования или code-style в проекте пока нет. Если изменение затрагивает runtime или базу данных, опишите выполненную проверку.
+`composer check` последовательно выполняет строгую валидацию Composer, аудит зависимостей из `composer.lock`, проверку стиля через PHP CS Fixer, PHPStan и PHPUnit.
+
+Для исправления нарушений стиля используйте `composer cs:fix`: команда изменяет PHP-файлы. Отдельные команды `composer cs:check` и `composer cs:fix` не требуют подключения к базе данных.
+
+Если изменение затрагивает runtime или базу данных, опишите выполненную проверку.
 
 ## Pull Request
 

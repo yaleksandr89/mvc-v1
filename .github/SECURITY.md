@@ -4,7 +4,7 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| **Русский** | [English](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/security/SECURITY_en.md) | [Español](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/security/SECURITY_es.md) | [中文](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/security/SECURITY_zh.md) | [Français](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/security/SECURITY_fr.md) | [Deutsch](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/security/SECURITY_de.md) |
+| **Русский** | [English](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/en/SECURITY.md) | [Español](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/es/SECURITY.md) | [中文](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/zh/SECURITY.md) | [Français](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/fr/SECURITY.md) | [Deutsch](https://github.com/yaleksandr89/mvc-v1/blob/master/docs/langs/de/SECURITY.md) |
 
 Пожалуйста, сообщайте о потенциальных уязвимостях ответственно. `mvc-v1` — учебный MVC-проект, но проблемы безопасности в маршрутизации, CRUD, работе с PostgreSQL, обработке пользовательского ввода и отображении данных рассматриваются так же серьёзно, как и в любом другом публичном репозитории.
 

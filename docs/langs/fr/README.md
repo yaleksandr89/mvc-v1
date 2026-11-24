@@ -5,15 +5,15 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.4-4169E1.svg?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![CI](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](../../LICENSE)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](../../../LICENSE)
 
-![MVC en PHP — blog pédagogique avec un noyau MVC maison, PostgreSQL et Docker Compose](../img/mvc-v1-readme-cover.png)
+![MVC en PHP — blog pédagogique avec un noyau MVC maison, PostgreSQL et Docker Compose](../../assets/mvc-v1-readme-cover.png)
 
 ## Choisir une langue
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../README.md) | [English](./README_en.md) | [Español](./README_es.md) | [中文](./README_zh.md) | **Sélectionné** | [Deutsch](./README_de.md) |
+| [Русский](../../../README.md) | [English](../en/README.md) | [Español](../es/README.md) | [中文](../zh/README.md) | **Sélectionné** | [Deutsch](../de/README.md) |
 
 C'est l'un de mes premiers projets avec une implémentation MVC écrite directement, sans s'appuyer sur un framework prêt à l'emploi. L'exemple est un blog simple d'articles : routage, contrôleurs, modèles, vues et CRUD sont organisés de façon à pouvoir suivre tout le parcours d'une requête dans le code du projet.
 
@@ -54,7 +54,7 @@ Après le démarrage, l'application est accessible à l'adresse [http://localhos
 > [!IMPORTANT]
 > `make demo-data` fonctionne uniquement avec une table `blog_posts` vide. Si elle contient déjà des données, la commande s'arrête sans rien écraser. Pour recréer complètement le stockage PostgreSQL local et charger immédiatement les données de démonstration, utilisez `make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1` ; cette commande supprime le volume PostgreSQL local.
 
-Les détails de l'environnement, la base de données de test isolée, les autres commandes et l'installation manuelle sans Docker sont décrits dans le [guide de développement](../development.md).
+Les détails de l'environnement, la base de données de test isolée, les autres commandes et l'installation manuelle sans Docker sont décrits dans le [guide de développement](development.md).
 
 ## Fonctionnement de l'application
 
@@ -76,7 +76,7 @@ public/index.php → code d'état + en-têtes + corps
 
 Le modèle des articles utilise PostgreSQL directement via PDO. Les véritables erreurs restent des exceptions dans l'application, sont journalisées au niveau approprié puis converties en une réponse `500` sûre, sans exposer de détails techniques à l'utilisateur.
 
-Le routage, les limites de responsabilité et le parcours complet d'une requête sont détaillés dans le [guide d'architecture](../architecture.md).
+Le routage, les limites de responsabilité et le parcours complet d'une requête sont détaillés dans le [guide d'architecture](architecture.md).
 
 ## Vérifications et couverture
 
@@ -84,14 +84,16 @@ Le routage, les limites de responsabilité et le parcours complet d'une requête
 |---|---|---|
 | `make test` | Lance PHPUnit | Réinitialise d'abord la base de test isolée |
 | `make test-dox` | Lance PHPUnit avec des noms de scénarios lisibles | |
-| `make check` | Vérifie Composer, les dépendances, PHPStan et PHPUnit | Vérification globale principale |
+| `make cs-check` | Vérifie le style PHP | Affiche un diff en cas de non-conformité ; ne modifie pas les sources |
+| `make cs-fix` | Formate le code PHP | Modifie les sources ; ne réinitialise pas la base de test |
+| `make check` | Vérifie Composer, les dépendances, le style PHP avec PHP CS Fixer, PHPStan et PHPUnit | Vérification globale principale ; réinitialise d’abord la base de test |
 | `make coverage` | Affiche la couverture et crée un fichier Clover XML | Résultat : `runtime/coverage.xml` |
 | `make coverage-html` | Crée un rapport HTML de couverture | Résultat : `runtime/coverage/index.html` |
 | `make smoke` | Vérifie l'application via de vraies requêtes HTTP | Nécessite 50 articles de démonstration |
 
 Les tests utilisent la base séparée `mvc_v1_test`, de sorte que la base principale de développement n'est pas modifiée pendant leur exécution.
 
-La liste complète des commandes Make et la configuration de CI sont décrites dans le [guide de développement](../development.md).
+La liste complète des commandes Make et la configuration de CI sont décrites dans le [guide de développement](development.md).
 
 ## Ce qui reste volontairement simple
 
@@ -100,7 +102,7 @@ La liste complète des commandes Make et la configuration de CI sont décrites d
 - aucun ORM ni couche de repository supplémentaire n'a été ajouté ; l'accès à PostgreSQL se fait via PDO ;
 - aucune chaîne de middleware ni système d'événements n'a été introduit.
 
-Ces choix et les limites de responsabilité sont expliqués plus en détail dans le [guide d'architecture](../architecture.md).
+Ces choix et les limites de responsabilité sont expliqués plus en détail dans le [guide d'architecture](architecture.md).
 
 ## Retours
 

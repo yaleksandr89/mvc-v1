@@ -4,13 +4,13 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../.github/CONTRIBUTING.md) | [English](CONTRIBUTING_en.md) | [Español](CONTRIBUTING_es.md) | [中文](CONTRIBUTING_zh.md) | **Français** | [Deutsch](CONTRIBUTING_de.md) |
+| [Русский](../../../.github/CONTRIBUTING.md) | [English](../en/CONTRIBUTING.md) | [Español](../es/CONTRIBUTING.md) | [中文](../zh/CONTRIBUTING.md) | **Français** | [Deutsch](../de/CONTRIBUTING.md) |
 
 Merci de votre intérêt pour `mvc-v1`. C'est un projet PHP MVC pédagogique avec un petit framework maison.
 
 ## Avant de commencer
 
-Consultez les Issues et Pull Requests existantes et gardez le travail proposé clair et ciblé. Signalez les sujets sensibles via la [politique de sécurité](../../.github/SECURITY.md), et non dans une Issue publique.
+Consultez les Issues et Pull Requests existantes et gardez le travail proposé clair et ciblé. Signalez les sujets sensibles via la [politique de sécurité](../../../.github/SECURITY.md), et non dans une Issue publique.
 
 ## Contrat du projet
 
@@ -28,6 +28,8 @@ Les Conventional Commits sont recommandés : `fix(router): preserve path paramet
 
 ## Vérifications locales
 
+Avec Docker Compose, utilisez `make composer-install`, `make check`, `make cs-check` et `make cs-fix`. `make check` réinitialise la base de test isolée `mvc_v1_test` ; si vous exécutez Composer directement, préparez vous-même cette base isolée avant les tests.
+
 ```shell
 composer install
 composer check
@@ -36,11 +38,16 @@ composer check
 Pour des vérifications ciblées, utilisez :
 
 ```shell
+composer cs:check
 composer test
 composer analyse
 ```
 
-Il n'existe pas encore de commande formatter ou code-style. Lors d'une modification du runtime ou de la base de données, décrivez la vérification effectuée.
+`composer check` exécute dans l'ordre la validation stricte de Composer, l'audit des dépendances de `composer.lock`, la vérification du style avec PHP CS Fixer, PHPStan et PHPUnit.
+
+Pour corriger les écarts de style, utilisez `composer cs:fix` : cette commande modifie les fichiers PHP. Les commandes indépendantes `composer cs:check` et `composer cs:fix` ne nécessitent pas de connexion à la base de données.
+
+Lors d'une modification du runtime ou de la base de données, décrivez la vérification effectuée.
 
 ## Pull Request
 

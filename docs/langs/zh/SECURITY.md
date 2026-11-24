@@ -4,7 +4,7 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../.github/SECURITY.md) | [English](SECURITY_en.md) | [Español](SECURITY_es.md) | **中文** | [Français](SECURITY_fr.md) | [Deutsch](SECURITY_de.md) |
+| [Русский](../../../.github/SECURITY.md) | [English](../en/SECURITY.md) | [Español](../es/SECURITY.md) | **中文** | [Français](../fr/SECURITY.md) | [Deutsch](../de/SECURITY.md) |
 
 请负责任地报告潜在漏洞。`mvc-v1` 是教育性 MVC 项目，但路由、CRUD、PostgreSQL 访问、用户输入处理和数据输出中的安全问题会像任何公开仓库一样被认真对待。
 

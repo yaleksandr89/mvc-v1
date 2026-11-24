@@ -4,13 +4,13 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../.github/CONTRIBUTING.md) | [English](CONTRIBUTING_en.md) | [Español](CONTRIBUTING_es.md) | [中文](CONTRIBUTING_zh.md) | [Français](CONTRIBUTING_fr.md) | **Deutsch** |
+| [Русский](../../../.github/CONTRIBUTING.md) | [English](../en/CONTRIBUTING.md) | [Español](../es/CONTRIBUTING.md) | [中文](../zh/CONTRIBUTING.md) | [Français](../fr/CONTRIBUTING.md) | **Deutsch** |
 
 Danke für Ihr Interesse an `mvc-v1`. Es ist ein pädagogisches PHP-MVC-Projekt mit einem kleinen eigenen Framework.
 
 ## Bevor Sie beginnen
 
-Prüfen Sie vorhandene Issues und Pull Requests und halten Sie die Arbeit klar und fokussiert. Melden Sie sicherheitsrelevante Themen über die [Sicherheitsrichtlinie](../../.github/SECURITY.md), nicht über ein öffentliches Issue.
+Prüfen Sie vorhandene Issues und Pull Requests und halten Sie die Arbeit klar und fokussiert. Melden Sie sicherheitsrelevante Themen über die [Sicherheitsrichtlinie](../../../.github/SECURITY.md), nicht über ein öffentliches Issue.
 
 ## Projektvertrag
 
@@ -28,6 +28,8 @@ Conventional Commits werden empfohlen: `fix(router): preserve path parameters`, 
 
 ## Lokale Prüfungen
 
+Bei der Arbeit mit Docker Compose verwenden Sie `make composer-install`, `make check`, `make cs-check` und `make cs-fix`. `make check` setzt die isolierte Testdatenbank `mvc_v1_test` zurück; bei direkter Ausführung von Composer bereiten Sie diese isolierte Datenbank vor den Tests selbst vor.
+
 ```shell
 composer install
 composer check
@@ -36,11 +38,16 @@ composer check
 Für gezielte Prüfungen verwenden Sie:
 
 ```shell
+composer cs:check
 composer test
 composer analyse
 ```
 
-Es gibt noch keinen formatter- oder code-style-Befehl. Beschreiben Sie bei Änderungen am Runtime- oder Datenbankverhalten die durchgeführte Prüfung.
+`composer check` führt nacheinander die strikte Composer-Validierung, die Sicherheitsprüfung der Abhängigkeiten aus `composer.lock`, die Stilprüfung mit PHP CS Fixer, PHPStan und PHPUnit aus.
+
+Um Stilabweichungen zu korrigieren, verwenden Sie `composer cs:fix`: Der Befehl ändert PHP-Dateien. Die einzelnen Befehle `composer cs:check` und `composer cs:fix` benötigen keine Datenbankverbindung.
+
+Beschreiben Sie bei Änderungen am Runtime- oder Datenbankverhalten die durchgeführte Prüfung.
 
 ## Pull Request
 
