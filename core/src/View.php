@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -40,7 +41,7 @@ class View
         $layoutPath = PROJECT_VIEW . "/layouts/{$page->getLayout()}.php";
         if (!is_file($layoutPath)) {
             throw new ConnectLayout(
-                "не удалось подключить шаблон [{$page->getLayout()}], расположенный [$layoutPath]."
+                "не удалось подключить шаблон [{$page->getLayout()}], расположенный [$layoutPath].",
             );
         }
 
@@ -97,9 +98,9 @@ class View
                 date('Y-m-d H:i:s'),
                 $error::class,
                 $error->getMessage(),
-                PHP_EOL
+                PHP_EOL,
             ),
-            FILE_APPEND
+            FILE_APPEND,
         );
 
         return new Response('Internal server error.', 500);

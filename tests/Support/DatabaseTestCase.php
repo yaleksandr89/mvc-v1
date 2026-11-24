@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Support;
@@ -21,10 +22,10 @@ abstract class DatabaseTestCase extends TestCase
         $password = env('DB_PASS');
 
         if (
-            !is_string($host) ||
-            !is_string($database) ||
-            !is_string($user) ||
-            !is_string($password)
+            !is_string($host)
+            || !is_string($database)
+            || !is_string($user)
+            || !is_string($password)
         ) {
             throw new RuntimeException('Test database configuration must contain string values.');
         }
@@ -33,16 +34,11 @@ abstract class DatabaseTestCase extends TestCase
             throw new RuntimeException('Refusing unsafe test database: expected mvc_v1_test.');
         }
 
-        $this->database = new PDO(
-            sprintf('pgsql:host=%s;dbname=mvc_v1_test', $host),
-            $user,
-            $password,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]
-        );
+        $this->database = new PDO(sprintf('pgsql:host=%s;dbname=mvc_v1_test', $host), $user, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
 
         $this->restoreFixture();
     }

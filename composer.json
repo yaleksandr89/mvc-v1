@@ -51,6 +51,7 @@
         "yaa/mvc-framework": "dev-master"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "~3.95.0",
         "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^13.3"
     },
@@ -67,9 +68,12 @@
     "scripts": {
         "test": "phpunit --configuration=phpunit.xml.dist",
         "analyse": "phpstan analyse --no-progress",
+        "cs:check": "php-cs-fixer check --config=.php-cs-fixer.dist.php --diff",
+        "cs:fix": "php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "check": [
             "@composer validate --strict --no-check-publish",
             "@composer audit --locked",
+            "@cs:check",
             "@analyse",
             "@test"
         ]

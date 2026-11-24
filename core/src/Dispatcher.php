@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -18,16 +19,16 @@ class Dispatcher
             $controllerName = $track->getController();
             $action = $track->getAction();
             if (
-                preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $controllerName) !== 1 ||
-                preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $action) !== 1
+                preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $controllerName) !== 1
+                || preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $action) !== 1
             ) {
                 throw new ConnectClass('Controller or action name has an invalid format.');
             }
 
             $appNamespace = env('APP_NAMESPACE');
             if (
-                !is_string($appNamespace) ||
-                preg_match('/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)+$/D', $appNamespace) !== 1
+                !is_string($appNamespace)
+                || preg_match('/^(?:[A-Za-z_][A-Za-z0-9_]*\\\\)+$/D', $appNamespace) !== 1
             ) {
                 throw new ConnectClass('APP_NAMESPACE is missing or invalid.');
             }
@@ -76,9 +77,9 @@ class Dispatcher
                 date('Y-m-d H:i:s'),
                 $error::class,
                 $error->getMessage(),
-                PHP_EOL
+                PHP_EOL,
             ),
-            FILE_APPEND
+            FILE_APPEND,
         );
 
         return new Response('Internal server error.', 500);

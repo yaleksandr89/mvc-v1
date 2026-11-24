@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -8,9 +9,8 @@ class Route
     public function __construct(
         private string $path,
         private string $controller,
-        private string $action
-    ) {
-    }
+        private string $action,
+    ) {}
 
     public function getController(): string
     {

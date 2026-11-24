@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Validations;
@@ -14,16 +15,14 @@ class ArticleValidate
         string $title,
         string $excerpt,
         string $contentHtml,
-        ?int $id = null
-    ): array
-    {
+        ?int $id = null,
+    ): array {
         $errors = [];
 
         $title = mb_strtolower(trim($title));
         $excerpt = trim($excerpt);
         $contentHtml = trim($contentHtml);
 
-        // Название
         if (empty($title)) {
             $errors['title']['empty'] = 'Не может быть пустым';
         }
@@ -31,13 +30,12 @@ class ArticleValidate
             $errors['title']['minLength'] = 'Минимум 15 символов';
         }
         if (
-            ($article = ArticleModal::getInstance()->getByTitle($title)) &&
-            ((int)$article['id'] !== $id)
+            ($article = ArticleModal::getInstance()->getByTitle($title))
+            && ((int) $article['id'] !== $id)
         ) {
             $errors['title']['unique'] = 'Название уже существует';
         }
 
-        // Краткое содержание
         if (empty($excerpt)) {
             $errors['excerpt']['empty'] = 'Не может быть пустым';
         }
@@ -45,7 +43,6 @@ class ArticleValidate
             $errors['excerpt']['minLength'] = 'Минимум 50 символов';
         }
 
-        // Содержание
         if (empty($contentHtml)) {
             $errors['content_html']['empty'] = 'Не может быть пустым';
         }

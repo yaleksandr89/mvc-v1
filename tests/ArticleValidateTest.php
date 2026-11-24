@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -28,13 +29,13 @@ final class ArticleValidateTest extends DatabaseTestCase
         self::assertArrayHasKey('minLength', ArticleValidate::validate(
             str_repeat('t', 14),
             str_repeat('e', 50),
-            str_repeat('c', 100)
+            str_repeat('c', 100),
         )['title']);
 
         self::assertArrayNotHasKey('title', ArticleValidate::validate(
             str_repeat('t', 15),
             str_repeat('e', 50),
-            str_repeat('c', 100)
+            str_repeat('c', 100),
         ));
     }
 
@@ -44,13 +45,13 @@ final class ArticleValidateTest extends DatabaseTestCase
         self::assertArrayHasKey('minLength', ArticleValidate::validate(
             'Unique Boundary Title',
             str_repeat('e', 49),
-            str_repeat('c', 100)
+            str_repeat('c', 100),
         )['excerpt']);
 
         self::assertArrayNotHasKey('excerpt', ArticleValidate::validate(
             'Unique Boundary Title',
             str_repeat('e', 50),
-            str_repeat('c', 100)
+            str_repeat('c', 100),
         ));
     }
 
@@ -60,13 +61,13 @@ final class ArticleValidateTest extends DatabaseTestCase
         self::assertArrayHasKey('minLength', ArticleValidate::validate(
             'Unique Content Boundary',
             str_repeat('e', 50),
-            str_repeat('c', 99)
+            str_repeat('c', 99),
         )['content_html']);
 
         self::assertArrayNotHasKey('content_html', ArticleValidate::validate(
             'Unique Content Boundary',
             str_repeat('e', 50),
-            str_repeat('c', 100)
+            str_repeat('c', 100),
         ));
     }
 
@@ -76,7 +77,7 @@ final class ArticleValidateTest extends DatabaseTestCase
         self::assertSame([], ArticleValidate::validate(
             str_repeat('Ж', 15),
             str_repeat('Я', 50),
-            str_repeat('Ю', 100)
+            str_repeat('Ю', 100),
         ));
     }
 
@@ -86,7 +87,7 @@ final class ArticleValidateTest extends DatabaseTestCase
         self::assertSame([], ArticleValidate::validate(
             'Completely Unique Test Article',
             str_repeat('Valid deterministic excerpt ', 2),
-            str_repeat('Valid deterministic content ', 4)
+            str_repeat('Valid deterministic content ', 4),
         ));
     }
 
@@ -129,7 +130,7 @@ final class ArticleValidateTest extends DatabaseTestCase
             $title,
             str_repeat('Valid deterministic excerpt ', 2),
             str_repeat('Valid deterministic content ', 4),
-            $id
+            $id,
         );
     }
 }

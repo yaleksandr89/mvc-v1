@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -20,7 +21,7 @@ class ArticleModal extends Model
             return array_values(
                 $this
                     ->db_query('SELECT id,title,excerpt,content_html,published_at,updated_at FROM blog_posts')
-                    ->fetchAll(PDO::FETCH_ASSOC)
+                    ->fetchAll(PDO::FETCH_ASSOC),
             );
         } catch (PDOException $error) {
             $this->handleDatabaseFailure($error, __METHOD__);
@@ -42,7 +43,7 @@ class ArticleModal extends Model
                     LIMIT $paginator->perPage
                     OFFSET {$paginator->getStart()}
                     ")
-                    ->fetchAll(PDO::FETCH_ASSOC)
+                    ->fetchAll(PDO::FETCH_ASSOC),
             );
         } catch (PDOException $error) {
             $this->handleDatabaseFailure($error, __METHOD__);
@@ -58,9 +59,7 @@ class ArticleModal extends Model
             return $this
                 ->db_query(
                     'SELECT id, title,excerpt, content_html, published_at, updated_at FROM blog_posts WHERE id=:id',
-                    [
-                        'id' => $id,
-                    ]
+                    ['id' => $id],
                 )
                 ->fetch();
         } catch (PDOException $error) {
@@ -77,9 +76,7 @@ class ArticleModal extends Model
             return $this
                 ->db_query(
                     'SELECT * FROM blog_posts WHERE LOWER(title) = LOWER(:title)',
-                    [
-                        ':title' => $title,
-                    ]
+                    [':title' => $title],
                 )
                 ->fetch();
         } catch (PDOException $error) {
@@ -93,22 +90,18 @@ class ArticleModal extends Model
     public function create(
         string $title,
         string $excerpt,
-        string $contentHtml
-    ): array|false
-    {
+        string $contentHtml,
+    ): array|false {
         try {
             $sql = 'INSERT INTO blog_posts (title, excerpt, content_html)
                     VALUES (:title, :excerpt, :content_html)
                     RETURNING id, title, excerpt, content_html, published_at, updated_at';
 
-            $sth = $this->db_query(
-                $sql,
-                [
-                    ':title' => $title,
-                    ':excerpt' => $excerpt,
-                    ':content_html' => $contentHtml,
-                ]
-            );
+            $sth = $this->db_query($sql, [
+                ':title' => $title,
+                ':excerpt' => $excerpt,
+                ':content_html' => $contentHtml,
+            ]);
 
             return $sth->fetch();
         } catch (PDOException $error) {
@@ -120,24 +113,20 @@ class ArticleModal extends Model
         int $id,
         string $title,
         string $excerpt,
-        string $contentHtml
-    ): bool
-    {
+        string $contentHtml,
+    ): bool {
         try {
             $sql = 'UPDATE blog_posts
                     SET title=:title, excerpt=:excerpt, content_html=:content_html, updated_at=:updated_at
                     WHERE id=:id';
 
-            $sth = $this->db_query(
-                $sql,
-                [
-                    ':id' => $id,
-                    ':title' => $title,
-                    ':excerpt' => $excerpt,
-                    ':content_html' => $contentHtml,
-                    ':updated_at' => new DateTime('now')->format('Y-m-d H:i:s'),
-                ]
-            );
+            $sth = $this->db_query($sql, [
+                ':id' => $id,
+                ':title' => $title,
+                ':excerpt' => $excerpt,
+                ':content_html' => $contentHtml,
+                ':updated_at' => new DateTime('now')->format('Y-m-d H:i:s'),
+            ]);
 
             return $sth->rowCount() > 0;
         } catch (PDOException $error) {
@@ -152,7 +141,7 @@ class ArticleModal extends Model
 
             $sth = $this->db_query(
                 $sql,
-                [':id' => $id]
+                [':id' => $id],
             );
 
             return $sth->rowCount() > 0;

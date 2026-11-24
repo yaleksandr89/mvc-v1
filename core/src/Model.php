@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -24,10 +25,10 @@ abstract class Model
             $user = env('DB_USER');
             $password = env('DB_PASS');
             if (
-                !is_string($host) ||
-                !is_string($database) ||
-                !is_string($user) ||
-                !is_string($password)
+                !is_string($host)
+                || !is_string($database)
+                || !is_string($user)
+                || !is_string($password)
             ) {
                 throw new PDOException('Database configuration must contain string values.');
             }
@@ -80,9 +81,9 @@ abstract class Model
                 date('Y-m-d H:i:s'),
                 $context,
                 $error->getMessage(),
-                PHP_EOL
+                PHP_EOL,
             ),
-            FILE_APPEND
+            FILE_APPEND,
         );
 
         throw new DatabaseException(
@@ -102,7 +103,5 @@ abstract class Model
         }
     }
 
-    private function __clone()
-    {
-    }
+    private function __clone() {}
 }

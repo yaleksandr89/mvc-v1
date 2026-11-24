@@ -5,15 +5,15 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18.4-4169E1.svg?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![CI](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml/badge.svg)](https://github.com/yaleksandr89/mvc-v1/actions/workflows/ci.yml)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
-![MVC на PHP — учебный блог с собственным MVC-ядром, PostgreSQL и Docker Compose](docs/img/mvc-v1-readme-cover.png)
+![MVC на PHP — учебный блог с собственным MVC-ядром, PostgreSQL и Docker Compose](docs/assets/mvc-v1-readme-cover.png)
 
 ## Выберите язык
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| **Выбран** | [English](docs/langs/README_en.md) | [Español](docs/langs/README_es.md) | [中文](docs/langs/README_zh.md) | [Français](docs/langs/README_fr.md) | [Deutsch](docs/langs/README_de.md) |
+| **Выбран** | [English](docs/langs/en/README.md) | [Español](docs/langs/es/README.md) | [中文](docs/langs/zh/README.md) | [Français](docs/langs/fr/README.md) | [Deutsch](docs/langs/de/README.md) |
 
 Это один из моих первых проектов с самостоятельной реализацией MVC без готового фреймворка. В качестве примера используется простой блог со статьями: маршрутизация, контроллеры, модели, представления и CRUD собраны так, чтобы весь путь запроса можно было проследить по собственному коду.
 
@@ -54,7 +54,7 @@
 > [!IMPORTANT]
 > `make demo-data` работает только с пустой таблицей `blog_posts`: если в ней уже есть данные, команда остановится и ничего не перезапишет. Полностью пересоздать локальную PostgreSQL и сразу загрузить демонстрационные данные можно командой `make postgres-reinit CONFIRM=postgres18 WITH_DEMO_DATA=1`; она удаляет локальный том PostgreSQL.
 
-Подробности об окружении, тестовой базе, остальных командах и ручном запуске без Docker собраны в [руководстве по разработке](docs/development.md).
+Подробности об окружении, тестовой базе, остальных командах и ручном запуске без Docker собраны в [руководстве по разработке](docs/langs/ru/development.md).
 
 ## Как устроено приложение
 
@@ -76,7 +76,7 @@ public/index.php → код состояния + заголовки + тело
 
 Модель статей работает с PostgreSQL напрямую через PDO. Реальные ошибки остаются исключениями внутри приложения, записываются в журнал на своём уровне и преобразуются в безопасный ответ `500` без вывода технических деталей пользователю.
 
-Маршрутизация, границы ответственности и полный путь запроса подробно разобраны в [описании архитектуры](docs/architecture.md).
+Маршрутизация, границы ответственности и полный путь запроса подробно разобраны в [описании архитектуры](docs/langs/ru/architecture.md).
 
 ## Проверки и покрытие
 
@@ -84,14 +84,16 @@ public/index.php → код состояния + заголовки + тело
 |---|---|---|
 | `make test` | Запускает PHPUnit | Перед запуском сбрасывается отдельная тестовая база |
 | `make test-dox` | Запускает PHPUnit с читаемыми названиями сценариев | |
-| `make check` | Проверяет Composer, зависимости, PHPStan и PHPUnit | Основная комплексная проверка |
+| `make cs-check` | Проверяет стиль PHP | Показывает diff при нарушениях; не изменяет исходники |
+| `make cs-fix` | Форматирует PHP-код | Изменяет исходники; не сбрасывает тестовую базу |
+| `make check` | Проверяет Composer, зависимости, стиль PHP через PHP CS Fixer, PHPStan и PHPUnit | Основная комплексная проверка; перед запуском сбрасывает тестовую базу |
 | `make coverage` | Показывает покрытие и создаёт Clover XML | Результат: `runtime/coverage.xml` |
 | `make coverage-html` | Создаёт HTML-отчёт покрытия | Результат: `runtime/coverage/index.html` |
 | `make smoke` | Проверяет приложение через настоящий HTTP-запрос | Нужны 50 демонстрационных статей |
 
 Тесты используют отдельную базу `mvc_v1_test`, поэтому основная база разработки при их запуске не затрагивается.
 
-Полный список команд Make и устройство CI приведены в [руководстве по разработке](docs/development.md).
+Полный список команд Make и устройство CI приведены в [руководстве по разработке](docs/langs/ru/development.md).
 
 ## Что намеренно оставлено простым
 
@@ -100,7 +102,7 @@ public/index.php → код состояния + заголовки + тело
 - ORM и дополнительный слой репозиториев не добавлены, работа с PostgreSQL идёт через PDO;
 - отдельная цепочка промежуточных обработчиков и система событий не вводились;
 
-Более подробно эти решения и границы ответственности описаны в [документе об архитектуре](docs/architecture.md).
+Более подробно эти решения и границы ответственности описаны в [документе об архитектуре](docs/langs/ru/architecture.md).
 
 ## Обратная связь
 

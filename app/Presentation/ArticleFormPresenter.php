@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Presentation;
@@ -40,7 +41,7 @@ class ArticleFormPresenter
         mixed $validation,
         mixed $oldFormValue,
         string $csrfToken,
-        string $type
+        string $type,
     ): array {
         if ($type !== 'create' && $type !== 'edit') {
             throw new InvalidArgumentException("Unsupported article form type: $type");
@@ -52,14 +53,14 @@ class ArticleFormPresenter
         if ($type === 'edit') {
             $articleId = $article['id'] ?? null;
             if (
-                (!is_int($articleId) && !is_string($articleId)) ||
-                preg_match('/^[0-9]+$/D', (string)$articleId) !== 1 ||
-                (int)$articleId < 1
+                (!is_int($articleId) && !is_string($articleId))
+                || preg_match('/^[0-9]+$/D', (string) $articleId) !== 1
+                || (int) $articleId < 1
             ) {
                 throw new InvalidArgumentException('A valid numeric article ID is required for edit mode.');
             }
 
-            $articleId = (int)$articleId;
+            $articleId = (int) $articleId;
             $formAction = "/articles/$articleId/edit";
             $deleteAction = "/articles/$articleId/delete";
         }

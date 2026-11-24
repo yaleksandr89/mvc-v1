@@ -4,13 +4,13 @@
 
 | Русский | English | Español | 中文 | Français | Deutsch |
 |---|---|---|---|---|---|
-| [Русский](../../.github/CONTRIBUTING.md) | **English** | [Español](CONTRIBUTING_es.md) | [中文](CONTRIBUTING_zh.md) | [Français](CONTRIBUTING_fr.md) | [Deutsch](CONTRIBUTING_de.md) |
+| [Русский](../../../.github/CONTRIBUTING.md) | **English** | [Español](../es/CONTRIBUTING.md) | [中文](../zh/CONTRIBUTING.md) | [Français](../fr/CONTRIBUTING.md) | [Deutsch](../de/CONTRIBUTING.md) |
 
 Thank you for your interest in `mvc-v1`. It is an educational PHP MVC project with a small custom framework.
 
 ## Before you start
 
-Check existing Issues and Pull Requests, and keep the proposed work focused and clear. Report security-sensitive matters through the [security policy](../../.github/SECURITY.md), not a public Issue.
+Check existing Issues and Pull Requests, and keep the proposed work focused and clear. Report security-sensitive matters through the [security policy](../../../.github/SECURITY.md), not a public Issue.
 
 ## Project contract
 
@@ -28,6 +28,8 @@ Conventional Commits are recommended: `fix(router): preserve path parameters`, `
 
 ## Local checks
 
+When working with Docker Compose, use `make composer-install`, `make check`, `make cs-check`, and `make cs-fix`. `make check` resets the isolated `mvc_v1_test` database; when running Composer directly, prepare that isolated database yourself before running tests.
+
 ```shell
 composer install
 composer check
@@ -36,11 +38,16 @@ composer check
 For targeted checks, use:
 
 ```shell
+composer cs:check
 composer test
 composer analyse
 ```
 
-There is no formatter or code-style command yet. When changing runtime or database behavior, describe the verification performed.
+`composer check` runs strict Composer validation, an audit of dependencies from `composer.lock`, a PHP CS Fixer style check, PHPStan, and PHPUnit in that order.
+
+To fix style violations, use `composer cs:fix`: it modifies PHP files. The separate `composer cs:check` and `composer cs:fix` commands do not require a database connection.
+
+When changing runtime or database behavior, describe the verification performed.
 
 ## Pull Request
 

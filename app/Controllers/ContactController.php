@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controllers;
@@ -26,7 +27,7 @@ class ContactController extends Controller
 
         return $this->render(
             'contacts/index',
-            compact('h1', 'desc', 'nameMethod', 'contacts')
+            compact('h1', 'desc', 'nameMethod', 'contacts'),
         );
     }
 }

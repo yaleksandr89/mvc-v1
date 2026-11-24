@@ -41,13 +41,13 @@ use App\Helper\SecurityHelper;
                         <p class="card-text"><?= SecurityHelper::escapeHtml($article['excerpt']) ?></p>
                         <div class="mt-auto d-flex flex-column flex-md-row justify-content-between gap-3">
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="/articles/<?= (int)$article['id'] ?>/show" class="btn btn-lg btn-outline-dark">
+                                <a href="/articles/<?= (int) $article['id'] ?>/show" class="btn btn-lg btn-outline-dark">
                                     Открыть
                                 </a>
-                                <a href="/articles/<?= (int)$article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
+                                <a href="/articles/<?= (int) $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
                                     Редактировать
                                 </a>
-                                <form action="/articles/<?= (int)$article['id'] ?>/delete" method="POST">
+                                <form action="/articles/<?= (int) $article['id'] ?>/delete" method="POST">
                                     <input
                                             type="hidden"
                                             name="_csrf"

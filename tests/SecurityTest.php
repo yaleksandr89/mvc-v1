@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -7,6 +8,8 @@ use App\Helper\SecurityHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use Stringable;
 use Yaa\Framework\Route;
 use Yaa\Framework\Router;
 
@@ -17,7 +20,7 @@ final class SecurityTest extends TestCase
     {
         self::assertSame(
             '&lt;script title=&quot;quoted&quot;&gt;Tom &amp; &#039;Jerry&#039;&lt;/script&gt;',
-            SecurityHelper::escapeHtml('<script title="quoted">Tom & \'Jerry\'</script>')
+            SecurityHelper::escapeHtml('<script title="quoted">Tom & \'Jerry\'</script>'),
         );
     }
 
@@ -26,7 +29,7 @@ final class SecurityTest extends TestCase
     {
         self::assertSame('', SecurityHelper::escapeHtml(null));
         self::assertSame('', SecurityHelper::escapeHtml(['not-scalar']));
-        self::assertSame('', SecurityHelper::escapeHtml(new \stdClass()));
+        self::assertSame('', SecurityHelper::escapeHtml(new stdClass()));
     }
 
     #[TestDox('Скалярные значения преобразуются и экранируются')]
@@ -40,7 +43,7 @@ final class SecurityTest extends TestCase
     #[TestDox('Stringable-объект преобразуется и экранируется')]
     public function testConvertsAndEscapesStringableValue(): void
     {
-        $value = new class implements \Stringable {
+        $value = new class implements Stringable {
             public function __toString(): string
             {
                 return '<stringable & value>';

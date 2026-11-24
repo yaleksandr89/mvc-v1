@@ -30,7 +30,7 @@ use App\Helper\SecurityHelper;
                 <p class="card-text"><?= nl2br(SecurityHelper::escapeHtml($article['content_html'])) ?></p>
                 <div class="mt-auto d-flex flex-column flex-md-row justify-content-between gap-3">
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="/articles/<?= (int)$article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
+                        <a href="/articles/<?= (int) $article['id'] ?>/edit" class="btn btn-lg btn-outline-dark">
                             Редактировать
                         </a>
                         <a href="/articles" class="btn btn-lg btn-outline-dark">

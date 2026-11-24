@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Yaa\Framework;
@@ -25,9 +26,9 @@ readonly class Response
 
         foreach ($headers as $name => $value) {
             if (
-                !is_string($name) ||
-                $name === '' ||
-                preg_match('/^[A-Za-z][A-Za-z0-9-]*$/D', $name) !== 1
+                !is_string($name)
+                || $name === ''
+                || preg_match('/^[A-Za-z][A-Za-z0-9-]*$/D', $name) !== 1
             ) {
                 throw new InvalidArgumentException('HTTP header names must contain only letters, digits, and hyphens.');
             }
