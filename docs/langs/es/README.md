@@ -58,18 +58,18 @@ Los detalles del entorno, la base de datos de pruebas aislada, el resto de coman
 
 ## Cómo funciona la aplicación
 
-```text
-Petición HTTP
-    ↓
-Router
-    ↓
-Dispatcher
-    ↓
-Page | Response
-    ↓
-Page → View → Response
-    ↓
-public/index.php → código de estado + cabeceras + cuerpo
+```mermaid
+flowchart TD
+    A["Petición HTTP → public/index.php"]
+    B["Router → Track → Dispatcher → Controller"]
+    C["Page → View → Response"]
+    D["Response / RedirectResponse"]
+    E["public/index.php<br/>Código de estado + cabeceras + cuerpo"]
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
 ```
 
 `Page` describe una página que todavía debe renderizarse, mientras que `Response` y `RedirectResponse` representan respuestas HTTP ya completas. El código de estado, las cabeceras y el cuerpo se envían únicamente desde el punto de entrada `public/index.php`.

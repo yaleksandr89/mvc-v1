@@ -58,18 +58,18 @@ Environment details, the isolated test database, the remaining commands, and man
 
 ## How the application works
 
-```text
-HTTP request
-    ↓
-Router
-    ↓
-Dispatcher
-    ↓
-Page | Response
-    ↓
-Page → View → Response
-    ↓
-public/index.php → status code + headers + body
+```mermaid
+flowchart TD
+    A["HTTP request → public/index.php"]
+    B["Router → Track → Dispatcher → Controller"]
+    C["Page → View → Response"]
+    D["Response / RedirectResponse"]
+    E["public/index.php<br/>Status code + headers + body"]
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
 ```
 
 `Page` describes a page that still needs to be rendered, while `Response` and `RedirectResponse` represent complete HTTP responses. The status code, headers, and body are sent only by the `public/index.php` entry point.

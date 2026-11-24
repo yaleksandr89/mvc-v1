@@ -58,18 +58,18 @@ Details zur Umgebung, zur isolierten Testdatenbank, zu weiteren Befehlen und zur
 
 ## Aufbau der Anwendung
 
-```text
-HTTP-Anfrage
-    ↓
-Router
-    ↓
-Dispatcher
-    ↓
-Page | Response
-    ↓
-Page → View → Response
-    ↓
-public/index.php → Statuscode + Header + Body
+```mermaid
+flowchart TD
+    A["HTTP-Anfrage → public/index.php"]
+    B["Router → Track → Dispatcher → Controller"]
+    C["Page → View → Response"]
+    D["Response / RedirectResponse"]
+    E["public/index.php<br/>Statuscode + Header + Body"]
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    D --> E
 ```
 
 `Page` beschreibt eine Seite, die noch gerendert werden muss, während `Response` und `RedirectResponse` bereits vollständige HTTP-Antworten darstellen. Statuscode, Header und Body werden ausschließlich im Einstiegspunkt `public/index.php` gesendet.
